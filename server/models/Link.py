@@ -8,7 +8,7 @@ LinksCollection = db['links']
 
 
 class Link:
-    def __init__(self, url, title, description, tags, category_id, user_id, _id=None, created_at=None, updated_at=None):
+    def __init__(self, url, title, description, tags, category_id, user_id, visits=0, _id=None, created_at=None, updated_at=None):
         self._id = ObjectId(_id) if _id else None
         self.url = url
         self.title = title
@@ -16,6 +16,7 @@ class Link:
         self.tags = tags if isinstance(tags, list) else []
         self.category_id = category_id
         self.user_id = user_id
+        self.visits = visits 
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -28,6 +29,7 @@ class Link:
             "tags": self.tags,
             "category_id": self.category_id,
             "user_id": self.user_id,
+            "visits": self.visits,
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
@@ -45,6 +47,7 @@ class Link:
             "tags": self.tags,
             "category_id": self.category_id,
             "user_id": self.user_id,
+            "visits": self.visits,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
@@ -70,7 +73,7 @@ class Link:
             raise ValueError("Cannot update link without _id")
         
         try:
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now()
             update_data = {k: v for k, v in updates.items() if v is not None}
             update_data['updated_at'] = self.updated_at
             
@@ -148,8 +151,23 @@ class Link:
         except PyMongoError as e:
             raise Exception(f"Failed to search links by tags: {str(e)}")
     
+    @staticmethod
+    def increment_visits(link_id):
+        """Increment the visit count for a link"""
+        try:
+            if isinstance(link_id, str):
+                link_id = ObjectId(link_id)
+            
+            result = LinksCollection.update_one(
+                {"_id": link_id},
+                {"$inc": {"visits": 1}}
+            )
+            return result.modified_count > 0
+        except PyMongoError as e:
+            raise Exception(f"Failed to increment visits: {str(e)}")
+
     def __str__(self):
-        return f"Link(id={self._id}, title={self.title}, url={self.url})"
-    
+        return f"Link(id={self._id}, title={self.title}, url={self.url}, visits={self.visits})"
+
     def __repr__(self):
         return self.__str__()
