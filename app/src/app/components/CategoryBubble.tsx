@@ -15,7 +15,7 @@ export default function CategoryBubble({
     <div
       className={`p-6 bg-black/20 border border-white/20 ${
         showList ? "rounded-4xl" : "rounded-full"
-      } shadow-lg shadow-black/30 text-center  m-2`}
+      } shadow-lg shadow-black/30 text-center  m-2 `}
     >
       <h2
         onClick={() => setShowList(!showList)}

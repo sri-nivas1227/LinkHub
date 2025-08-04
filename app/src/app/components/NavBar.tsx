@@ -6,10 +6,15 @@ export default function NavBar() {
   const router = useRouter();
   return (
     <nav className="flex justify-between font-ibm-plex-mono items-center p-4 text-white">
-      <div onClick={() => router.back()} className="flex items-center">
+      <div onClick={() => router.back()} className="flex items-center cursor-pointer">
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2 w-8 h-8" />
       </div>
-      <div className="text-3xl font-semibold">DropLinks</div>
+      <div
+        onClick={() => router.push("/home")}
+        className="text-3xl font-semibold cursor-pointer"
+      >
+        DropLinks
+      </div>
       <div className=""></div>
     </nav>
   );

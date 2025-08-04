@@ -1,3 +1,5 @@
+import CategoryDropdown from "../components/CategoryDropdown";
+
 export default function AddLinkPage() {
   return (
     <div className="w-full h-full flex justify-center items-center font-ibm-plex-mono">
@@ -17,13 +19,7 @@ export default function AddLinkPage() {
             className="w-full p-2 border border-gray-300 rounded-3xl"
             placeholder="Choose title..."
           />
-          <input
-            type="text"
-            name="category"
-            id="category"
-            className="w-full p-2 border border-gray-300 rounded-3xl"
-            placeholder="Choose category..."
-          />
+          <CategoryDropdown />
 
           <button className="p-1 px-8 w-fit text-black font-semibold rounded-full border border-black/30 bg-gradient-to-r shadow-md shadow-black/40 from-white via-[#c2c2c2] to-[#929292]">
             Save
