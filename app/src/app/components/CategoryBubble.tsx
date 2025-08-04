@@ -1,7 +1,6 @@
 "use client";
-import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function CategoryBubble({
   title,
@@ -11,12 +10,16 @@ export default function CategoryBubble({
   //   showList?: boolean;
 }) {
   const [showList, setShowList] = useState(false);
-  // const showList = true;
+  const router = useRouter();
   return (
-    <div className="p-3 bg-black/20 border border-white/20 rounded-4xl shadow-lg shadow-black/30 text-center  m-2">
+    <div
+      className={`p-6 bg-black/20 border border-white/20 ${
+        showList ? "rounded-4xl" : "rounded-full"
+      } shadow-lg shadow-black/30 text-center  m-2`}
+    >
       <h2
         onClick={() => setShowList(!showList)}
-        className="font-bold cursor-pointer text-2xl"
+        className="font-bold cursor-pointer text-3xl hover:scale-105"
       >
         {title}
       </h2>
@@ -33,7 +36,10 @@ export default function CategoryBubble({
               Link 3
             </li>
           </ul>
-          <div className="flex justify-center items-center text-lg ">
+          <div
+            onClick={() => router.push("/categories/list")}
+            className="flex justify-center items-center text-lg "
+          >
             <span className="underline">more..</span>
             <Image
               src="/right.png"
