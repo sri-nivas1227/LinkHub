@@ -139,7 +139,17 @@ class Link:
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to get links by category: {str(e)}")
-    
+    @staticmethod
+    def get_by_url(url):
+        """Get a link by its URL"""
+        try:
+            link_data = LinksCollection.find_one({"url": url})
+            if link_data:
+                return Link(**link_data)
+            return None
+        except PyMongoError as e:
+            raise Exception(f"Failed to get link by URL: {str(e)}")
+
     @staticmethod
     def search_by_tags(tags):
         """Search links by tags"""

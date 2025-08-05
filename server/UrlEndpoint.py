@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request
 from bson import ObjectId
 from models.Link import Link
+from db import db
+from helpers.utilities import convert_to_slug
+from models.Category import Category
 
 # Create a Blueprint for URL endpoints
 urlRouter = Blueprint('url', __name__)
@@ -47,12 +50,37 @@ def create_url():
         # Validate required fields
         if not data or not data.get('url'):
             return jsonify({"message": "URL is required"}), 400
+        if not data.get('category_id') and not data.get("new_category"):
+            return jsonify({"message": "Category ID is required"}), 400
+        if not data.get("category_id") and data.get("new_category"):
+            # check if the new_category already exists
+            new_category_slug = convert_to_slug(data.get("new_category"))
+            existing_category = Category.get_by_slug(new_category_slug)
+            if existing_category:
+                print(f"Using existing category: {existing_category._id}")
+                # Use existing category ID
+                data['category_id'] = str(existing_category._id)
+            else:
+                # Create new category if not provided
+                new_category = data.get("new_category")
+                new_category_slug = convert_to_slug(new_category)
+                new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=data.get("user_id"))
+                new_category_object.create()
+                print(f"Created new category: {new_category_object._id}")
+                data['category_id'] = str(new_category_object._id)
+        
+
+        
         
         # Check if the URL already exists
-        from db import db
-        existing_link = db['links'].find_one({"url": data.get("url")})
+        existing_link = Link.get_by_url(data.get("url"))
         if existing_link:
-            return jsonify({"message": "URL already exists"}), 409
+            # Fetch category details for the existing link
+            if 'category_id' in existing_link:
+                category = Category.get_by_id(existing_link['category_id'])
+                if category:
+                    return jsonify({"message": f"URL already exists in category {category.category}"}), 409
+            return jsonify({"message": f"URL already exists in {existing_link['_id']}"}, 409)
         
         # Create new Link object
         link = Link(
