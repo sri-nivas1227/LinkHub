@@ -20,7 +20,6 @@ export default function AddLinkPage() {
         "http://localhost:5000/categories?user_id=17"
       );
       const data = await response.json();
-      console.log("API response:", data); // Debug log
 
       // Handle different response formats
       if (Array.isArray(data)) {
@@ -42,7 +41,7 @@ export default function AddLinkPage() {
       console.error("All fields are required");
       return;
     }
- 
+
     const newLink = {
       url: link,
       title,
@@ -65,7 +64,6 @@ export default function AddLinkPage() {
       }
 
       const data = await response.json();
-      console.log("Link added successfully:", data);
     } catch (error) {
       console.error("Error adding link:", error);
     }
@@ -74,8 +72,6 @@ export default function AddLinkPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
-  console.log(categoryList);
-  console.log("filled values: ", { link, title, category, newCategory });
   return (
     <div className="w-full h-full flex justify-center items-center font-ibm-plex-mono">
       <div className="w-3/5 min-h-2/3 flex flex-col justify-center items-center bg-black/15 rounded-[5rem] overflow-hidden bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100/30 p-2 text-center ">

@@ -1,16 +1,39 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function CategoryBubble({
   title,
-}: //   showList,
-{
+  id,
+}: {
   title: string;
-  //   showList?: boolean;
+  id: string;
 }) {
   const [showList, setShowList] = useState(false);
+  const [topLinks, setTopLinks] = useState([]);
   const router = useRouter();
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/urls/category/top/${id}?user_id=17`
+        );
+        const data = await response.json();
+        setTopLinks(data.data);
+      } catch (error) {
+        console.error("Error fetching links for category:", error);
+      }
+    };
+    if (showList) {
+      fetchLinks();
+    }
+  }, [showList]);
+  if (topLinks && topLinks.length === 0 && showList) {
+    return (
+      <div className="text-center">No links available in this category</div>
+    );
+  }
   return (
     <div
       className={`p-6 bg-black/20 border border-white/20 ${
@@ -26,18 +49,19 @@ export default function CategoryBubble({
       {showList && (
         <>
           <ul className="mt-2 text-lg">
-            <li className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl">
-              Link 1
-            </li>
-            <li className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl">
-              Link 2
-            </li>
-            <li className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl">
-              Link 3
-            </li>
+            {topLinks.map((link) => (
+              <li
+                key={link.id}
+                className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
+              >
+                <Link href={link.url} target="_blank" rel="noopener noreferrer">
+                  {link.title}
+                </Link>
+              </li>
+            ))}
           </ul>
           <div
-            onClick={() => router.push("/categories/list")}
+            onClick={() => router.push(`/categories/list?category_id=${id}`)}
             className="flex justify-center items-center text-lg "
           >
             <span className="underline">more..</span>
