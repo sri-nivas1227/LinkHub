@@ -1,13 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ChevronRight2 } from "@deemlol/next-icons";
 export default function NavBar() {
   const router = useRouter();
   return (
     <nav className="flex justify-between font-ibm-plex-mono items-center p-4 text-white">
-      <div onClick={() => router.back()} className="flex items-center cursor-pointer">
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2 w-8 h-8" />
+      <div
+        onClick={() => router.back()}
+        className="flex items-center cursor-pointer"
+      >
+        <ChevronRight2 className="mr-2 w-8 h-8" />
       </div>
       <div
         onClick={() => router.push("/home")}

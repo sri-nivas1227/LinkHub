@@ -29,14 +29,14 @@ body {
 .home-bg {
   background-image: url("/linkhub-bg.svg");
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 
 .page-bg {
   background-image: url("/page-bg.svg");
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 

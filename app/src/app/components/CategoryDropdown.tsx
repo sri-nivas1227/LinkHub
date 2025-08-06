@@ -1,57 +1,98 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Plus } from "@deemlol/next-icons";
 
-export default function CategoryDropdown() {
-  const [options, setOptions] = useState(["Option 1", "Option 2"]);
+interface Category {
+  id: string | null;
+  name: string;
+}
+
+export default function CategoryDropdown({
+  categoryList,
+  setCategoryList,
+  selectedCategory,
+  setSelectedCategory,
+  newCategory,
+  setNewCategory,
+}: {
+  categoryList: Category[];
+  setCategoryList: (categories: Category[]) => void;
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
+  newCategory: string;
+  setNewCategory: (category: string) => void;
+}) {
   const [selected, setSelected] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-  const [newOption, setNewOption] = useState("");
-
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === "__add_new__") {
-      setIsAdding(true);
-    } else {
-      setSelected(e.target.value);
-    }
-  };
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleAdd = () => {
-    if (!newOption.trim()) return;
-    const updatedOptions = [...options, newOption.trim()];
-    setOptions(updatedOptions);
-    setSelected(newOption.trim());
-    setNewOption("");
+    if (!newCategory.trim()) {
+      console.error("New category cannot be empty");
+      return;
+    }
+    setSelected(newCategory);
+    setSelectedCategory(null);
     setIsAdding(false);
   };
 
   const handleCancel = () => {
     setIsAdding(false);
-    setNewOption("");
+    setSelected("");
   };
 
   return (
     <div className="flex flex-col bg-transparent gap-2 w-64">
       {!isAdding ? (
-        <select
-          value={selected}
-          onChange={handleSelect}
-          className="w-full p-2 border border-gray-300 rounded-3xl outline-none bg-transparent text-black"
-        >
-          <option value="" className="" disabled>
-            -- Select an option --
-          </option>
-          {options.map((opt, idx) => (
-            <option className="bg-black/20" key={idx} value={opt}>
-              {opt}
-            </option>
-          ))}
-          <option value="__add_new__">➕ Add New</option>
-        </select>
+        <div className="relative">
+          <p
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full p-2 border border-gray-300 rounded-3xl flex justify-around cursor-pointer"
+          >
+            {selected ? selected : "Select Category"}{" "}
+            <ChevronDown size={24} color="#FFFFFF" />
+          </p>
+          <div
+            className={`${
+              isOpen ? "block" : "hidden"
+            } w-full border rounded-3xl absolute top-full left-0 shadow-lg z-10  bg-white text-black text-lg font-semibold`}
+          >
+            <p
+              onClick={() => {
+                setIsAdding(true);
+                setIsOpen(false);
+              }}
+              className=" flex items-center justify-between px-4 py-1 cursor-pointer bg-black/50 rounded-t-3xl"
+            >
+              Add New
+              <Plus />
+            </p>
+            <div className="h-[15vh] flex flex-col gap-2 divide-black divide-y- overflow-y-auto">
+              {categoryList.length > 0 ? (
+                categoryList.map((category) => (
+                  <p
+                    onClick={() => {
+                      setSelectedCategory(category.id);
+                      setSelected(category.name);
+                      setIsOpen(false);
+                    }}
+                    key={category.id}
+                    className=""
+                  >
+                    {category.name}
+                  </p>
+                ))
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="flex flex-col gap-2">
           <input
-            value={newOption}
-            onChange={(e) => setNewOption(e.target.value)}
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
             placeholder="Enter new option"
             className="flex-1 p-2 border rounded"
           />
