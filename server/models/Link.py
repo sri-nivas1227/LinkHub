@@ -55,7 +55,7 @@ class Link:
     def create(self):
         """Create a new link"""
         try:
-            self.created_at = datetime.utcnow()
+            self.created_at = datetime.now()
             self.updated_at = self.created_at
             link_data = self.to_dict()
             # Remove _id for creation
@@ -175,6 +175,19 @@ class Link:
             return result.modified_count > 0
         except PyMongoError as e:
             raise Exception(f"Failed to increment visits: {str(e)}")
+    
+    @staticmethod
+    def get_top_by_category(category_id, user_id,limit=5):
+        """Get top links by category based on visits"""
+        # try:
+        # if isinstance(category_id, str):
+        #     category_id = ObjectId(category_id)
+        
+        links_data = LinksCollection.find({"category_id": category_id, "user_id":str(user_id)}).limit(limit)
+        
+        return [Link(**link_data) for link_data in links_data]
+        # except PyMongoError as e:
+        #     raise Exception(f"Failed to get top links by category: {str(e)}")
 
     def __str__(self):
         return f"Link(id={self._id}, title={self.title}, url={self.url}, visits={self.visits})"

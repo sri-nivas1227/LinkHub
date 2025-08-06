@@ -39,21 +39,10 @@ class Category:
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
 
-    def from_dict( data):
-        """Create a Category object from a dictionary"""
-        return Category(
-            category=data.get("category"),
-            category_slug=data.get("category_slug"),
-            user_id=data.get("user_id"),
-            created_at=data.get("created_at"),
-            updated_at=data.get("updated_at"),
-            _id=data.get("_id")
-        )
-
     def create(self):
         """Create a new category"""
         try:
-            self.created_at = datetime.utcnow()
+            self.created_at = datetime.now()
             self.updated_at = self.created_at
             category_data = self.to_dict()
             result = CategoriesCollection.insert_one(category_data)
@@ -62,33 +51,39 @@ class Category:
         except PyMongoError as e:
             raise Exception(f"Error creating category: {str(e)}")
     
-    @classmethod
-    def get_all(cls):
-        """Get all categories"""
+    @staticmethod
+    def get_all_by_user_id(user_id):
         try:
-            categories = CategoriesCollection.find()
-            return [cls.from_dict(cat) for cat in categories]
+            categories = CategoriesCollection.find({"user_id":user_id})
+            categories = [Category(**cat) for cat in categories]
+            return categories
         except PyMongoError as e:
             raise Exception(f"Error fetching categories: {str(e)}")
     
-    @classmethod
-    def get_by_id(cls, category_id):
-        """Get a category by ID"""
+    @staticmethod
+    def get_by_id(category_id):
         try:
             category = CategoriesCollection.find_one({"_id": ObjectId(category_id)})
             if category:
-                return cls.from_dict(category)
+                return Category(**category)
             return None
         except PyMongoError as e:
             raise Exception(f"Error fetching category by ID: {str(e)}")
     
-    @classmethod
-    def get_by_slug(cls, category_slug):
-        """Get a category by slug"""
+    @staticmethod
+    def get_name_id_by_user_id(user_id):
+        try:
+            categories = CategoriesCollection.find({"user_id": user_id}, {"_id": 1, "category": 1})
+            return [{"id": str(cat["_id"]), "name": cat["category"]} for cat in categories]
+        except PyMongoError as e:
+            raise Exception(f"Error fetching category names by user ID: {str(e)}")
+    
+    @staticmethod
+    def get_by_slug(category_slug):
         try:
             category = CategoriesCollection.find_one({"category_slug": category_slug})
             if category:
-                return cls.from_dict(category)
+                return Category(**category)
             return None
         except PyMongoError as e:
             raise Exception(f"Error fetching category by slug: {str(e)}")

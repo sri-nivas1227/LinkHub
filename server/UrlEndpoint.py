@@ -41,68 +41,76 @@ def get_url(url_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@urlRouter.route("/urls/category/top/<category_id>", methods=['GET'])
+def get_top_urls_by_category(category_id):
+    """Get top URLs by category"""
+    user_id = request.args.get('user_id')
+    try:
+        top_links = [item.to_json() for item in Link.get_top_by_category(category_id, user_id=user_id)]
+        return jsonify({"message": f"Top URLs in category {category_id}", "data": top_links}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @urlRouter.route('/urls', methods=['POST'])
 def create_url():
     """Create a new URL"""
-    try:
-        data = request.get_json()
-        
-        # Validate required fields
-        if not data or not data.get('url'):
-            return jsonify({"message": "URL is required"}), 400
-        if not data.get('category_id') and not data.get("new_category"):
-            return jsonify({"message": "Category ID is required"}), 400
-        if not data.get("category_id") and data.get("new_category"):
-            # check if the new_category already exists
-            new_category_slug = convert_to_slug(data.get("new_category"))
-            existing_category = Category.get_by_slug(new_category_slug)
-            if existing_category:
-                print(f"Using existing category: {existing_category._id}")
-                # Use existing category ID
-                data['category_id'] = str(existing_category._id)
-            else:
-                # Create new category if not provided
-                new_category = data.get("new_category")
-                new_category_slug = convert_to_slug(new_category)
-                new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=data.get("user_id"))
-                new_category_object.create()
-                print(f"Created new category: {new_category_object._id}")
-                data['category_id'] = str(new_category_object._id)
-        
+    # try:
+    data = request.get_json()
+    
+    # Validate required fields
+    if not data or not data.get('url'):
+        return jsonify({"message": "URL is required"}), 400
+    if not data.get('category_id') and not data.get("new_category"):
+        return jsonify({"message": "Category ID is required"}), 400
+    if not data.get("category_id") and data.get("new_category"):
+        # check if the new_category already exists
+        new_category_slug = convert_to_slug(data.get("new_category"))
+        existing_category = Category.get_by_slug(new_category_slug)
+        if existing_category:
+            # Use existing category ID
+            data['category_id'] = str(existing_category._id)
+        else:
+            # Create new category if not provided
+            new_category = data.get("new_category")
+            new_category_slug = convert_to_slug(new_category)
+            new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=data.get("user_id"))
+            new_category_object.create()
+            data['category_id'] = str(new_category_object._id)
+    
 
-        
-        
-        # Check if the URL already exists
-        existing_link = Link.get_by_url(data.get("url"))
-        if existing_link:
-            # Fetch category details for the existing link
-            if 'category_id' in existing_link:
-                category = Category.get_by_id(existing_link['category_id'])
-                if category:
-                    return jsonify({"message": f"URL already exists in category {category.category}"}), 409
-            return jsonify({"message": f"URL already exists in {existing_link['_id']}"}, 409)
-        
-        # Create new Link object
-        link = Link(
-            url=data.get('url'),
-            title=data.get('title', ''),
-            description=data.get('description', ''),
-            tags=data.get('tags', []),
-            category_id=data.get('category_id'),
-            user_id=data.get('user_id')
-        )
-        
-        # Save to database
-        link_id = link.create()
-        
-        return jsonify({
-            "message": "URL created successfully", 
-            "_id": link_id,
-            "data": link.to_json()
-        }), 201
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    
+    
+    # Check if the URL already exists
+    existing_link = Link.get_by_url(data.get("url")).to_dict()
+    if existing_link:
+        # Fetch category details for the existing link
+        if existing_link.get("category_id"):
+            category = Category.get_by_id(existing_link['category_id'])
+            if category:
+                return jsonify({"message": f"URL already exists in category {category.category}"}), 409
+        return jsonify({"message": f"URL already exists in {existing_link['_id']}"}, 409)
+    
+    # Create new Link object
+    link = Link(
+        url=data.get('url'),
+        title=data.get('title', ''),
+        description=data.get('description', ''),
+        tags=data.get('tags', []),
+        category_id=data.get('category_id'),
+        user_id=data.get('user_id')
+    )
+    
+    # Save to database
+    link_id = link.create()
+    
+    return jsonify({
+        "message": "URL created successfully", 
+        "_id": link_id,
+        "data": link.to_json()
+    }), 201
+    
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @urlRouter.route('/urls/<url_id>', methods=['PUT'])
 def update_url(url_id):
@@ -159,10 +167,13 @@ def get_urls_by_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@urlRouter.route('/urls/category/<category_id>', methods=['GET'])
-def get_urls_by_category(category_id):
+@urlRouter.route('/urls/category', methods=['GET'])
+def get_urls_by_category():
     """Get all URLs for a specific category"""
     try:
+        category_id = request.args.get('category_id')
+        if not category_id:
+            return jsonify({"message": "Category ID is required"}), 400
         links = Link.get_by_category(category_id)
         # Remove user_id for privacy
         links_data = []
