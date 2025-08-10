@@ -3,6 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+interface TopLink {
+  id: string;
+  title: string;
+  url: string;
+}
+
 export default function CategoryBubble({
   title,
   id,
@@ -11,7 +18,7 @@ export default function CategoryBubble({
   id: string;
 }) {
   const [showList, setShowList] = useState(false);
-  const [topLinks, setTopLinks] = useState([]);
+  const [topLinks, setTopLinks] = useState<TopLink[]>([]);
   const router = useRouter();
   useEffect(() => {
     const fetchLinks = async () => {
@@ -49,9 +56,9 @@ export default function CategoryBubble({
       {showList && (
         <>
           <ul className="mt-2 text-lg">
-            {topLinks.map((link) => (
+            {topLinks.map((link, index) => (
               <li
-                key={link.id}
+                key={index}
                 className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
               >
                 <Link href={link.url} target="_blank" rel="noopener noreferrer">
@@ -62,9 +69,9 @@ export default function CategoryBubble({
           </ul>
           <div
             onClick={() => router.push(`/categories/list?category_id=${id}`)}
-            className="flex justify-center items-center text-lg "
+            className="w-fit m-auto flex justify-center items-center text-lg cursor-pointer "
           >
-            <span className="underline">more..</span>
+            <span className="hover:underline hover:scale-105">more..</span>
             <Image
               src="/right.png"
               alt="arrow right"

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { ChevronRight2 } from "@deemlol/next-icons";
+import { ChevronLeft } from "@deemlol/next-icons";
 export default function NavBar() {
   const router = useRouter();
   return (
@@ -9,7 +9,7 @@ export default function NavBar() {
         onClick={() => router.back()}
         className="flex items-center cursor-pointer"
       >
-        <ChevronRight2 className="mr-2 w-8 h-8" />
+        <ChevronLeft className="mr-2 w-8 h-8" />
       </div>
       <div
         onClick={() => router.push("/home")}
