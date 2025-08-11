@@ -5,8 +5,8 @@ export default function AddLinkLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div lang="en" className="page-bg w-full p-0 rounded-xl h-full">
-        <NavBar />
+    <div lang="en" className=" w-full p-0 rounded-xl h-full">
+      <NavBar />
       <div className={`flex justify-center items-center h-full w-full `}>
         {children}
       </div>
