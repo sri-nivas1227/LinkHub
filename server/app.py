@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from UrlEndpoint import urlRouter
 from CategoryEndpoint import categoryRouter
+from AuthEndpoints import auth_router
 from flask_cors import CORS
 
 # Load environment variables
@@ -11,6 +12,7 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
+app.register_blueprint(auth_router)
 app.register_blueprint(urlRouter)
 app.register_blueprint(categoryRouter)
 
