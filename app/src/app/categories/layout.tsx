@@ -7,7 +7,7 @@ export default function AddLinkLayout({
   return (
     <div
       lang="en"
-      className="font-ibm-plex-mono page-bg w-full p-0 rounded-xl h-full"
+      className="font-ibm-plex-mono w-full p-0 rounded-xl h-full bg-gradient-to-b from-[#791216] to-[#b6313c] via-[#d98283]"
     >
       <NavBar />
       <div className={`flex justify-center   h-full w-full `}>
