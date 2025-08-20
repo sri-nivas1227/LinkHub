@@ -45,7 +45,7 @@
 
 **Setup and run backend (Flask)**:
 
-- `cd backend`
+- `cd server`
 - `python -m venv venv`
 - `venv/Scripts/activate` or `source ./venv/bin/activate` (for linux or mac)
 - `pip install -r requirements.txt`
@@ -54,7 +54,7 @@
 
 **Setup and run frontend (Next.js)**:
 
-- `cd frontend`
+- `cd app`
 - `npm install`
 - `npm run dev`
 
