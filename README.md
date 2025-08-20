@@ -39,13 +39,15 @@
 
 **Clone the repository**:
 
-`git clone https://github.com/your-username/linkhub.git`
+`git clone https://github.com/sri-nivas1227/LinkHub.git`
 `cd linkhub`
 
 
 **Setup and run backend (Flask)**:
 
 `cd backend`
+`python -m venv venv`
+`venv/Scripts/activate` or `source ./venv/bin/activate` (for linux or mac)
 `pip install -r requirements.txt`
 `python app.py`
 
