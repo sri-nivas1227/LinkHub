@@ -11,7 +11,7 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+CORS(app, origins=os.getenv("ALLOWED_HOSTS"))
 app.register_blueprint(auth_router)
 app.register_blueprint(urlRouter)
 app.register_blueprint(categoryRouter)
