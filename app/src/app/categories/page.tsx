@@ -27,8 +27,8 @@ export default function CategoriesPage() {
     return <div className="text-center">No categories available</div>;
   }
   return (
-    <div className="w-full">
-      <div className="w-4/5 m-auto flex flex-col gap-2">
+    <div className="w-4/5 h-full glass-card rounded-[4rem] p-2 text-center">
+      <div className="w-4/5 h-full m-auto flex flex-col gap-2 overflow-scroll">
         {categories.map((category) => (
           <CategoryBubble
             key={category.id}

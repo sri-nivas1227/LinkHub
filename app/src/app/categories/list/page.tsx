@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface LinkType {
-  id: string;
+  _id: string;
   title: string;
   url: string;
   category: string | null;
@@ -16,6 +16,7 @@ function LinksList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [links, setLinks] = useState<LinkType[]>([]);
+  const [title, setTitle] = useState<string | null>("");
   const categoryId = searchParams.get("category_id");
 
   useEffect(() => {
@@ -26,7 +27,8 @@ function LinksList() {
           `http://localhost:5000/urls/category?category_id=${categoryId}`
         );
         const data = await response.json();
-        setLinks(data.data);
+        setLinks(data.data.links);
+        setTitle(data.data.category);
       } catch (error) {
         console.error("Error fetching links for category:", error);
       }
@@ -67,14 +69,14 @@ function LinksList() {
   }
 
   return (
-    <div className="w-4/5 h-full m-auto p-3 bg-black/20 border border-b-0 border-white/20 rounded-4xl shadow-lg shadow-black/30 text-center">
-      <h2 className="font-bold cursor-pointer text-2xl">title</h2>
+    <div className="w-4/5 h-full glass-card rounded-[4rem] p-2 text-center">
+      <h2 className="font-bold cursor-pointer text-2xl">{title}</h2>
       <div>
         <ul className="mt-2 text-lg">
           {links.map((link) => (
             <li
-              key={link.id}
-              className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
+              key={link._id}
+              className="p-1 px-4 border bg-black/50 border-white/20 m-1 my-2 rounded-4xl"
             >
               <Link href={link.url} target="_blank">
                 {link.title}

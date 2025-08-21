@@ -174,6 +174,10 @@ def get_urls_by_category():
         category_id = request.args.get('category_id')
         if not category_id:
             return jsonify({"message": "Category ID is required"}), 400
+        try:
+            category = Category.get_by_id(category_id)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
         links = Link.get_by_category(category_id)
         # Remove user_id for privacy
         links_data = []
@@ -185,7 +189,7 @@ def get_urls_by_category():
         
         return jsonify({
             "message": f"URLs for category {category_id}",
-            "data": links_data
+            "data": {"category":category.category, "links":links_data}
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

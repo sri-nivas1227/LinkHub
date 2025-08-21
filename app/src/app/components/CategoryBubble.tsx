@@ -43,13 +43,15 @@ export default function CategoryBubble({
   }
   return (
     <div
-      className={`p-6 bg-black/20 border border-white/20 ${
+      className={`p-2 bg-black/50 border border-white/20 ${
         showList ? "rounded-4xl" : "rounded-full"
-      } shadow-lg shadow-black/30 text-center  m-2 `}
+      } shadow-lg shadow-black/30 text-center m-1 `}
     >
       <h2
         onClick={() => setShowList(!showList)}
-        className="font-bold cursor-pointer text-3xl hover:scale-105"
+        className={`font-bold cursor-pointer ${
+          showList ? "text-3xl" : "text-xl"
+        } hover:scale-105`}
       >
         {title}
       </h2>
@@ -59,7 +61,7 @@ export default function CategoryBubble({
             {topLinks.map((link, index) => (
               <li
                 key={index}
-                className="p-1 px-4 border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
+                className="p-1 px-4 text-base border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
               >
                 <Link href={link.url} target="_blank" rel="noopener noreferrer">
                   {link.title}

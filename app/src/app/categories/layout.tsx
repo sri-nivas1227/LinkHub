@@ -1,24 +1,75 @@
+import Image from "next/image";
 import NavBar from "../components/NavBar";
-export default function AddLinkLayout({
+import bg1 from "@/app/assets/bg1.svg";
+import bg2 from "@/app/assets/bg2.svg";
+import bg3 from "@/app/assets/bg3.svg";
+export default function CategoriesLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      lang="en"
-      className="font-ibm-plex-mono w-full p-0 rounded-xl h-full bg-gradient-to-b from-[#791216] to-[#b6313c] via-[#d98283]"
-    >
-      <NavBar />
-      <div className={`flex justify-center   h-full w-full `}>
-        <div className="w-full">
-          <div className="mb-4 flex justify-center">
-            <input
-              type="text"
-              placeholder="Search categories..."
-              className="w-4/5 px-4 py-2 border rounded-3xl focus:outline-none focus:ring-2"
-            />
-          </div>
+    <div className="relative w-full h-full flex justify-center items-center overflow-hidden">
+      <div className="relative w-full h-full ">
+        <Image
+          src={bg1}
+          alt="Background"
+          width={200}
+          height={200}
+          objectFit="cover"
+          className="absolute -left-[10%] top-[5%] rotate-200"
+        />
+        <Image
+          src={bg1}
+          alt="Background"
+          width={200}
+          height={200}
+          objectFit="cover"
+          className="absolute right-[10%] top-[40%] rotate-120"
+        />
+        <Image
+          src={bg2}
+          alt="Background"
+          width={200}
+          height={200}
+          className="absolute left-[50%] -top-[10%] rotate-140"
+        />
+        <Image
+          src={bg1}
+          alt="Background"
+          width={150}
+          height={150}
+          objectFit="cover"
+          className="absolute -left-[5%] top-[40%] rotate-170"
+        />
+        <Image
+          src={bg3}
+          alt="Background"
+          width={200}
+          height={200}
+          objectFit="cover"
+          className="absolute -right-[10%] top-[10%] rotate-180"
+        />
+        <Image
+          src={bg3}
+          alt="Background"
+          width={200}
+          height={200}
+          objectFit="cover"
+          className="absolute left-0 bottom-0 rotate-180"
+        />
+        <Image
+          src={bg2}
+          alt="Background"
+          width={200}
+          height={200}
+          objectFit="cover"
+          className="absolute right-[10%] -bottom-[10%] rotate-180"
+        />
+      </div>
+      <div className="w-full h-full top-0 left-0 absolute overflow-scroll">
+        <NavBar />
+        <div className="w-full h-full flex flex-col items-center">
           {children}
         </div>
       </div>
