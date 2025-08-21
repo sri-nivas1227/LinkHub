@@ -36,7 +36,8 @@ export default function SignUpPage() {
 
   return (
     <div className="h-full flex flex-col justify-center items-center my-4">
-      <div className="flex flex-col bg-gray-800 gap-3 p-3 rounded-3xl text-xl font-semibold w-full max-w-md">
+      <h1 className="text-white m-3 font-mono text-3xl font-bold">DropLinks</h1>
+      <div className="flex flex-col gap-3 p-2 rounded-3xl font-semibold w-full max-w-md">
         <label className="flex gap-3 justify-between items-baseline">
           <span>Name:</span>
           <input
@@ -44,7 +45,7 @@ export default function SignUpPage() {
             name="name"
             value={form.name}
             onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 bg-gray-900 text-white"
+            className="border border-white outline-none rounded-3xl p-1 text-white"
             required
           />
         </label>
@@ -55,7 +56,7 @@ export default function SignUpPage() {
             name="email"
             value={form.email}
             onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 bg-gray-900 text-white"
+            className="border border-white outline-none rounded-3xl p-1 text-white"
             required
           />
         </label>
@@ -66,7 +67,7 @@ export default function SignUpPage() {
             name="password"
             value={form.password}
             onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 bg-gray-900 text-white"
+            className="border border-white outline-none rounded-3xl p-1 text-white"
             required
           />
         </label>

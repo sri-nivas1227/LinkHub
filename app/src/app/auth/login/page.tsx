@@ -28,7 +28,8 @@ export default function Page() {
   return (
     <div className="h-full flex flex-col justify-center items-center my-4">
       {/* <h1 className="text-3xl font-semibold">Login</h1> */}
-      <div className="flex flex-col bg-gray-800 gap-3 p-3 rounded-3xl text-xl font-semibold">
+      <h1 className="text-white m-3 font-mono text-3xl font-bold">DropLinks</h1>
+      <div className="flex flex-col gap-3 p-2 rounded-3xl font-semibold">
         <label className="flex gap-3 justify-between items-baseline">
           <span className="">Email:</span>
           <input
