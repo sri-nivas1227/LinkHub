@@ -73,8 +73,8 @@ export default function AddLinkPage() {
     fetchCategories();
   }, []);
   return (
-    <div className="w-full h-full flex justify-center items-center font-ibm-plex-mono">
-      <div className="w-3/5 min-h-2/3 flex flex-col justify-center items-center bg-black/15 rounded-[5rem] overflow-hidden bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100/30 p-2 text-center ">
+    <div className="w-4/5 glass-card rounded-[4rem] p-2 text-center">
+      <div className=" w-4/5 m-auto flex flex-col gap-2 overflow-scroll">
         <div className="flex flex-col justify-center items-center gap-5">
           <input
             type="text"
