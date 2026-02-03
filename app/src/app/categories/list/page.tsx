@@ -38,53 +38,38 @@ function LinksList() {
 
   if (!categoryId) {
     return (
-      <div className="text-center">
-        No category selected. Go to{" "}
-        <span
-          onClick={() => {
-            router.push("/categories");
-          }}
-          className="underline text-blue-500"
-        >
-          categories
-        </span>
+      <div>
+        <p>No category selected.</p>
+        <button onClick={() => router.push("/categories")}>
+          Go to Categories
+        </button>
       </div>
     );
   }
 
   if (links.length === 0) {
     return (
-      <div className="text-center">
-        No links found for this category. Go to{" "}
-        <span
-          onClick={() => {
-            router.push("/categories");
-          }}
-          className="underline text-blue-500"
-        >
-          categories
-        </span>
+      <div>
+        <p>No links found for this category.</p>
+        <button onClick={() => router.push("/categories")}>
+          Go to Categories
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="w-4/5 h-full glass-card rounded-[4rem] p-2 text-center">
-      <h2 className="font-bold cursor-pointer text-2xl">{title}</h2>
-      <div>
-        <ul className="mt-2 text-lg">
-          {links.map((link) => (
-            <li
-              key={link._id}
-              className="p-1 px-4 border bg-black/50 border-white/20 m-1 my-2 rounded-4xl"
-            >
-              <Link href={link.url} target="_blank">
-                {link.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div>
+      <h2>{title}</h2>
+      <ul>
+        {links.map((link) => (
+          <li key={link._id}>
+            <Link href={link.url} target="_blank">
+              {link.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

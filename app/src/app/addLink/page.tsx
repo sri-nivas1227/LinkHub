@@ -73,44 +73,42 @@ export default function AddLinkPage() {
     fetchCategories();
   }, []);
   return (
-    <div className="w-4/5 glass-card rounded-[4rem] p-2 text-center">
-      <div className=" w-4/5 m-auto flex flex-col gap-2 overflow-scroll">
-        <div className="flex flex-col justify-center items-center gap-5">
-          <input
-            type="text"
-            name="link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            id="link"
-            className="w-full p-2 border border-gray-300 rounded-3xl"
-            placeholder="Paste your link here"
-          />
-          <input
-            type="text"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            id="title"
-            className="w-full p-2 border border-gray-300 rounded-3xl"
-            placeholder="Choose title..."
-          />
-          <CategoryDropdown
-            categoryList={categoryList}
-            setCategoryList={setCategoryList}
-            selectedCategory={category}
-            setSelectedCategory={setCategory}
-            newCategory={newCategory}
-            setNewCategory={setNewCategory}
-          />
-
-          <button
-            onClick={handleSubmit}
-            className="p-1 px-8 w-fit text-black font-semibold rounded-full border border-black/30 bg-gradient-to-r shadow-md shadow-black/40 from-white via-[#c2c2c2] to-[#929292]"
-          >
-            Save
-          </button>
-        </div>
+    <div>
+      <h2>Add New Link</h2>
+      <div>
+        <label>URL:</label>
+        <input
+          type="text"
+          name="link"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          id="link"
+          placeholder="Paste your link here"
+        />
       </div>
+      <div>
+        <label>Title:</label>
+        <input
+          type="text"
+          name="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          id="title"
+          placeholder="Choose title..."
+        />
+      </div>
+      <div>
+        <label>Category:</label>
+        <CategoryDropdown
+          categoryList={categoryList}
+          setCategoryList={setCategoryList}
+          selectedCategory={category}
+          setSelectedCategory={setCategory}
+          newCategory={newCategory}
+          setNewCategory={setNewCategory}
+        />
+      </div>
+      <button onClick={handleSubmit}>Save</button>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,51 +36,25 @@ export default function CategoryBubble({
     }
   }, [showList]);
   if (topLinks && topLinks.length === 0 && showList) {
-    return (
-      <div className="text-center">No links available in this category</div>
-    );
+    return <div>No links available in this category</div>;
   }
   return (
-    <div
-      className={`p-2 bg-black/50 border border-white/20 ${
-        showList ? "rounded-4xl" : "rounded-full"
-      } shadow-lg shadow-black/30 text-center m-1 `}
-    >
-      <h2
-        onClick={() => setShowList(!showList)}
-        className={`font-bold cursor-pointer ${
-          showList ? "text-3xl" : "text-xl"
-        } hover:scale-105`}
-      >
-        {title}
-      </h2>
+    <div>
+      <h2 onClick={() => setShowList(!showList)}>{title}</h2>
       {showList && (
         <>
-          <ul className="mt-2 text-lg">
+          <ul>
             {topLinks.map((link, index) => (
-              <li
-                key={index}
-                className="p-1 px-4 text-base border bg-gray-500/20 border-white/20 m-1 my-2 rounded-4xl"
-              >
+              <li key={index}>
                 <Link href={link.url} target="_blank" rel="noopener noreferrer">
                   {link.title}
                 </Link>
               </li>
             ))}
           </ul>
-          <div
-            onClick={() => router.push(`/categories/list?category_id=${id}`)}
-            className="w-fit m-auto flex justify-center items-center text-lg cursor-pointer "
-          >
-            <span className="hover:underline hover:scale-105">more..</span>
-            <Image
-              src="/right.png"
-              alt="arrow right"
-              width={16}
-              height={16}
-              className="invert"
-            />
-          </div>
+          <button onClick={() => router.push(`/categories/list?category_id=${id}`)}>
+            View more
+          </button>
         </>
       )}
     </div>

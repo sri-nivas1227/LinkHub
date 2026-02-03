@@ -26,39 +26,31 @@ export default function Page() {
   };
 
   return (
-    <div className="h-full flex flex-col justify-center items-center my-4">
-      {/* <h1 className="text-3xl font-semibold">Login</h1> */}
-      <h1 className="text-white m-3 font-mono text-3xl font-bold">DropLinks</h1>
-      <div className="flex flex-col gap-3 p-2 rounded-3xl font-semibold">
-        <label className="flex gap-3 justify-between items-baseline">
-          <span className="">Email:</span>
+    <div>
+      <h1>Login</h1>
+      <div>
+        <label>
+          Email:
           <input
             type="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="border border-white outline-none rounded-3xl p-1"
           />
         </label>
-        <label className="flex gap-3 justify-between items-baseline">
-          <span className="">Password:</span>
+      </div>
+      <div>
+        <label>
+          Password:
           <input
             type="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-white outline-none rounded-3xl p-1"
           />
         </label>
-        <div className="flex justify-center items-center">
-          <button
-            onClick={handleLogin}
-            className="p-2 px-4 bg-gray-200 text-black rounded-3xl border w-fit"
-          >
-            Login
-          </button>
-        </div>
       </div>
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }

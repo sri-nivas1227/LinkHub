@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import { ChevronDown, Plus } from "@deemlol/next-icons";
+import { useState } from "react";
 
 interface Category {
   id: string | null;
@@ -42,84 +41,57 @@ export default function CategoryDropdown({
   };
 
   return (
-    <div className="flex flex-col bg-transparent gap-2 w-64">
+    <div>
       {!isAdding ? (
-        <div className="relative">
-          <p
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-full p-2 border border-gray-300 rounded-3xl flex justify-around cursor-pointer"
-          >
-            {selected ? selected : "Select Category"}{" "}
-            <ChevronDown size={24} color="#FFFFFF" />
-          </p>
-          <div
-            className={`${
-              isOpen ? "block" : "hidden"
-            } w-full border rounded-3xl absolute top-full left-0 shadow-lg z-10  bg-white text-black text-lg font-semibold`}
-          >
-            <p
-              onClick={() => {
-                setIsAdding(true);
-                setIsOpen(false);
-              }}
-              className=" flex items-center justify-between px-4 py-1 cursor-pointer bg-black/50 rounded-t-3xl"
-            >
-              Add New
-              <Plus />
-            </p>
-            <div className="h-[15vh] flex flex-col gap-2 divide-black divide-y- overflow-y-auto">
-              {categoryList.length > 0 ? (
-                categoryList.map((category) => (
-                  <p
-                    onClick={() => {
-                      setSelectedCategory(category.id);
-                      setSelected(category.name);
-                      setIsOpen(false);
-                    }}
-                    key={category.id}
-                    className=""
-                  >
-                    {category.name}
-                  </p>
-                ))
-              ) : (
-                <></>
-              )}
+        <div>
+          <button onClick={() => setIsOpen(!isOpen)}>
+            {selected ? selected : "Select Category"}
+          </button>
+          {isOpen && (
+            <div>
+              <button
+                onClick={() => {
+                  setIsAdding(true);
+                  setIsOpen(false);
+                }}
+              >
+                Add New
+              </button>
+              <div>
+                {categoryList.length > 0 ? (
+                  categoryList.map((category) => (
+                    <button
+                      onClick={() => {
+                        setSelectedCategory(category.id);
+                        setSelected(category.name);
+                        setIsOpen(false);
+                      }}
+                      key={category.id}
+                    >
+                      {category.name}
+                    </button>
+                  ))
+                ) : (
+                  <p>No categories</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div>
           <input
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Enter new option"
-            className="flex-1 p-2 border rounded"
+            placeholder="Enter new category"
           />
-          <div className="flex gap-2 justify-center">
-            <button
-              onClick={handleAdd}
-              className="px-3 py-2 bg-blue-600 text-white rounded"
-            >
-              Add
-            </button>
-            <button
-              onClick={handleCancel}
-              className="px-3 py-2 bg-red-600/80 text-white rounded"
-              type="button"
-            >
-              Cancel
-            </button>
-          </div>
+          <button onClick={handleAdd}>Add</button>
+          <button onClick={handleCancel} type="button">
+            Cancel
+          </button>
         </div>
       )}
-      <div className="flex justify-center">
-        {selected && (
-          <p className="px-2 text-sm text-gray-800 font-semibold rounded-3xl bg-yellow-300/70">
-            Selected: {selected}
-          </p>
-        )}
-      </div>
+      {selected && <p>Selected: {selected}</p>}
     </div>
   );
 }

@@ -24,19 +24,18 @@ export default function CategoriesPage() {
     fetchCategories();
   }, []);
   if (categories && categories.length === 0) {
-    return <div className="text-center">No categories available</div>;
+    return <div>No categories available</div>;
   }
   return (
-    <div className="w-4/5 h-full glass-card rounded-[4rem] p-2 text-center">
-      <div className="w-4/5 h-full m-auto flex flex-col gap-2 overflow-scroll">
-        {categories.map((category) => (
-          <CategoryBubble
-            key={category.id}
-            id={category.id}
-            title={category.name}
-          />
-        ))}
-      </div>
+    <div>
+      <h2>Categories</h2>
+      {categories.map((category) => (
+        <CategoryBubble
+          key={category.id}
+          id={category.id}
+          title={category.name}
+        />
+      ))}
     </div>
   );
 }
