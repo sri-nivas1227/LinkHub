@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { ChevronDown, Plus } from "lucide-react";
 
 interface Category {
   id: string | null;
@@ -41,23 +42,29 @@ export default function CategoryDropdown({
   };
 
   return (
-    <div>
+    <div className="relative w-full">
       {!isAdding ? (
-        <div>
-          <button onClick={() => setIsOpen(!isOpen)}>
-            {selected ? selected : "Select Category"}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex w-full items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-left text-sm text-zinc-300 transition hover:text-zinc-100"
+          >
+            <span>{selected ? selected : "Select Category"}</span>
+            <ChevronDown size={16} />
           </button>
           {isOpen && (
-            <div>
+            <div className="absolute top-[3.2rem] z-10 w-full rounded-2xl border border-zinc-800 bg-zinc-900/90 p-2 shadow-lg">
               <button
                 onClick={() => {
                   setIsAdding(true);
                   setIsOpen(false);
                 }}
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs text-indigo-200 transition hover:bg-indigo-500/10"
               >
-                Add New
+                <Plus size={14} />
+                Add new category
               </button>
-              <div>
+              <div className="mt-2 max-h-40 overflow-auto pr-1">
                 {categoryList.length > 0 ? (
                   categoryList.map((category) => (
                     <button
@@ -67,31 +74,48 @@ export default function CategoryDropdown({
                         setIsOpen(false);
                       }}
                       key={category.id}
+                      className="w-full rounded-xl px-3 py-2 text-left text-xs text-zinc-300 transition hover:bg-zinc-800/60"
                     >
                       {category.name}
                     </button>
                   ))
                 ) : (
-                  <p>No categories</p>
+                  <p className="px-3 py-2 text-xs text-zinc-500">
+                    No categories
+                  </p>
                 )}
               </div>
             </div>
           )}
         </div>
       ) : (
-        <div>
+        <div className="flex flex-col gap-2">
           <input
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
             placeholder="Enter new category"
+            className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
           />
-          <button onClick={handleAdd}>Add</button>
-          <button onClick={handleCancel} type="button">
-            Cancel
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleAdd}
+              className="flex-1 rounded-full border border-indigo-500/60 bg-indigo-500/20 px-4 py-2 text-xs font-semibold text-indigo-200"
+            >
+              Add
+            </button>
+            <button
+              onClick={handleCancel}
+              type="button"
+              className="flex-1 rounded-full border border-zinc-800 bg-zinc-900/60 px-4 py-2 text-xs font-semibold text-zinc-300"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
-      {selected && <p>Selected: {selected}</p>}
+      {selected && (
+        <p className="mt-2 text-xs text-zinc-500">Selected: {selected}</p>
+      )}
     </div>
   );
 }

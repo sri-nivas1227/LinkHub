@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LinkHub
 
-## Getting Started
+## Design System & Implementation Brief: LinkHub
+1. Aesthetic DNA (The "Vibe")
+Theme: Deep Midnight Minimalist.
 
-First, run the development server:
+Color Palette:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Background: #09090b (Zinc 950) for the main canvas.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Surface: #18181b (Zinc 900) for cards and modals.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Accent: Indigo-500 (#6366f1) for primary actions, with a subtle Emerald-400 glow for success states.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Text: Zinc-100 (Primary) and Zinc-400 (Secondary).
 
-## Learn More
+Typography: Sans-serif (Inter or Geist). Use tight tracking (tracking-tight) for headings to give it a premium feel.
 
-To learn more about Next.js, take a look at the following resources:
+Effects: Glassmorphism on the Navbar, subtle 1px borders (border-zinc-800), and soft shadows.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Layout Structure (Mobile-First)
+The app should feel like a high-end mobile app even on a desktop browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Navbar
+Sticky/Fixed: Top blur effect (backdrop-blur-md).
 
-## Deploy on Vercel
+Content: Minimal logo "LH" on the left, a "Search" icon, and a "User Profile" avatar on the right.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The "Feed" (Collections & Links)
+Container: Max-width of max-w-md (approx. 450px) to keep the mobile feel on desktop. Center this container.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Collections: Horizontal scrolling pill-shaped badges at the top to filter categories (e.g., "Reading," "Dev Tools," "Inspiration").
+
+Link Cards: * Vertical stack.
+
+Each card should feature a small favicon, a bold title, and a truncated URL.
+
+Include a "Quick Copy" icon button on each card.
+
+Footer
+Style: Minimalist text. "Built with LinkHub © 2026."
+
+Floating Action Button (FAB): A prominent "+" button fixed at the bottom right for mobile, or bottom center, to quickly add a new link.
+
+3. Tech Stack Requirements
+Framework: Next.js (App Router).
+
+Styling: Tailwind CSS.
+
+Icons: Lucide-react (for clean, thin-stroke icons).
+
+Animations: Framer Motion (use simple initial={{ opacity: 0, y: 10 }} for list items).
+
+4. Feature Enhancements for "Vibecoding"
+Skeleton States: Add shimmer effects while links are loading.
+
+Empty State: A beautiful, centered illustration or icon when a collection is empty.
+
+Hover Effects: On desktop, cards should subtly lift or glow when hovered. On mobile, use active-press scaling (scale-95).
+
+5. Instructions for the Agent
+"Using Next.js and Tailwind CSS, build the LinkHub interface described above. Focus on high-quality spacing (gap, padding). Ensure the dark theme uses Zinc scales for a sophisticated look rather than pure black. Use a mobile-first approach where the UI stays centered in a slim column on large screens. Prioritize smooth transitions between collection filters."
