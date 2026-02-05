@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Link as LinkIcon, Plus, Sparkles } from "lucide-react";
+import { checkTokenAction } from "../auth/actions";
 
 interface Category {
   id: string;
@@ -18,29 +19,27 @@ interface LinkType {
 // Check for token in cookies before loading the home page
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null,
+  );
   const [links, setLinks] = useState<LinkType[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-
-    if (!token) {
-      window.location.href = "/auth/login";
-      return;
-    }
+    checkTokenAction().then((isAuthenticated) => {
+      if (!isAuthenticated) {
+        window.location.href = "/auth/login";
+      }
+    });
   }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
       try {
         const response = await fetch(
-          "http://localhost:5000/categories?user_id=17"
+          "http://localhost:5000/categories?user_id=17",
         );
         const data = await response.json();
         const nextCategories = Array.isArray(data?.data) ? data.data : [];
@@ -71,10 +70,12 @@ export default function Home() {
       setIsLoadingLinks(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/urls/category?category_id=${selectedCategoryId}`
+          `http://localhost:5000/urls/category?category_id=${selectedCategoryId}`,
         );
         const data = await response.json();
-        const nextLinks = Array.isArray(data?.data?.links) ? data.data.links : [];
+        const nextLinks = Array.isArray(data?.data?.links)
+          ? data.data.links
+          : [];
         setLinks(nextLinks);
       } catch (error) {
         console.error("Error fetching links:", error);
@@ -88,7 +89,8 @@ export default function Home() {
   }, [selectedCategoryId]);
 
   const selectedCategoryName = useMemo(() => {
-    return categories.find((category) => category.id === selectedCategoryId)?.name;
+    return categories.find((category) => category.id === selectedCategoryId)
+      ?.name;
   }, [categories, selectedCategoryId]);
 
   const handleCopy = async (id: string, url: string) => {
