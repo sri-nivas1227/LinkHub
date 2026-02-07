@@ -4,6 +4,8 @@ from models.Link import Link
 from db import db
 from helpers.utilities import convert_to_slug
 from models.Category import Category
+from helpers.utilities import validate_and_get_token_payload
+
 
 # Create a Blueprint for URL endpoints
 urlRouter = Blueprint('url', __name__)
@@ -44,7 +46,15 @@ def get_url(url_id):
 @urlRouter.route("/urls/category/top/<category_id>", methods=['GET'])
 def get_top_urls_by_category(category_id):
     """Get top URLs by category"""
-    user_id = request.args.get('user_id')
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401    
     try:
         top_links = [item.to_json() for item in Link.get_top_by_category(category_id, user_id=user_id)]
         return jsonify({"message": f"Top URLs in category {category_id}", "data": top_links}), 200
@@ -56,7 +66,15 @@ def create_url():
     """Create a new URL"""
     # try:
     data = request.get_json()
-    
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     # Validate required fields
     if not data or not data.get('url'):
         return jsonify({"message": "URL is required"}), 400
@@ -73,22 +91,20 @@ def create_url():
             # Create new category if not provided
             new_category = data.get("new_category")
             new_category_slug = convert_to_slug(new_category)
-            new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=data.get("user_id"))
+            new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=user_id)
             new_category_object.create()
             data['category_id'] = str(new_category_object._id)
     
-
-    
-    
     # Check if the URL already exists
-    existing_link = Link.get_by_url(data.get("url")).to_dict()
+    existing_link = Link.get_by_url(data.get("url"))
     if existing_link:
+        existing_link = existing_link.to_dict()
         # Fetch category details for the existing link
-        if existing_link.get("category_id"):
+        if existing_link.get("category"):
             category = Category.get_by_id(existing_link['category_id'])
             if category:
-                return jsonify({"message": f"URL already exists in category {category.category}"}), 409
-        return jsonify({"message": f"URL already exists in {existing_link['_id']}"}, 409)
+                return jsonify({"success":False,"message": f"URL already exists in category {category.category}"}), 409
+        return jsonify({"success":False,"message": f"URL already exists in {existing_link['_id']}"}, 409)
     
     # Create new Link object
     link = Link(
@@ -97,16 +113,19 @@ def create_url():
         description=data.get('description', ''),
         tags=data.get('tags', []),
         category_id=data.get('category_id'),
-        user_id=data.get('user_id')
+        user_id=user_id
     )
     
     # Save to database
     link_id = link.create()
     
     return jsonify({
-        "message": "URL created successfully", 
+        "success": True,
+        "message": "URL created successfully",
+        "data":{
         "_id": link_id,
-        "data": link.to_json()
+        "link": link.to_json()
+        } 
     }), 201
     
     # except Exception as e:
