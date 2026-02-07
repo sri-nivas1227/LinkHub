@@ -65,6 +65,13 @@ export async function extractTokenAction() {
   return null;
 }
 
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete("auth_token");
+  return true;
+  
+}
+
 // Homepage actions
 export async function getCategoriesAction() {
   console.log("inside categories action");
