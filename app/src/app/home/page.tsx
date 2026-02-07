@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Link as LinkIcon, Plus, Sparkles } from "lucide-react";
-import { checkTokenAction } from "../auth/actions";
+import { checkTokenAction, getCategoriesAction, getLinksFromCategoriesAction } from "../actions";
+import { headers } from "next/headers";
 
 interface Category {
   id: string;
@@ -37,12 +38,10 @@ export default function Home() {
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
+      console.log("Loading Categories")
       try {
-        const response = await fetch(
-          "http://localhost:5000/categories?user_id=17",
-        );
-        const data = await response.json();
-        const nextCategories = Array.isArray(data?.data) ? data.data : [];
+        const response = await getCategoriesAction();
+        const nextCategories = Array.isArray(response?.data) ? response.data : [];
         setCategories(nextCategories);
         if (nextCategories.length > 0) {
           setSelectedCategoryId((current) => current ?? nextCategories[0].id);
@@ -69,12 +68,9 @@ export default function Home() {
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
-        const response = await fetch(
-          `http://localhost:5000/urls/category?category_id=${selectedCategoryId}`,
-        );
-        const data = await response.json();
-        const nextLinks = Array.isArray(data?.data?.links)
-          ? data.data.links
+        const response = await getLinksFromCategoriesAction(selectedCategoryId);
+        const nextLinks = Array.isArray(response?.data?.links)
+          ? response.data.links
           : [];
         setLinks(nextLinks);
       } catch (error) {

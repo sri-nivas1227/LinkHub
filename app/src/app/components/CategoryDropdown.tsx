@@ -22,7 +22,7 @@ export default function CategoryDropdown({
   newCategory: string;
   setNewCategory: (category: string) => void;
 }) {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(selectedCategory);
   const [isAdding, setIsAdding] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
