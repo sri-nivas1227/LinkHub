@@ -1,9 +1,18 @@
-
+'use client'
+import { useEffect } from "react";
+import { checkTokenAction } from "../actions";
 export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+      checkTokenAction().then((isAuthenticated) => {
+        if (isAuthenticated) {
+          window.location.href = "/home";
+        }
+      });
+    }, []);
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#0B0F1A]">
       <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[110px]" />
