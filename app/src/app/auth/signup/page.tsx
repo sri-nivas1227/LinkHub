@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signupAction } from "../actions";
+import { postSignupAction } from "../../actions";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function SignUpPage() {
       return;
     }
     try {
-      const response = await signupAction(form);
+      const response = await postSignupAction(form);
       console.log(response);
       if (response.success) {
         router.push("/auth/login");

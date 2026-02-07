@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { loginAction } from "../actions";
+import { postLoginAction } from "../../actions";
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -13,7 +13,7 @@ export default function Page() {
     // Handle login logic here
     setLoading(true);
     setError(null);
-    const result = await loginAction({ email, password });
+    const result = await postLoginAction({ email, password });
     if (result.success) {
       // Redirect or update UI
       router.push("/home")
