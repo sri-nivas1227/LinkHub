@@ -5,10 +5,10 @@ export default function AddLinkLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative w-full h-full flex justify-center items-center overflow-hidden">
-      <div className="w-full h-full top-0 left-0 absolute overflow-scroll">
+    <div className="">
+      <div className="">
         <NavBar />
-        <div className="w-full h-full flex flex-col justify-center items-center">
+        <div className="">
           {children}
         </div>
       </div>
