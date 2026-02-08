@@ -71,9 +71,9 @@ class Category:
             raise Exception(f"Error fetching category by ID: {str(e)}")
     
     @staticmethod
-    def get_name_id_by_user_id(user_id):
+    def get_categories_by_user_id(user_id):
         try:
-            categories = CategoriesCollection.find({"user_id": user_id}, {"_id": 1, "category": 1})
+            categories = CategoriesCollection.find({"user_id": user_id})
             return [{"id": str(cat["_id"]), "name": cat["category"]} for cat in categories]
         except PyMongoError as e:
             raise Exception(f"Error fetching category names by user ID: {str(e)}")

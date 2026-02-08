@@ -1,73 +1,29 @@
-import Image from "next/image";
-import bg1 from "@/app/assets/bg1.svg";
-import bg2 from "@/app/assets/bg2.svg";
-import bg3 from "@/app/assets/bg3.svg";
+'use client'
+import { useEffect } from "react";
+import { checkTokenAction } from "../actions";
 export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+      checkTokenAction().then((isAuthenticated) => {
+        if (isAuthenticated) {
+          window.location.href = "/home";
+        }
+      });
+    }, []);
   return (
-    <div className="relative w-full h-full flex justify-center items-center overflow-hidden">
-      <div className="relative w-full h-full ">
-        <Image
-          src={bg1}
-          alt="Background"
-          width={200}
-          height={200}
-          objectFit="cover"
-          className="absolute -left-[10%] top-[5%] rotate-200"
-        />
-        <Image
-          src={bg1}
-          alt="Background"
-          width={200}
-          height={200}
-          objectFit="cover"
-          className="absolute right-[10%] top-[40%] rotate-120"
-        />
-        <Image
-          src={bg2}
-          alt="Background"
-          width={200}
-          height={200}
-          className="absolute left-[50%] -top-[10%] rotate-140"
-        />
-        <Image
-          src={bg1}
-          alt="Background"
-          width={150}
-          height={150}
-          objectFit="cover"
-          className="absolute -left-[5%] top-[40%] rotate-170"
-        />
-        <Image
-          src={bg3}
-          alt="Background"
-          width={200}
-          height={200}
-          objectFit="cover"
-          className="absolute -right-[10%] top-[10%] rotate-180"
-        />
-        <Image
-          src={bg3}
-          alt="Background"
-          width={200}
-          height={200}
-          objectFit="cover"
-          className="absolute left-0 bottom-0 rotate-180"
-        />
-        <Image
-          src={bg2}
-          alt="Background"
-          width={200}
-          height={200}
-          objectFit="cover"
-          className="absolute right-[10%] -bottom-[10%] rotate-180"
-        />
-      </div>
-      <div className="absolute w-4/5 min-h-2/3 h-1/2 flex flex-col glass-card border rounded-[5rem] overflow-hidden bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 shadow-lg shadow-white p-2 text-center ">
-        {children}
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#0B0F1A]">
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-500/20 blur-[110px]" />
+      <div className="pointer-events-none absolute -bottom-24 right-16 h-72 w-72 rounded-full bg-fuchsia-500/20 blur-[110px]" />
+
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-xl rounded-[2.5rem] border border-white/10 bg-white/5 p-2 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl">
+          <div className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-8">
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );

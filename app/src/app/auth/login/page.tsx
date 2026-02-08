@@ -1,62 +1,85 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { postLoginAction } from "../../actions";
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const handleLogin = async () => {
     // Handle login logic here
-    const response = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Login successful:", data);
-      // Redirect or update state as needed
-      router.push("/home");
+    setLoading(true);
+    setError(null);
+    const result = await postLoginAction({ email, password });
+    if (result.success) {
+      // Redirect or update UI
+      router.push("/home")
     } else {
-      console.error("Login failed");
+      setError(result.message || "Login failed");
     }
   };
 
   return (
-    <div className="h-full flex flex-col justify-center items-center my-4">
-      {/* <h1 className="text-3xl font-semibold">Login</h1> */}
-      <h1 className="text-white m-3 font-mono text-3xl font-bold">DropLinks</h1>
-      <div className="flex flex-col gap-3 p-2 rounded-3xl font-semibold">
-        <label className="flex gap-3 justify-between items-baseline">
-          <span className="">Email:</span>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border border-white outline-none rounded-3xl p-1"
-          />
-        </label>
-        <label className="flex gap-3 justify-between items-baseline">
-          <span className="">Password:</span>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-white outline-none rounded-3xl p-1"
-          />
-        </label>
-        <div className="flex justify-center items-center">
+    <div className="w-full h-full flex items-center justify-center p-6">
+      <div className="w-full max-w-md text-left">
+        <div className="mb-8">
+          <p className="text-sm text-zinc-400">Welcome back</p>
+          <h1 className="text-3xl font-semibold text-white">
+            Sign in to LinkHub
+          </h1>
+          <p className="text-sm text-zinc-400 mt-2">
+            Access your saved links, categories, and collections in one place.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm text-zinc-300">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-zinc-300">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+          </div>
+          {error && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          )}
           <button
             onClick={handleLogin}
-            className="p-2 px-4 bg-gray-200 text-black rounded-3xl border w-fit"
+            disabled={loading}
+            className="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-3 transition disabled:opacity-60"
           >
-            Login
+            {loading ? "Signing in..." : "Sign In"}
           </button>
+        </div>
+
+        <div className="mt-6 text-sm text-zinc-400">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/auth/signup"
+            className="text-indigo-300 hover:text-indigo-200"
+          >
+            Sign up
+          </Link>
         </div>
       </div>
     </div>

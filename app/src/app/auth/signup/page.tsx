@@ -1,6 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { postSignupAction } from "../../actions";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -15,17 +17,18 @@ export default function SignUpPage() {
   const handleSignUp = async () => {
     setLoading(true);
     setError(null);
+    if(form.email===""||form.name==="" || form.password===""){
+      setError("Please fill all fields!")
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.status === 200 || res.status === 201) {
+      const response = await postSignupAction(form);
+      console.log(response);
+      if (response.success) {
         router.push("/auth/login");
       } else {
-        const data = await res.json();
-        setError(data.message || "Signup failed");
+        setError(response.message || "Signup Failed :/ Try again!");
       }
     } catch (err) {
       setError("Network error");
@@ -35,54 +38,76 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="h-full flex flex-col justify-center items-center my-4">
-      <h1 className="text-white m-3 font-mono text-3xl font-bold">DropLinks</h1>
-      <div className="flex flex-col gap-3 p-2 rounded-3xl font-semibold w-full max-w-md">
-        <label className="flex gap-3 justify-between items-baseline">
-          <span>Name:</span>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 text-white"
-            required
-          />
-        </label>
-        <label className="flex gap-3 justify-between items-baseline">
-          <span>Email:</span>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 text-white"
-            required
-          />
-        </label>
-        <label className="flex gap-3 justify-between items-baseline">
-          <span>Password:</span>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            className="border border-white outline-none rounded-3xl p-1 text-white"
-            required
-          />
-        </label>
-        {error && (
-          <div className="text-red-400 text-base text-center">{error}</div>
-        )}
-        <div className="flex justify-center items-center">
+    <div className="w-full h-full flex items-center justify-center p-6">
+      <div className="w-full max-w-md text-left">
+        <div className="mb-8">
+          <p className="text-sm text-zinc-400">Create your account</p>
+          <h1 className="text-3xl font-semibold text-white">Join LinkHub</h1>
+          <p className="text-sm text-zinc-400 mt-2">
+            Start organizing your links with smart categories and quick access.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm text-zinc-300">Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Jane Doe"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-zinc-300">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-zinc-300">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Create a strong password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+          </div>
+          {error && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          )}
           <button
             type="button"
-            className="p-2 px-4 bg-gray-200 text-black rounded-3xl border w-fit"
             disabled={loading}
             onClick={handleSignUp}
+            className="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-3 transition disabled:opacity-60"
           >
-            {loading ? "Signing Up..." : "Sign Up"}
+            {loading ? "Signing Up..." : "Create Account"}
           </button>
+        </div>
+
+        <div className="mt-6 text-sm text-zinc-400">
+          Already have an account?{" "}
+          <Link
+            href="/auth/login"
+            className="text-indigo-300 hover:text-indigo-200"
+          >
+            Sign in
+          </Link>
         </div>
       </div>
     </div>
