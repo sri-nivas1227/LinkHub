@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getCategoriesAction, postAddURLAction } from "../actions";
+import { ROUTES } from "@/config/constants";
 
 interface Category {
   id: string | null;
@@ -23,7 +24,6 @@ export default function AddLinkPage() {
 
 
   const fetchCategories = async () => {
-    console.log("fetching categories")
     try {
       const response = await getCategoriesAction();
       if(!response.success)
@@ -88,7 +88,7 @@ export default function AddLinkPage() {
     <div className="">
       <main className="mx-auto w-full max-w-md px-4 pb-24 pt-6">
         <div className="flex items-center gap-2 text-sm text-zinc-400">
-          <Link href="/home" className="flex items-center gap-1">
+          <Link href={ROUTES.HOME} className="flex items-center gap-1">
             <ArrowLeft size={14} />
             Back
           </Link>

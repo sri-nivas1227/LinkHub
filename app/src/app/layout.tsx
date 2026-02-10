@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
+import { APP_CONFIG } from "@/config/constants";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LinkHub",
-  description: "Your personal hub for curated links.",
+  title: APP_CONFIG.NAME,
+  description: APP_CONFIG.DESCRIPTION,
 };
 
 export default function RootLayout({

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { postSignupAction } from "../../actions";
+import { ROUTES } from "@/config/constants";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -24,9 +25,8 @@ export default function SignUpPage() {
     }
     try {
       const response = await postSignupAction(form);
-      console.log(response);
       if (response.success) {
-        router.push("/auth/login");
+        router.push(ROUTES.LOGIN);
       } else {
         setError(response.message || "Signup Failed :/ Try again!");
       }
@@ -103,7 +103,7 @@ export default function SignUpPage() {
         <div className="mt-6 text-sm text-zinc-400">
           Already have an account?{" "}
           <Link
-            href="/auth/login"
+            href={ROUTES.LOGIN}
             className="text-indigo-300 hover:text-indigo-200"
           >
             Sign in

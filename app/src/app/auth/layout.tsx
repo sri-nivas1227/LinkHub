@@ -1,6 +1,7 @@
 'use client'
 import { useEffect } from "react";
 import { checkTokenAction } from "../actions";
+import { ROUTES } from "@/config/constants";
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -9,7 +10,7 @@ export default function AuthLayout({
   useEffect(() => {
       checkTokenAction().then((isAuthenticated) => {
         if (isAuthenticated) {
-          window.location.href = "/home";
+          window.location.href = ROUTES.HOME;
         }
       });
     }, []);

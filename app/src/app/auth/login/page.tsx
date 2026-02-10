@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { postLoginAction } from "../../actions";
+import { ROUTES } from "@/config/constants";
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function Page() {
     const result = await postLoginAction({ email, password });
     if (result.success) {
       // Redirect or update UI
-      router.push("/home")
+      router.push(ROUTES.HOME);
     } else {
       setError(result.message || "Login failed");
     }
@@ -75,7 +76,7 @@ export default function Page() {
         <div className="mt-6 text-sm text-zinc-400">
           Don&apos;t have an account?{" "}
           <Link
-            href="/auth/signup"
+            href={ROUTES.SIGNUP}
             className="text-indigo-300 hover:text-indigo-200"
           >
             Sign up

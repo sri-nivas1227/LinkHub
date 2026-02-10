@@ -4,6 +4,7 @@ import { Search, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { extractTokenAction, logoutAction } from "../actions";
 import { useRouter } from "next/navigation";
+import { ROUTES, UI_CONFIG, APP_CONFIG } from "@/config/constants";
 
 export default function NavBar() {
   const [profileClicked, setProfileClicked] = useState<boolean>(false);
@@ -14,14 +15,14 @@ export default function NavBar() {
     const response = await extractTokenAction();
     if (response && typeof response === "object") {
       return (
-        (response as any).username ?? (response as any).name ?? "Hello User!"
+        (response as any).username ?? (response as any).name ?? UI_CONFIG.DEFAULT_USERNAME
       );
     }
-    return "Hello User!";
+    return UI_CONFIG.DEFAULT_USERNAME;
   };
   const handleLogout = async () => {
     await logoutAction();
-    router.push("/auth/login");
+    router.push(ROUTES.LOGIN);
   };
   useEffect(() => {
     getUsername().then((value) => setUsername(value));
@@ -30,10 +31,10 @@ export default function NavBar() {
     <nav className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
         <Link
-          href="/home"
+          href={ROUTES.HOME}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-sm font-semibold tracking-tight"
         >
-          LH
+          {APP_CONFIG.LOGO}
         </Link>
         <div className="flex items-center gap-2">
           <button

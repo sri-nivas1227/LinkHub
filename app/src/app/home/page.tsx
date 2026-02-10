@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Link as LinkIcon, Plus, Sparkles } from "lucide-react";
 import { checkTokenAction, getCategoriesAction, getLinksFromCategoriesAction } from "../actions";
-import { headers } from "next/headers";
+import { ROUTES, UI_CONFIG } from "@/config/constants";
 
 interface Category {
   id: string;
@@ -31,14 +31,13 @@ export default function Home() {
   useEffect(() => {
     checkTokenAction().then((isAuthenticated) => {
       if (!isAuthenticated) {
-        window.location.href = "/auth/login";
+        window.location.href = ROUTES.LOGIN;
       }
     });
   }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
-      console.log("Loading Categories")
       try {
         const response = await getCategoriesAction();
         const nextCategories = Array.isArray(response?.data) ? response.data : [];
@@ -61,7 +60,6 @@ export default function Home() {
     if (!selectedCategoryId) {
       setLinks([]);
       setIsLoadingLinks(false);
-      console.log("returning");
       return;
     }
 
@@ -93,7 +91,7 @@ export default function Home() {
     try {
       await navigator.clipboard.writeText(url);
       setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 1500);
+      setTimeout(() => setCopiedId(null), UI_CONFIG.COPY_NOTIFICATION_TIMEOUT);
     } catch (error) {
       console.error("Copy failed:", error);
     }
@@ -146,7 +144,7 @@ export default function Home() {
             </p>
           </div>
           <Link
-            href="/addLink"
+            href={ROUTES.ADD_LINK}
             className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
           >
             Add link

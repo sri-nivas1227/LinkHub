@@ -1,6 +1,8 @@
 "use server";
 import { cookies, headers } from "next/headers";
 import jwt from "jsonwebtoken";
+import { API_URL, AUTH_COOKIE_NAME, COOKIE_CONFIG } from "@/config/constants";
+
 type responseFormat = { success: boolean; message: string; data?: any };
 
 // Auth Actions
@@ -10,7 +12,7 @@ export async function postSignupAction(formData: {
   password: string;
   name: string;
 }) {
-  const response = await fetch("http://localhost:5000/signup", {
+  const response = await fetch(`${API_URL}/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,14 +20,12 @@ export async function postSignupAction(formData: {
     body: JSON.stringify(formData),
   });
   const responseData: responseFormat = await response.json();
-  console.log(responseData);
   return responseData;
 }
 
 export async function postLoginAction(formData: any) {
-  console.log("ihkllj")
   // 1. Call your external API
-  const response = await fetch("http://localhost:5000/login", {
+  const response = await fetch(`${API_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -34,15 +34,10 @@ export async function postLoginAction(formData: any) {
   });
 
   const responseData: responseFormat = await response.json();
-  console.log(responseData, 'login info')
   if (response.ok) {
     // 2. Set the cookie on the server side
     const cookieStore = await cookies();
-    cookieStore.set("auth_token", responseData.data.token, {
-      httpOnly: true, // Security best practice
-      secure: true,
-      path: "/",
-    });
+    cookieStore.set(AUTH_COOKIE_NAME, responseData.data.token, COOKIE_CONFIG);
     return responseData;
   }
 
@@ -51,13 +46,13 @@ export async function postLoginAction(formData: any) {
 
 export async function checkTokenAction() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+  const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
   return token ? true : false;
 }
 
 export async function extractTokenAction() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+  const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
   if (token) {
     const payload = jwt.decode(token);
     return payload;
@@ -67,35 +62,29 @@ export async function extractTokenAction() {
 
 export async function logoutAction() {
   const cookieStore = await cookies();
-  cookieStore.delete("auth_token");
+  cookieStore.delete(AUTH_COOKIE_NAME);
   return true;
-  
 }
 
 // Homepage actions
 export async function getCategoriesAction() {
-  console.log("inside categories action");
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token");
-  console.log(token);
-  const response = await fetch("http://localhost:5000/categories", {
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}/categories`, {
     headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
     },
   });
   const data: responseFormat = await response.json();
-  console.log("response from API", data);
   return data;
 }
 
 export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
-  console.log("inside categories action");
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token");
-  console.log(token);
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
   const response = await fetch(
-    `http://localhost:5000/urls/category?category_id=${selectedCategoryId}`,
+    `${API_URL}/urls/category?category_id=${selectedCategoryId}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -104,24 +93,20 @@ export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
     },
   );
   const data: responseFormat = await response.json();
-  console.log("response from API", data);
   return data;
 }
 
 export async function postAddURLAction(newLink: any) {
-  console.log("inside categories action", newLink);
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token");
-  console.log(token);
-  const response = await fetch(`http://localhost:5000/urls`, {
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}/urls`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-        Cookie: `token=${token?.value}`,
+      Cookie: `token=${token?.value}`,
     },
     body: JSON.stringify(newLink),
   });
   const data: responseFormat = await response.json();
-  console.log("response from API", data);
   return data;
 }
