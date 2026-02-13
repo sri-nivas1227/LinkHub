@@ -5,6 +5,7 @@ from UrlEndpoint import urlRouter
 from CategoryEndpoint import categoryRouter
 from AuthEndpoints import auth_router
 from flask_cors import CORS
+from db import db
 
 # Load environment variables
 load_dotenv()
@@ -30,7 +31,7 @@ def home():
     return jsonify({
         "message": "Welcome to LinkHub API",
         "status": "running",
-        "database": "connected" if mongo.db is not None else "disconnected"
+        "database": "connected" if db is not None else "disconnected"
     })
 
 
