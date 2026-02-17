@@ -37,12 +37,12 @@ export default function NavBar() {
           {APP_CONFIG.LOGO}
         </Link>
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             aria-label="Search"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/60 text-zinc-300 transition hover:text-zinc-100"
           >
             <Search size={18} />
-          </button>
+          </button> */}
           <div className="relative">
             <button
               aria-label="User profile"
