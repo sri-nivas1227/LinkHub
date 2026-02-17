@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { postLoginAction } from "../../actions";
 import { ROUTES } from "@/config/constants";
+import { toast } from "sonner";
 export default function Page() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -13,13 +14,20 @@ export default function Page() {
   const handleLogin = async () => {
     // Handle login logic here
     setLoading(true);
-    setError(null);
     const result = await postLoginAction({ email, password });
     if (result.success) {
       // Redirect or update UI
+      setLoading(false);
       router.push(ROUTES.HOME);
     } else {
-      setError(result.message || "Login failed");
+      if (result.data?.redirect) {
+        toast.error("User doesn't exist. Redirecting to signup.");
+
+        router.push(result.data.redirect);
+        return;
+      }
+      toast.error(result.message || "Login failed. Please try again.");
+      setLoading(false);
     }
   };
 
