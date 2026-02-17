@@ -10,7 +10,7 @@ mongo_password = os.getenv("MONGO_PASSWORD")
 mongo_cluster = os.getenv("MONGO_CLUSTER_URL")
 mongo_db = os.getenv("MONGO_DATABASE_NAME")
 
-if all([mongo_username, mongo_password, mongo_cluster, mongo_db]):
+if os.getenv("ENV") == "production" and all([mongo_username, mongo_password, mongo_cluster, mongo_db]):
     mongo_uri = f"mongodb+srv://{mongo_username}:{mongo_password}@{mongo_cluster}/{mongo_db}?retryWrites=true&w=majority"
 else:
     mongo_uri = "mongodb://localhost:27017/linkhub"

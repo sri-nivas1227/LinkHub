@@ -18,9 +18,7 @@ def get_categories():
             "success": False,
             "message": "Invalid or missing token"
         }), 401
-    print(f"User ID from token: {user_id}")
     categories = Category.get_categories_by_user_id(user_id) if user_id else Category.get_all()
-    print(f"Categories fetched: {categories}")
     return jsonify({
         "success": True,
         "message": "List of categories",

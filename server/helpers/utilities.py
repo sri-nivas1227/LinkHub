@@ -16,9 +16,7 @@ def validate_and_get_token_payload(token: str) -> bool:
     jwt_secret = os.getenv("JWT_SECRET")
     try:
         payload = jwt.decode(token, jwt_secret, algorithms=["HS256"])  
-        print(f"Decoded JWT payload: {payload}")
         user = userCollection.find_one({"_id": ObjectId(payload["user_id"])})
-        print(f"User found in DB: {user}")
         if not user:
             return False, None
         return True, payload

@@ -1,4 +1,4 @@
-from flask import request, Blueprint, make_response
+from flask import redirect, request, Blueprint, make_response
 from db import db
 from bcrypt import hashpw, gensalt, checkpw
 import jwt
@@ -12,7 +12,6 @@ userCollection = db.get_collection('users')
 @auth_router.route('/signup', methods=['POST'])
 def signup():
     # Handle signup logic here
-    print(request.get_json())
     data = request.get_json()
     full_name = data.get('full_name')
     email = data.get('email')
@@ -38,7 +37,8 @@ def login():
     password = data.get('password')
 
     user = userCollection.find_one({"email": email})
-
+    if not user:
+        return {"success":False,"message": "User not found", "data":{"redirect": "/auth/signup"}}, 401
     if user and checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
         jwt_secret = os.getenv("JWT_SECRET")
         jwt_token = jwt.encode({"user_id":str(user["_id"]), "name":user["full_name"], "datetime":str(datetime.now())}, jwt_secret, algorithm="HS256")
