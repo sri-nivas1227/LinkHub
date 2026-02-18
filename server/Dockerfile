@@ -4,9 +4,7 @@ WORKDIR /server
 
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir gunicorn -r requirements.txt
-RUN pip
 
 COPY . .
 
-CMD [ "gunicorn", "app:app" ]
-
+CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "app:app" ]
