@@ -2,7 +2,7 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 // Cookie Configuration
-export const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth_token';
+export const AUTH_COOKIE_NAME = 'auth_token';
 export const COOKIE_CONFIG = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
