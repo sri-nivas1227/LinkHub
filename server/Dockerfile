@@ -1,11 +1,12 @@
-FROM python:3
+FROM python:3.14-slim
 
 WORKDIR /server
 
 COPY ./requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn -r requirements.txt
+RUN pip
 
 COPY . .
 
-CMD [ "wsgi" ]
+CMD [ "gunicorn", "app:app" ]
 
