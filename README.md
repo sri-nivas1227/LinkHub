@@ -22,9 +22,10 @@
 
 ### 🔮 Future Plans
 
-🛡️ Malicious URL Checker – Protect users from visiting harmful or spam URLs within shared collections
-
-🔍 Smart Search & Filtering – Implement NLP & ML-based search to enable semantic queries and discoverability through relevant keywords
+- A Profile page
+- Shareable collections
+- A chrome extension to save links
+- An app to easily access the links and also might send reminders to view those recently saved links
 
 ## 🛠️ Getting Started
 **Prerequisites**
@@ -60,8 +61,28 @@
 
 
 Visit the app at http://localhost:3000
+### Environment Variables
 
-## 📌 Roadmap
+To run this project, you will need to add the following environment variables to your .env file in the `server` directory.
+
+`MONGO_USERNAME`: Your MongoDB username
+`MONGO_PASSWORD`: Your MongoDB password
+`MONGO_CLUSTER_URL`: Your MongoDB cluster URL
+`MONGO_DATABASE_NAME`: Your MongoDB database name
+`JWT_SECRET`: Your secret for JWT
+`ALLOWED_HOSTS`: The hosts that are allowed to make requests to the server
+`FLASK_ENV`: The environment for the flask app. It can be either `development` or `production`
+
+For production, you should use a `.env.production` file.
+## � Deployment
+
+This application can be easily deployed using Docker.
+
+- `docker-compose up --build`
+
+This will build the Docker images for the frontend and backend and run the containers.
+
+## �📌 Roadmap
 
  - Malicious URL scanning
 
