@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Search, UserRound } from "lucide-react";
+import { LinkIcon, Search, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { extractTokenAction, logoutAction } from "../actions";
 import { useRouter } from "next/navigation";
@@ -32,9 +32,9 @@ export default function NavBar() {
       <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
         <Link
           href={ROUTES.HOME}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-sm font-semibold tracking-tight"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-indigo-300 text-sm font-semibold tracking-tight"
         >
-          {APP_CONFIG.LOGO}
+          <LinkIcon size={18} />
         </Link>
         <div className="flex items-center gap-2">
           {/* <button
