@@ -13,19 +13,22 @@ userCollection = db.get_collection('users')
 def signup():
     # Handle signup logic here
     data = request.get_json()
-    full_name = data.get('full_name')
+    print(data,'data from request')
+    full_name = data.get('name')
     email = data.get('email')
     password = data.get('password')
     # Check if user already exists
     existing_user = userCollection.find_one({"email": email})
     if existing_user:
         return {"success":False,"message": "User already exists"}, 400
+    if not full_name or not email or not password:
+        return {"success":False,"message": "All fields are required"}, 400
     user = {
         "full_name": full_name,
         "email": email,
         "password": hashpw(password.encode('utf-8'), gensalt()).decode('utf-8')
     }
-
+    print(user,'user data to db')
     userCollection.insert_one(user)
     return {"success":True,"message": "User registered successfully"}, 201
 
