@@ -15,7 +15,9 @@ export default function NavBar() {
     const response = await extractTokenAction();
     if (response && typeof response === "object") {
       return (
-        (response as any).username ?? (response as any).name ?? UI_CONFIG.DEFAULT_USERNAME
+        (response as any).username ??
+        (response as any).name ??
+        UI_CONFIG.DEFAULT_USERNAME
       );
     }
     return UI_CONFIG.DEFAULT_USERNAME;
@@ -56,7 +58,10 @@ export default function NavBar() {
                 <span className="font-semibold text-zinc-200 text-center border-b border-white whitespace-nowrap">
                   {username}
                 </span>
-                <span className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center ">
+                <span
+                  onClick={() => router.push("/profile")}
+                  className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center "
+                >
                   Profile
                 </span>
                 <span
