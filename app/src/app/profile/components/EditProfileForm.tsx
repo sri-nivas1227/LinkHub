@@ -1,0 +1,179 @@
+"use client";
+
+import { useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
+
+interface Link {
+  title: string;
+  url: string;
+}
+
+interface Profile {
+  name: string;
+  email: string;
+  bio: string;
+  links: Link[];
+}
+
+const EditProfileForm = () => {
+  const [profile, setProfile] = useState<Profile>({
+    name: "John Doe",
+    email: "john.doe@example.com",
+    bio: "Software developer and Next.js enthusiast.",
+    links: [
+      { title: "Portfolio", url: "https://johndoe.com" },
+      { title: "GitHub", url: "https://github.com/johndoe" },
+    ],
+  });
+
+  const handleProfileChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setProfile((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLinkChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const { name, value } = e.target;
+    const newLinks = [...profile.links];
+    newLinks[index] = { ...newLinks[index], [name]: value };
+    setProfile((prev) => ({ ...prev, links: newLinks }));
+  };
+
+  const addLink = () => {
+    setProfile((prev) => ({
+      ...prev,
+      links: [...prev.links, { title: "", url: "" }],
+    }));
+  };
+
+  const removeLink = (index: number) => {
+    const newLinks = profile.links.filter((_, i) => i !== index);
+    setProfile((prev) => ({ ...prev, links: newLinks }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Updated Profile:", profile);
+    // Here you would typically call an API to save the profile data
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 rounded-lg bg-zinc-900/30 p-6 shadow-md"
+    >
+      <h2 className="text-2xl font-bold text-zinc-200">Edit Profile</h2>
+      <div className="space-y-4">
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-sm font-semibold text-zinc-300"
+          >
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={profile.name}
+            onChange={handleProfileChange}
+            className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-semibold text-zinc-300"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value={profile.email}
+            onChange={handleProfileChange}
+            className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="bio"
+            className="block text-sm font-semibold text-zinc-300"
+          >
+            Description
+          </label>
+          <textarea
+            name="bio"
+            id="bio"
+            rows={3}
+            value={profile.bio}
+            onChange={handleProfileChange}
+            className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold text-zinc-300">Custom Links</h3>
+        {profile.links.map((link, index) => (
+          <div key={index} className="flex items-center space-x-2">
+            <input
+              type="text"
+              name="title"
+              placeholder="Title"
+              value={link.title}
+              onChange={(e) => handleLinkChange(index, e)}
+              className="block w-1/3 rounded-md outline-none p-2 border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+            <input
+              type="url"
+              name="url"
+              placeholder="URL"
+              value={link.url}
+              onChange={(e) => handleLinkChange(index, e)}
+              className="block w-2/3 rounded-md outline-none p-2 border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => removeLink(index)}
+              className="text-gray-500 focus:text-red-600 outline-none hover:text-red-600"
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addLink}
+          className="flex items-center space-x-2 rounded-md border border-dashed border-gray-400 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+        >
+          <Plus size={16} />
+          <span>Add Link</span>
+        </button>
+      </div>
+
+      <div className="flex justify-end space-x-3">
+        <button
+          type="button"
+          className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+        >
+          Save Changes
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default EditProfileForm;
+
