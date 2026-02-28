@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { postUpdateProfileAction } from "@/app/actions";
 
 interface Link {
   title: string;
@@ -11,26 +12,18 @@ interface Link {
 interface Profile {
   name: string;
   email: string;
-  bio: string;
+  description: string;
   links: Link[];
 }
 
-const EditProfileForm = () => {
-  const [profile, setProfile] = useState<Profile>({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    bio: "Software developer and Next.js enthusiast.",
-    links: [
-      { title: "Portfolio", url: "https://johndoe.com" },
-      { title: "GitHub", url: "https://github.com/johndoe" },
-    ],
-  });
+const EditProfileForm = ({ profile }: { profile: Profile | null }) => {
+  const [updatedProfile, setUpdatedProfile] = useState<Profile>(profile!);
 
   const handleProfileChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    setUpdatedProfile((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLinkChange = (
@@ -38,27 +31,34 @@ const EditProfileForm = () => {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
-    const newLinks = [...profile.links];
+    const newLinks = [...updatedProfile.links];
     newLinks[index] = { ...newLinks[index], [name]: value };
-    setProfile((prev) => ({ ...prev, links: newLinks }));
+    setUpdatedProfile((prev) => ({ ...prev, links: newLinks }));
   };
 
   const addLink = () => {
-    setProfile((prev) => ({
+    setUpdatedProfile((prev) => ({
       ...prev,
       links: [...prev.links, { title: "", url: "" }],
     }));
   };
 
   const removeLink = (index: number) => {
-    const newLinks = profile.links.filter((_, i) => i !== index);
-    setProfile((prev) => ({ ...prev, links: newLinks }));
+    const newLinks = updatedProfile.links.filter((_, i) => i !== index);
+    setUpdatedProfile((prev) => ({ ...prev, links: newLinks }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Updated Profile:", profile);
-    // Here you would typically call an API to save the profile data
+    console.log("Updated Profile:", updatedProfile);
+    const response = await postUpdateProfileAction(updatedProfile);
+    if (response.success) {
+      // Handle success (e.g., show a success message, redirect, etc.)
+      console.log("Profile updated successfully");
+    } else {
+      // Handle error (e.g., show an error message)
+      console.error("Failed to update profile");
+    }
   };
 
   return (
@@ -79,7 +79,7 @@ const EditProfileForm = () => {
             type="text"
             name="name"
             id="name"
-            value={profile.name}
+            value={updatedProfile.name}
             onChange={handleProfileChange}
             className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
@@ -95,23 +95,23 @@ const EditProfileForm = () => {
             type="email"
             name="email"
             id="email"
-            value={profile.email}
+            value={updatedProfile.email}
             onChange={handleProfileChange}
             className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
         <div>
           <label
-            htmlFor="bio"
+            htmlFor="description"
             className="block text-sm font-semibold text-zinc-300"
           >
             Description
           </label>
           <textarea
-            name="bio"
-            id="bio"
+            name="description"
+            id="description"
             rows={3}
-            value={profile.bio}
+            value={updatedProfile.description}
             onChange={handleProfileChange}
             className="mt-1 block w-full rounded-md border outline-none p-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
@@ -120,7 +120,7 @@ const EditProfileForm = () => {
 
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-zinc-300">Custom Links</h3>
-        {profile.links.map((link, index) => (
+        {updatedProfile.links.map((link, index) => (
           <div key={index} className="flex items-center space-x-2">
             <input
               type="text"
@@ -176,4 +176,3 @@ const EditProfileForm = () => {
 };
 
 export default EditProfileForm;
-

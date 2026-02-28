@@ -2,27 +2,36 @@
 
 import { motion } from "framer-motion";
 import { User, Mail, Link as LinkIcon, Edit } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditProfileForm from "./components/EditProfileForm";
+import { getProfileAction, postUpdateProfileAction } from "../actions";
 
-const dummyUser = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  bio: "Software developer and Next.js enthusiast. Love creating beautiful and functional web applications.",
-};
-
-const dummyLinks = [
-  { _id: "1", title: "Portfolio", url: "https://johndoe.com" },
-  { _id: "2", title: "GitHub", url: "https://github.com/johndoe" },
-  { _id: "3", title: "LinkedIn", url: "https://linkedin.com/in/johndoe" },
-];
-
+interface Link {
+  title: string;
+  url: string;
+}
+interface Profile {
+  name: string;
+  email: string;
+  description: string;
+  links: Link[];
+}
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-
+  const [profile, setProfile] = useState<Profile | null>(null);
   const handleEditClick = () => {
     setIsEditing(true);
   };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await getProfileAction();
+      console.log(profileData);
+      setProfile(profileData.data.profile);
+    };
+    fetchProfile();
+  }, []);
+  console.log(profile);
   return (
     <div className="min-h-screen">
       <main className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
@@ -50,19 +59,19 @@ export default function ProfilePage() {
                     <User size={32} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold">{dummyUser.name}</h2>
+                    <h2 className="text-xl font-semibold">{profile?.name}</h2>
                     <div className="flex items-center space-x-2 text-gray-400">
                       <Mail size={16} />
-                      <span>{dummyUser.email}</span>
+                      <span>{profile?.email}</span>
                     </div>
                   </div>
                 </div>
-                <p className="mt-4 text-gray-500">{dummyUser.bio}</p>
+                <p className="mt-4 text-gray-500">{profile?.description}</p>
               </div>
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {dummyLinks.map((link) => (
+                {profile?.links.map((link, index) => (
                   <div
-                    key={link._id}
+                    key={index}
                     className="flex items-center justify-between rounded-lg bg-white p-2 shadow-sm"
                   >
                     <div className="flex items-center space-x-2">
@@ -84,7 +93,7 @@ export default function ProfilePage() {
             </div>
           </motion.div>
         )}
-        {isEditing && <EditProfileForm />}
+        {isEditing && <EditProfileForm profile={profile} />}
       </main>
     </div>
   );

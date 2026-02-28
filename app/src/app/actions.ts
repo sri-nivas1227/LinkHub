@@ -110,3 +110,32 @@ export async function postAddURLAction(newLink: any) {
   const data: responseFormat = await response.json();
   return data;
 }
+
+// Profile actions
+export async function getProfileAction(){
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}/profile`, {
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
+
+export async function postUpdateProfileAction(updatedProfile: any) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}/profile`, {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+    body: JSON.stringify(updatedProfile),
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
