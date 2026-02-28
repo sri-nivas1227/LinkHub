@@ -24,7 +24,7 @@ def get_urls():
                 del link_json['user_id']
             links_data.append(link_json)
         
-        return jsonify({"message": "List of URLs", "data": links_data}), 200
+        return jsonify({"message": "List of URLs", "data": {"links": links_data}}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

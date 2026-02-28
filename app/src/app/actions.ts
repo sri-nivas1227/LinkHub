@@ -96,6 +96,19 @@ export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
   return data;
 }
 
+export async function getAllLinksAction() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}/urls`, {
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function postAddURLAction(newLink: any) {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);

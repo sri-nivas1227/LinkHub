@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Link as LinkIcon, Plus, Sparkles } from "lucide-react";
-import { checkTokenAction, getCategoriesAction, getLinksFromCategoriesAction } from "../actions";
+import {
+  checkTokenAction,
+  getAllLinksAction,
+  getCategoriesAction,
+  getLinksFromCategoriesAction,
+} from "../actions";
 import { ROUTES, UI_CONFIG } from "@/config/constants";
 
 interface Category {
@@ -40,7 +45,9 @@ export default function Home() {
       setIsLoadingCategories(true);
       try {
         const response = await getCategoriesAction();
-        const nextCategories = Array.isArray(response?.data) ? response.data : [];
+        const nextCategories = Array.isArray(response?.data)
+          ? response.data
+          : [];
         setCategories(nextCategories);
         if (nextCategories.length > 0) {
           setSelectedCategoryId((current) => current ?? nextCategories[0].id);
@@ -66,11 +73,20 @@ export default function Home() {
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
-        const response = await getLinksFromCategoriesAction(selectedCategoryId);
-        const nextLinks = Array.isArray(response?.data?.links)
-          ? response.data.links
-          : [];
-        setLinks(nextLinks);
+        if (selectedCategoryId === "all") {
+          const allLinksResponse = await getAllLinksAction();
+          const allLinks = Array.isArray(allLinksResponse?.data?.links)
+            ? allLinksResponse.data.links
+            : [];
+          setLinks(allLinks);
+        } else {
+          const response =
+            await getLinksFromCategoriesAction(selectedCategoryId);
+          const nextLinks = Array.isArray(response?.data?.links)
+            ? response.data.links
+            : [];
+          setLinks(nextLinks);
+        }
       } catch (error) {
         console.error("Error fetching links:", error);
         setLinks([]);
@@ -112,6 +128,21 @@ export default function Home() {
           <span className="text-xs text-zinc-500">Swipe to explore</span>
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+          {isLoadingCategories ? (
+            <div className=""></div>
+          ) : (
+            <button
+              onClick={() => setSelectedCategoryId("all")}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
+                selectedCategoryId === "all"
+                  ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
+                  : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              All Links
+            </button>
+          )}
+
           {isLoadingCategories
             ? Array.from({ length: 4 }).map((_, index) => (
                 <div
@@ -138,9 +169,8 @@ export default function Home() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-zinc-300">Feed</p>
-            <p className="text-xs text-zinc-500">
-              {selectedCategoryName ?? "Pick a collection"}
+            <p className="text-sm font-medium text-zinc-300">
+              {selectedCategoryName ?? "All Links"}
             </p>
           </div>
           <Link
