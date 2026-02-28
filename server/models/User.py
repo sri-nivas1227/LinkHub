@@ -7,11 +7,10 @@ class User:
     def __init__(
         self,
         email,
-        username,
         full_name,
         password,
-        profile_description=None,
-        profile_links = None,
+        username=None,
+        profile =None,
         preferences=None,
         _id=None,
     ):
@@ -20,10 +19,7 @@ class User:
         self.email = email
         self.username = username
         self.password = password
-        self.profile = dict(
-            description = profile_description,
-            profile_links = profile_links,
-        )
+        self.profile = profile
         self.preferences = preferences
 
     def to_dict(self):
@@ -97,9 +93,13 @@ class User:
     @staticmethod
     def get_by_email(email):
         user = users_collection.find_one(filter={"email":email})
-        return user
+        if user:
+            return User(**user)
+        return None
 
     @staticmethod
     def get_by_id(user_id):
         user = users_collection.find_one(filter={"_id":ObjectId(user_id)})
-        return user
+        if user:
+            return User(**user)
+        return None

@@ -56,7 +56,7 @@ def login():
             401,
         )
     if not user or not checkpw(
-        password.encode("utf-8"), user["password"].encode("utf-8")
+        password.encode("utf-8"), user.password.encode("utf-8")
     ):
         return make_response(
             {"success": False, "message": "Invalid email or password"}, 401
@@ -64,8 +64,8 @@ def login():
     jwt_secret = os.getenv("JWT_SECRET")
     jwt_token = jwt.encode(
         {
-            "user_id": str(user["_id"]),
-            "name": user["full_name"],
+            "user_id": str(user._id),
+            "name": user.full_name,
             "datetime": str(datetime.now()),
         },
         jwt_secret,
