@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { checkTokenAction } from "../actions";
 import { ROUTES } from "@/config/constants";
-import { Toaster } from "sonner";
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -23,7 +22,6 @@ export default function AuthLayout({
       <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-xl rounded-[2.5rem] border border-white/10 bg-white/5 p-2 shadow-2xl shadow-indigo-500/10 backdrop-blur-xl">
           <div className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-8">
-            <Toaster position="top-center" richColors={true} />
             {children}
           </div>
         </div>
