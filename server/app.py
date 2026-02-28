@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from UrlEndpoint import urlRouter
 from CategoryEndpoint import categoryRouter
 from AuthEndpoints import auth_router
+from Endpoints.ProfileEndpoints import profile_router
 from flask_cors import CORS
 from db import db
 
@@ -16,7 +17,7 @@ CORS(app, origins=os.getenv("ALLOWED_HOSTS"))
 app.register_blueprint(auth_router)
 app.register_blueprint(urlRouter)
 app.register_blueprint(categoryRouter)
-
+app.register_blueprint(profile_router)
 # Helper function to serialize MongoDB documents
 def serialize_doc(doc):
     """Convert MongoDB document to JSON serializable format"""
