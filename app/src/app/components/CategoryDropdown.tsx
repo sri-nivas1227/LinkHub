@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 
 interface Category {
@@ -18,9 +18,9 @@ export default function CategoryDropdown({
   categoryList: Category[];
   setCategoryList: (categories: Category[]) => void;
   selectedCategory: string | null;
-  setSelectedCategory: (category: string | null) => void;
+  setSelectedCategory: (e: ChangeEvent<HTMLInputElement>) => void;
   newCategory: string;
-  setNewCategory: (category: string) => void;
+  setNewCategory: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
   const [selected, setSelected] = useState(selectedCategory);
   const [isAdding, setIsAdding] = useState(false);
@@ -32,7 +32,9 @@ export default function CategoryDropdown({
       return;
     }
     setSelected(newCategory);
-    setSelectedCategory(null);
+    setSelectedCategory({
+      target: { name: "category_id", value: newCategory },
+    } as any);
     setIsAdding(false);
   };
 
@@ -69,7 +71,9 @@ export default function CategoryDropdown({
                   categoryList.map((category) => (
                     <button
                       onClick={() => {
-                        setSelectedCategory(category.id);
+                        setSelectedCategory({
+                          target: { name: "category_id", value: category.name },
+                        } as any);
                         setSelected(category.name);
                         setIsOpen(false);
                       }}
@@ -92,7 +96,10 @@ export default function CategoryDropdown({
         <div className="flex flex-col gap-2">
           <input
             value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
+            onChange={(e) => {
+              setNewCategory(e);
+            }}
+            name="new_category"
             placeholder="Enter new category"
             className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
           />

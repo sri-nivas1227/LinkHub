@@ -1,89 +1,90 @@
 "use client";
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../components/CategoryDropdown";
-import NavBar from "../components/NavBar";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getCategoriesAction, postAddURLAction } from "../actions";
 import { ROUTES } from "@/config/constants";
-
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 interface Category {
   id: string | null;
   name: string;
 }
 
 export default function AddLinkPage() {
-  const [link, setLink] = useState("");
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    url: "",
+    title: "",
+    category_id: "",
+    new_category: "",
+  });
   const [newCategory, setNewCategory] = useState("");
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [message,setMessage] = useState<string|null> (null);
-
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchCategories = async () => {
     try {
       const response = await getCategoriesAction();
-      if(!response.success)
-      {
+      if (!response.success) {
         setError(response.message);
         return;
       }
-      if (Array.isArray(response.data)) {
-        setCategoryList(response.data);
-      } else if (response && Array.isArray(response.data)) {
+      if (response && Array.isArray(response.data)) {
         setCategoryList(response.data);
       } else {
-        console.error("Unexpected response format:", response);
         setCategoryList([]);
       }
     } catch (error) {
-      console.error("Error fetching categories:", error);
       setCategoryList([]);
     }
   };
 
   const handleSubmit = async () => {
-    if (!link || !title || (!category && !newCategory)) {
-      setError("All Fields are required")
+    if (
+      !formData.url ||
+      !formData.title ||
+      (!formData.category_id && !formData.new_category)
+    ) {
+      toast.error("All Fields are required");
       return;
     }
 
-    const newLink = {
-      url: link,
-      title,
-      category_id: category,
-      new_category: newCategory,
-    };
-
     try {
       setIsSubmitting(true);
-      setError(null)
-      const response = await postAddURLAction(newLink);
+      setError(null);
+      const response = await postAddURLAction(formData);
 
       if (!response.success) {
-        setError(response.message);
+        toast.error(response.message);
         return;
       }
 
-      setLink("");
-      setTitle("");
-      setNewCategory("");
-      setCategory(null);
-      setMessage(response.message);
+      setFormData({
+        url: "",
+        title: "",
+        category_id: "",
+        new_category: "",
+      });
+      // setMessage(response.message);
+      toast.success(response.message);
+      router.push(ROUTES.HOME);
     } catch (error) {
       console.error("Error adding link:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
   useEffect(() => {
     fetchCategories();
   }, []);
-
+  console.log("form-data:", formData);
   return (
     <div className="">
       <main className="mx-auto w-full max-w-md px-4 pb-24 pt-6">
@@ -105,14 +106,14 @@ export default function AddLinkPage() {
           </div>
 
           <label className="flex flex-col gap-2 text-sm text-zinc-300">
-            URL
+            Link URL
             <input
               type="text"
-              name="link"
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              id="link"
-              placeholder="Paste your link here"
+              name="url"
+              value={formData.url}
+              onChange={handleInputChange}
+              id="url"
+              placeholder="Paste your URL here"
               className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/70 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
             />
           </label>
@@ -122,8 +123,8 @@ export default function AddLinkPage() {
             <input
               type="text"
               name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={formData.title}
+              onChange={handleInputChange}
               id="title"
               placeholder="Choose a title"
               className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/70 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
@@ -135,20 +136,15 @@ export default function AddLinkPage() {
             <CategoryDropdown
               categoryList={categoryList}
               setCategoryList={setCategoryList}
-              selectedCategory={category}
-              setSelectedCategory={setCategory}
-              newCategory={newCategory}
-              setNewCategory={setNewCategory}
+              selectedCategory={formData.category_id}
+              setSelectedCategory={handleInputChange}
+              newCategory={formData.new_category}
+              setNewCategory={handleInputChange}
             />
           </div>
-           {error && (
+          {error && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
               {error}
-            </div>
-          )}
-          {message && (
-            <div className="rounded-xl border border-green-500/40 bg-green-500/10 px-4 py-3 text-sm text-green-200">
-              {message}
             </div>
           )}
           <button
