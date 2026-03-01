@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { postSignupAction } from "../../actions";
+import { postLoginAction, postSignupAction } from "../../actions";
 import { ROUTES } from "@/config/constants";
 
 export default function SignUpPage() {
@@ -18,15 +18,18 @@ export default function SignUpPage() {
   const handleSignUp = async () => {
     setLoading(true);
     setError(null);
-    if(form.email===""||form.name==="" || form.password===""){
-      setError("Please fill all fields!")
+    if (form.email === "" || form.name === "" || form.password === "") {
+      setError("Please fill all fields!");
       setLoading(false);
       return;
     }
     try {
       const response = await postSignupAction(form);
       if (response.success) {
-        router.push(ROUTES.LOGIN);
+        const result = await postLoginAction(form);
+        if (result.success) {
+          router.push(ROUTES.HOME);
+        }
       } else {
         setError(response.message || "Signup Failed :/ Try again!");
       }
