@@ -108,7 +108,7 @@ export default function AddLinkPage() {
           <label className="flex flex-col gap-2 text-sm text-zinc-300">
             Link URL
             <input
-              type="text"
+              type="url"
               name="url"
               value={formData.url}
               onChange={handleInputChange}
