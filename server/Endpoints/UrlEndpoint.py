@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from pymongo import DESCENDING, ASCENDING
 from bson import ObjectId
 from models.Link import Link
 from db import db
@@ -10,56 +11,6 @@ from helpers.utilities import validate_and_get_token_payload
 # Create a Blueprint for URL endpoints
 urlRouter = Blueprint('url', __name__)
 
-@urlRouter.route('/urls', methods=['GET'])
-def get_urls():
-    """Get all URLs"""
-    try:
-        all_links = Link.get_all()
-        # Convert to JSON-serializable format, excluding user_id for privacy
-        links_data = []
-        for link in all_links:
-            link_json = link.to_json()
-            # Remove user_id for privacy
-            if 'user_id' in link_json:
-                del link_json['user_id']
-            links_data.append(link_json)
-        
-        return jsonify({"message": "List of URLs", "data": {"links": links_data}}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@urlRouter.route('/urls/<url_id>', methods=['GET'])
-def get_url(url_id):
-    """Get a specific URL by ID"""
-    try:
-        link = Link.get_by_id(url_id)
-        if link:
-            link_json = link.to_json()
-            # Remove user_id for privacy
-            if 'user_id' in link_json:
-                del link_json['user_id']
-            return jsonify({"message": f"Details of URL {url_id}", "data": link_json}), 200
-        return jsonify({"message": "URL not found"}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@urlRouter.route("/urls/category/top/<category_id>", methods=['GET'])
-def get_top_urls_by_category(category_id):
-    """Get top URLs by category"""
-    token = request.cookies.get('token')
-    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
-    if is_valid_token:
-        user_id = payload.get('user_id')
-    else:
-        return jsonify({
-            "success": False,
-            "message": "Invalid or missing token"
-        }), 401    
-    try:
-        top_links = [item.to_json() for item in Link.get_top_by_category(category_id, user_id=user_id)]
-        return jsonify({"message": f"Top URLs in category {category_id}", "data": top_links}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 @urlRouter.route('/urls', methods=['POST'])
 def create_url():
@@ -131,51 +82,18 @@ def create_url():
     # except Exception as e:
     #     return jsonify({"error": str(e)}), 500
 
-@urlRouter.route('/urls/<url_id>', methods=['PUT'])
-def update_url(url_id):
-    """Update a specific URL by ID"""
-    try:
-        link = Link.get_by_id(url_id)
-        if not link:
-            return jsonify({"message": "URL not found"}), 404
-        
-        data = request.get_json()
-        if not data:
-            return jsonify({"message": "No data provided"}), 400
-        
-        # Update the link
-        success = link.update(data)
-        if success:
-            return jsonify({
-                "message": "URL updated successfully",
-                "data": link.to_json()
-            }), 200
-        else:
-            return jsonify({"message": "Update failed"}), 400
-            
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@urlRouter.route('/urls/<url_id>', methods=['DELETE'])
-def delete_url(url_id):
-    """Delete a specific URL by ID"""
-    try:
-        link = Link.get_by_id(url_id)
-        if not link:
-            return jsonify({"message": "URL not found"}), 404
-        
-        success = link.delete()
-        if success:
-            return jsonify({"message": "URL deleted successfully"}), 200
-        else:
-            return jsonify({"message": "Delete failed"}), 400
-            
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@urlRouter.route('/urls/user/<user_id>', methods=['GET'])
-def get_urls_by_user(user_id):
+@urlRouter.route('/urls/user', methods=['GET'])
+def get_urls_by_user():
     """Get all URLs for a specific user"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     try:
         links = Link.get_by_user_id(user_id)
         links_data = [link.to_json() for link in links]
@@ -237,5 +155,47 @@ def search_urls_by_tags():
             "message": f"URLs matching tags: {tags}",
             "data": links_data
         }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 
+
+@urlRouter.route('/urls/<url_id>', methods=['PUT'])
+def update_url(url_id):
+    """Update a specific URL by ID"""
+    try:
+        link = Link.get_by_id(url_id)
+        if not link:
+            return jsonify({"message": "URL not found"}), 404
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "No data provided"}), 400
+        
+        # Update the link
+        success = link.update(data)
+        if success:
+            return jsonify({
+                "message": "URL updated successfully",
+                "data": link.to_json()
+            }), 200
+        else:
+            return jsonify({"message": "Update failed"}), 400
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@urlRouter.route('/urls/<url_id>', methods=['DELETE'])
+def delete_url(url_id):
+    """Delete a specific URL by ID"""
+    try:
+        link = Link.get_by_id(url_id)
+        if not link:
+            return jsonify({"message": "URL not found"}), 404
+        
+        success = link.delete()
+        if success:
+            return jsonify({"message": "URL deleted successfully"}), 200
+        else:
+            return jsonify({"message": "Delete failed"}), 400
+            
     except Exception as e:
         return jsonify({"error": str(e)}), 500

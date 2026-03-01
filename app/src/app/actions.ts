@@ -1,7 +1,12 @@
 "use server";
 import { cookies, headers } from "next/headers";
 import jwt from "jsonwebtoken";
-import { API_URL, AUTH_COOKIE_NAME, COOKIE_CONFIG } from "@/config/constants";
+import {
+  API_URL,
+  AUTH_COOKIE_NAME,
+  COOKIE_CONFIG,
+  ENDPOINTS,
+} from "@/config/constants";
 
 type responseFormat = { success: boolean; message: string; data?: any };
 
@@ -12,7 +17,7 @@ export async function postSignupAction(formData: {
   password: string;
   name: string;
 }) {
-  const response = await fetch(`${API_URL}/signup`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.SIGNUP}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +30,7 @@ export async function postSignupAction(formData: {
 
 export async function postLoginAction(formData: any) {
   // 1. Call your external API
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.LOGIN}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +75,7 @@ export async function logoutAction() {
 export async function getCategoriesAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-  const response = await fetch(`${API_URL}/categories`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.CATEGORIES}`, {
     headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
@@ -84,7 +89,7 @@ export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
   const response = await fetch(
-    `${API_URL}/urls/category?category_id=${selectedCategoryId}`,
+    `${API_URL}${ENDPOINTS.LINKS_BY_CATEGORY}?category_id=${selectedCategoryId}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +104,7 @@ export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
 export async function getAllLinksAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-  const response = await fetch(`${API_URL}/urls`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.ALL_LINKS}`, {
     headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
@@ -112,7 +117,7 @@ export async function getAllLinksAction() {
 export async function postAddURLAction(newLink: any) {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-  const response = await fetch(`${API_URL}/urls`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.ADD_LINK}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -125,10 +130,10 @@ export async function postAddURLAction(newLink: any) {
 }
 
 // Profile actions
-export async function getProfileAction(){
+export async function getProfileAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-  const response = await fetch(`${API_URL}/profile`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.GET_PROFILE}`, {
     headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
@@ -141,9 +146,9 @@ export async function getProfileAction(){
 export async function postUpdateProfileAction(updatedProfile: any) {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME);
-  const response = await fetch(`${API_URL}/profile`, {
+  const response = await fetch(`${API_URL}${ENDPOINTS.POST_PROFILE}`, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
     },

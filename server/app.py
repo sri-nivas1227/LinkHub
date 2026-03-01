@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 import os
 from dotenv import load_dotenv
-from UrlEndpoint import urlRouter
-from CategoryEndpoint import categoryRouter
-from AuthEndpoints import auth_router
+from Endpoints.UrlEndpoint import urlRouter
+from Endpoints.CategoryEndpoint import categoryRouter
+from Endpoints.AuthEndpoints import auth_router
 from Endpoints.ProfileEndpoints import profile_router
 from flask_cors import CORS
 from db import db
