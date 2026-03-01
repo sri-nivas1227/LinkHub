@@ -49,6 +49,21 @@ export async function postLoginAction(formData: any) {
   return responseData;
 }
 
+export async function pingServerAction() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}${ENDPOINTS.PING}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+  });
+  const data: responseFormat = await response.json();
+  if (!data.success) {
+    cookieStore.delete(AUTH_COOKIE_NAME);
+  }
+  return data;
+}
 export async function checkTokenAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;

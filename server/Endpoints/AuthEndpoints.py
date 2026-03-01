@@ -4,6 +4,7 @@ import jwt
 from dotenv import load_dotenv
 import os
 from datetime import datetime
+from helpers.utilities import validate_and_get_token_payload
 from models.User import User
 
 load_dotenv()
@@ -81,3 +82,19 @@ def login():
         },
         200,
     )
+
+
+@auth_router.route("/ping", methods=["GET"])
+def ping():
+    token = request.cookies.get("token")
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+        user = User.get_by_id(user_id)
+        if user:
+            return make_response({"message": f"pong, {user.full_name}"}, 200)
+    return make_response({
+            "success": False,
+            "message": "Invalid or missing token"
+        }, 401)

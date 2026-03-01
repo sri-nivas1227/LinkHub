@@ -34,6 +34,7 @@ export const APP_CONFIG = {
 
 // LinkHub API Endpoints
 export const ENDPOINTS = {
+  PING: "/ping",
   LOGIN: "/login",
   SIGNUP: "/signup",
   CATEGORIES: "/categories",

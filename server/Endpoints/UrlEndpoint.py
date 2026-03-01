@@ -16,7 +16,6 @@ urlRouter = Blueprint('url', __name__)
 def create_url():
     """Create a new URL"""
     # try:
-    data = request.get_json()
     token = request.cookies.get('token')
     is_valid_token, payload = validate_and_get_token_payload(token) if token else False
     if is_valid_token:
@@ -26,6 +25,7 @@ def create_url():
             "success": False,
             "message": "Invalid or missing token"
         }), 401
+    data = request.get_json()
     # Validate required fields
     if not data or not data.get('url'):
         return jsonify({"message": "URL is required"}), 400
@@ -52,7 +52,7 @@ def create_url():
         existing_link = existing_link.to_dict()
         # Fetch category details for the existing link
         if existing_link.get("category"):
-            category = Category.get_by_id(existing_link['category_id'])
+            category = Category.get_by_id(existing_link['category_id'], user_id=user_id)
             if category:
                 return jsonify({"success":False,"message": f"URL already exists in category {category.category}"}), 409
         return jsonify({"success":False,"message": f"URL already exists in {existing_link['_id']}"}, 409)
@@ -107,12 +107,21 @@ def get_urls_by_user():
 @urlRouter.route('/urls/category', methods=['GET'])
 def get_urls_by_category():
     """Get all URLs for a specific category"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:        
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     try:
         category_id = request.args.get('category_id')
         if not category_id:
             return jsonify({"message": "Category ID is required"}), 400
         try:
-            category = Category.get_by_id(category_id)
+            category = Category.get_by_id(category_id, user_id)
         except Exception as e:
             return jsonify({"error": str(e)}), 500
         links = Link.get_by_category(category_id)
