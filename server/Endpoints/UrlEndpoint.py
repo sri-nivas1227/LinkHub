@@ -98,8 +98,9 @@ def get_urls_by_user():
         links = Link.get_by_user_id(user_id)
         links_data = [link.to_json() for link in links]
         return jsonify({
+            "success": True,
             "message": f"URLs for user {user_id}",
-            "data": links_data
+            "data": {"links":links_data}
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

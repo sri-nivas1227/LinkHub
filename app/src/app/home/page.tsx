@@ -11,6 +11,7 @@ import {
   getLinksFromCategoriesAction,
 } from "../actions";
 import { ROUTES, UI_CONFIG } from "@/config/constants";
+import { toast } from "sonner";
 
 interface Category {
   id: string;
@@ -25,21 +26,12 @@ interface LinkType {
 // Check for token in cookies before loading the home page
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null,
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [links, setLinks] = useState<LinkType[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  useEffect(() => {
-    checkTokenAction().then((isAuthenticated) => {
-      if (!isAuthenticated) {
-        window.location.href = ROUTES.LOGIN;
-      }
-    });
-  }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
@@ -49,11 +41,8 @@ export default function Home() {
           ? response.data
           : [];
         setCategories(nextCategories);
-        if (nextCategories.length > 0) {
-          setSelectedCategoryId((current) => current ?? nextCategories[0].id);
-        }
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories. Please try again.");
         setCategories([]);
       } finally {
         setIsLoadingCategories(false);
@@ -64,31 +53,22 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!selectedCategoryId) {
-      setLinks([]);
-      setIsLoadingLinks(false);
-      return;
-    }
-
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
+        let responsedata;
         if (selectedCategoryId === "all") {
-          const allLinksResponse = await getAllLinksAction();
-          const allLinks = Array.isArray(allLinksResponse?.data?.links)
-            ? allLinksResponse.data.links
-            : [];
-          setLinks(allLinks);
+          responsedata = await getAllLinksAction();
         } else {
-          const response =
-            await getLinksFromCategoriesAction(selectedCategoryId);
-          const nextLinks = Array.isArray(response?.data?.links)
-            ? response.data.links
-            : [];
-          setLinks(nextLinks);
+          responsedata =
+          await getLinksFromCategoriesAction(selectedCategoryId);
         }
+        const allLinks = Array.isArray(responsedata?.data?.links)
+          ? responsedata.data.links
+          : [];
+        setLinks(allLinks);
       } catch (error) {
-        console.error("Error fetching links:", error);
+        toast.error("Failed to load links. Please try again.");
         setLinks([]);
       } finally {
         setIsLoadingLinks(false);

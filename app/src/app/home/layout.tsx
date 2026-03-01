@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import NavBar from "../components/NavBar";
 import { pingServerAction } from "../actions";
 import { useRouter } from "next/navigation";
+import { ROUTES } from "@/config/constants";
 
 export default function HomeLayout({
   children,
@@ -16,7 +17,7 @@ export default function HomeLayout({
       console.log("Ping response:", response.success);
       if (!response.success) {
         console.log("User not authenticated. Redirecting to login.");
-        router.push("/auth/login");
+        router.push(ROUTES.LOGIN);
       }
     };
     pingServer();
