@@ -43,5 +43,5 @@ export const ENDPOINTS = {
   ALL_LINKS: "/urls/user",
   ADD_LINK: "/urls",
   GET_PROFILE: "/profile",
-  POST_PROFILE: "/profile/update",
+  POST_PROFILE: "/profile",
 } as const;

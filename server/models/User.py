@@ -19,7 +19,7 @@ class User:
         self.email = email
         self.username = username
         self.password = password
-        self.profile = profile
+        self.profile = profile if profile else {"description": "", "links": []}
         self.preferences = preferences
 
     def to_dict(self):

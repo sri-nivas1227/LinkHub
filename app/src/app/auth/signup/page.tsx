@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { postLoginAction, postSignupAction } from "../../actions";
 import { ROUTES } from "@/config/constants";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function SignUpPage() {
         const result = await postLoginAction(form);
         if (result.success) {
           router.push(ROUTES.HOME);
+          toast.success("Account created successfully! Welcome to LinkHub! 🎉");
         }
       } else {
         setError(response.message || "Signup Failed :/ Try again!");
