@@ -93,7 +93,7 @@ export default function ProfilePage() {
             </div>
           </motion.div>
         )}
-        {isEditing && <EditProfileForm profile={profile} />}
+        {isEditing && <EditProfileForm profile={profile} setIsEditing={setIsEditing} />}
       </main>
     </div>
   );

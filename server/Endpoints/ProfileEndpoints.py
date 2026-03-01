@@ -49,12 +49,13 @@ def getProfile():
     if not user:
         return make_response({"success":False, "message":"User does not exist"}, 401)
 
-    profile_data = user.profile
+    profile_data = user.profile if user.profile else {}
+    
     response_data = {
         "name": user.full_name,
         "email": user.email,
-        "description": profile_data.get("description"),
-        "links": profile_data.get("links"),
+        "description": profile_data.get("description", ""),
+        "links": profile_data.get("links", []),
     }
     return make_response(
             {

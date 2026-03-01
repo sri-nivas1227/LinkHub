@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { postUpdateProfileAction } from "@/app/actions";
+import { useRouter } from "next/navigation";
 
 interface Link {
   title: string;
@@ -16,8 +17,16 @@ interface Profile {
   links: Link[];
 }
 
-const EditProfileForm = ({ profile }: { profile: Profile | null }) => {
-  const [updatedProfile, setUpdatedProfile] = useState<Profile>(profile!);
+const EditProfileForm = ({ profile, setIsEditing }: { profile: Profile | null; setIsEditing: (isEditing: boolean) => void }) => {
+  const router = useRouter();
+  const [updatedProfile, setUpdatedProfile] = useState<Profile>(
+    profile || {
+      name: "",
+      email: "",
+      description: "",
+      links: [],
+    },
+  );
 
   const handleProfileChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -55,6 +64,7 @@ const EditProfileForm = ({ profile }: { profile: Profile | null }) => {
     if (response.success) {
       // Handle success (e.g., show a success message, redirect, etc.)
       console.log("Profile updated successfully");
+      setIsEditing(false);
     } else {
       // Handle error (e.g., show an error message)
       console.error("Failed to update profile");
@@ -161,6 +171,7 @@ const EditProfileForm = ({ profile }: { profile: Profile | null }) => {
         <button
           type="button"
           className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+          onClick={() => setIsEditing(false)}
         >
           Cancel
         </button>

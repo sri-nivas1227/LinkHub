@@ -93,7 +93,7 @@ def ping():
         user_id = payload.get('user_id')
         user = User.get_by_id(user_id)
         if user:
-            return make_response({"message": f"pong, {user.full_name}"}, 200)
+            return make_response({"success":True, "message": f"pong, {user.full_name}"}, 200)
     return make_response({
             "success": False,
             "message": "Invalid or missing token"

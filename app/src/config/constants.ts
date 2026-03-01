@@ -16,6 +16,7 @@ export const ROUTES = {
   LOGIN: "/auth/login",
   SIGNUP: "/auth/signup",
   ADD_LINK: "/addLink",
+  PROFILE: "/profile",
   ROOT: "/",
 } as const;
 
@@ -43,6 +44,4 @@ export const ENDPOINTS = {
   ADD_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile/update",
-
-
 } as const;
