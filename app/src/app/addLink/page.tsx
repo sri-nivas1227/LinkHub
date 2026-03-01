@@ -69,8 +69,8 @@ export default function AddLinkPage() {
         new_category: "",
       });
       // setMessage(response.message);
-      toast.success(response.message);
       router.push(ROUTES.HOME);
+      toast.success(response.message);
     } catch (error) {
       console.error("Error adding link:", error);
     } finally {

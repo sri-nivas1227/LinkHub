@@ -1,6 +1,7 @@
 "use client";
 import { ChangeEvent, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 interface Category {
   id: string | null;
@@ -26,15 +27,12 @@ export default function CategoryDropdown({
   const [isAdding, setIsAdding] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAdd = () => {
+  const handleAddNewCategory = () => {
     if (!newCategory.trim()) {
-      console.error("New category cannot be empty");
+      toast.error("New category cannot be empty");
       return;
     }
     setSelected(newCategory);
-    setSelectedCategory({
-      target: { name: "category_id", value: newCategory },
-    } as any);
     setIsAdding(false);
   };
 
@@ -72,7 +70,7 @@ export default function CategoryDropdown({
                     <button
                       onClick={() => {
                         setSelectedCategory({
-                          target: { name: "category_id", value: category.name },
+                          target: { name: "category_id", value: category.id },
                         } as any);
                         setSelected(category.name);
                         setIsOpen(false);
@@ -105,7 +103,7 @@ export default function CategoryDropdown({
           />
           <div className="flex gap-2">
             <button
-              onClick={handleAdd}
+              onClick={handleAddNewCategory}
               className="flex-1 rounded-full border border-indigo-500/60 bg-indigo-500/20 px-4 py-2 text-xs font-semibold text-indigo-200"
             >
               Add
