@@ -22,6 +22,10 @@ interface LinkType {
   _id: string;
   title: string;
   url: string;
+  visits: number;
+  category_id: string;
+  updated_id: string;
+  tags: string[];
 }
 // Check for token in cookies before loading the home page
 export default function Home() {
@@ -204,6 +208,13 @@ export default function Home() {
                   </div>
                   {copiedId === link._id && (
                     <p className="mt-3 text-xs text-emerald-300">Copied!</p>
+                  )}
+                  {selectedCategoryId == "all" && (
+                    <p className="text-xs text-zinc-400 mt-2">
+                      Collection Name:{" "}
+                      {categories.find((cat) => cat.id === link.category_id)
+                        ?.name || "Uncategorized"}
+                    </p>
                   )}
                 </motion.div>
               ))}
