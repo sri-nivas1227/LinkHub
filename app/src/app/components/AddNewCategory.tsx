@@ -1,6 +1,5 @@
 "use client";
 import { ChangeEvent, useState } from "react";
-import { ChevronDown, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 interface Category {
@@ -8,7 +7,7 @@ interface Category {
   name: string;
 }
 
-export default function CategoryDropdown({
+export default function AddNewCategory({
   setIsAdding,
   selectedCategory,
   setSelectedCategory,

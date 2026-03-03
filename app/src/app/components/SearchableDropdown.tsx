@@ -103,11 +103,7 @@ const SearchableDropdown = <T extends Record<string, any>>({
   const selectedCategoryName = useMemo(() => {
     return options.find((category) => category.value === selectedVal)?.label;
   }, [options, selectedVal]);
-  console.log(
-    "selectedVal:selectedCategoryname",
-    selectedVal,
-    selectedCategoryName,
-  );
+
   return (
     <div className="relative text-gray-800 font-sans" ref={containerRef}>
       <div className="relative">

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import CategoryDropdown from "../components/CategoryDropdown";
+import AddNewCategory from "@/app/components/AddNewCategory";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getCategoriesAction, postAddURLAction } from "../actions";
@@ -180,7 +180,7 @@ export default function AddLinkPage() {
                 </button>
               )}
               {isAdding && (
-                <CategoryDropdown
+                <AddNewCategory
                   setIsAdding={setIsAdding}
                   selectedCategory={formData.new_category}
                   setSelectedCategory={(e) =>
