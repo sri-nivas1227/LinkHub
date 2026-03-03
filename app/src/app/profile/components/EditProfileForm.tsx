@@ -59,11 +59,9 @@ const EditProfileForm = ({ profile, setIsEditing }: { profile: Profile | null; s
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Updated Profile:", updatedProfile);
     const response = await postUpdateProfileAction(updatedProfile);
     if (response.success) {
       // Handle success (e.g., show a success message, redirect, etc.)
-      console.log("Profile updated successfully");
       setIsEditing(false);
     } else {
       // Handle error (e.g., show an error message)

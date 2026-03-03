@@ -26,12 +26,10 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       const profileData = await getProfileAction();
-      console.log(profileData);
       setProfile(profileData.data.profile);
     };
     fetchProfile();
   }, []);
-  console.log(profile);
   return (
     <div className="min-h-screen">
       <main className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">

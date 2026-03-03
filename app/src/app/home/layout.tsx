@@ -14,9 +14,7 @@ export default function HomeLayout({
   useEffect(() => {
     const pingServer = async () => {
       const response = await pingServerAction();
-      console.log("Ping response:", response.success);
       if (!response.success) {
-        console.log("User not authenticated. Redirecting to login.");
         router.push(ROUTES.LOGIN);
       }
     };
