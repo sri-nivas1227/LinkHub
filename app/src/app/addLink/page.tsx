@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CategoryDropdown from "../components/CategoryDropdown";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import { getCategoriesAction, postAddURLAction } from "../actions";
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import SearchableDropdown from "@/app/components/SearchableDropdown";
 interface Category {
   id: string | null;
   name: string;
@@ -19,7 +20,8 @@ export default function AddLinkPage() {
     category_id: "",
     new_category: "",
   });
-  const [newCategory, setNewCategory] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export default function AddLinkPage() {
     try {
       const response = await getCategoriesAction();
       if (!response.success) {
-        setError(response.message);
+        toast.error(response.message);
         return;
       }
       if (response && Array.isArray(response.data)) {
@@ -54,7 +56,6 @@ export default function AddLinkPage() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
       const response = await postAddURLAction(formData);
 
       if (!response.success) {
@@ -81,10 +82,19 @@ export default function AddLinkPage() {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+  const selectedCategoryName = useMemo(() => {
+    return categoryList.find((category) => category.id === formData.category_id)
+      ?.name;
+  }, [categoryList, formData.category_id]);
+  const handleRemoveNewCategory = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      new_category: "",
+    }));
+  };
   useEffect(() => {
     fetchCategories();
   }, []);
-  console.log("form-data:", formData);
   return (
     <div className="">
       <main className="mx-auto w-full max-w-md px-4 pb-24 pt-6">
@@ -133,20 +143,73 @@ export default function AddLinkPage() {
 
           <div className="flex flex-col gap-2">
             <span className="text-sm text-zinc-300">Category</span>
-            <CategoryDropdown
-              categoryList={categoryList}
-              setCategoryList={setCategoryList}
-              selectedCategory={formData.category_id}
-              setSelectedCategory={handleInputChange}
-              newCategory={formData.new_category}
-              setNewCategory={handleInputChange}
-            />
-          </div>
-          {error && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {error}
+            {!formData.new_category && (
+              <SearchableDropdown
+                options={categoryList.map((category) => ({
+                  label: category.name,
+                  value: category.id || "",
+                }))}
+                label="label"
+                id="category-dropdown"
+                selectedVal={formData.category_id}
+                handleChange={(item) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    category_id: item?.value || "",
+                    new_category: "",
+                  }));
+                }}
+              />
+            )}
+            <div
+              className={`${isAdding ? "flex flex-col gap-2" : "flex items-center justify-between"}`}
+            >
+              {!formData.new_category && (
+                <p className="text-xs text-zinc-400 mt-2">
+                  {isAdding
+                    ? "Creating a new category..."
+                    : "Want to create a new category?"}
+                </p>
+              )}
+              {!isAdding && !formData.new_category && (
+                <button
+                  onClick={() => setIsAdding(true)}
+                  className="text-xs text-indigo-500/80 hover:text-indigo-500 transition"
+                >
+                  Add new
+                </button>
+              )}
+              {isAdding && (
+                <CategoryDropdown
+                  setIsAdding={setIsAdding}
+                  selectedCategory={formData.new_category}
+                  setSelectedCategory={(e) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      new_category: e.target.value,
+                      category_id: "",
+                    }))
+                  }
+                />
+              )}
             </div>
-          )}
+            {formData.new_category && (
+              <div className="flex items-center justify-between gap-4">
+                <p className="mt-2 text-sm text-zinc-300">
+                  New Category:{" "}
+                  <b className="text-base">
+                    {selectedCategoryName || formData.new_category}
+                  </b>
+                </p>
+                <p
+                  onClick={handleRemoveNewCategory}
+                  className="mt-2 text-xs text-red-300 cursor-pointer"
+                >
+                  Remove
+                </p>
+              </div>
+            )}
+          </div>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
