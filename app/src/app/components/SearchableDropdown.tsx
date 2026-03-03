@@ -112,7 +112,7 @@ const SearchableDropdown = <T extends Record<string, any>>({
           value={query || selectedCategoryName || ""}
           placeholder={placeholder}
           onKeyDown={handleKeyDown}
-          className="w-full px-3 py-2 pr-12 text-base bg-white border border-gray-300 rounded-sm cursor-default outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
+          className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/70 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
           onChange={(e) => {
             setQuery(e.target.value);
             handleChange(null);
@@ -130,7 +130,7 @@ const SearchableDropdown = <T extends Record<string, any>>({
       {isOpen && (
         <div
           ref={optionsRef}
-          className="absolute top-full left-0 z-[1000] w-full mt-1 max-h-52 overflow-y-auto bg-white border border-gray-300 shadow-lg rounded-sm"
+          className="absolute top-full left-0 z-[1000] w-full mt-1 max-h-52 overflow-y-auto rounded-2xl border border-zinc-600 bg-zinc-950 shadow-lg "
         >
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option, index) => {
@@ -144,8 +144,8 @@ const SearchableDropdown = <T extends Record<string, any>>({
                   onClick={() => selectOption(option)}
                   className={`px-3 py-2 cursor-pointer transition-colors ${
                     isSelected || isFocused
-                      ? "bg-blue-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? "bg-zinc-700 text-white"
+                      : "text-gray-400 hover:bg-zinc-600"
                   }`}
                 >
                   {option[label]}
