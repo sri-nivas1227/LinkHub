@@ -13,12 +13,13 @@ import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchableDropdown from "@/app/components/SearchableDropdown";
+import { Suspense } from "react";
 interface Category {
   id: string | null;
   name: string;
 }
 
-export default function AddLinkPage() {
+function AddLinkForm() {
   const [formData, setFormData] = useState({
     url: "",
     title: "",
@@ -260,5 +261,13 @@ export default function AddLinkPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AddLinkPage() {
+  return (
+    <Suspense>
+      <AddLinkForm />
+    </Suspense>
   );
 }
