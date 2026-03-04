@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Link as LinkIcon, Plus, Sparkles } from "lucide-react";
+import { Copy, Link as LinkIcon, Plus, Sparkles, Edit } from "lucide-react";
 import {
   checkTokenAction,
   getAllLinksAction,
@@ -12,6 +12,7 @@ import {
 } from "../actions";
 import { ROUTES, UI_CONFIG } from "@/config/constants";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Category {
   id: string;
@@ -29,13 +30,13 @@ interface LinkType {
 }
 // Check for token in cookies before loading the home page
 export default function Home() {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [links, setLinks] = useState<LinkType[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
@@ -64,8 +65,7 @@ export default function Home() {
         if (selectedCategoryId === "all") {
           responsedata = await getAllLinksAction();
         } else {
-          responsedata =
-          await getLinksFromCategoriesAction(selectedCategoryId);
+          responsedata = await getLinksFromCategoriesAction(selectedCategoryId);
         }
         const allLinks = Array.isArray(responsedata?.data?.links)
           ? responsedata.data.links
@@ -96,7 +96,9 @@ export default function Home() {
       console.error("Copy failed:", error);
     }
   };
-
+  const handleEditLink = (link_id: string) => {
+    router.push(`${ROUTES.ADD_LINK}?linkId=${link_id}`);
+  };
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-2">
@@ -198,6 +200,12 @@ export default function Home() {
                         {link.url}
                       </p>
                     </div>
+                    <button
+                      onClick={() => handleEditLink(link._id)}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
+                    >
+                      <Edit size={16} />
+                    </button>
                     <button
                       onClick={() => handleCopy(link._id, link.url)}
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
