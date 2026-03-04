@@ -126,6 +126,23 @@ export async function getAllLinksAction() {
     },
   });
   const data: responseFormat = await response.json();
+  
+  return data;
+}
+
+export async function getLinkDataAction(linkId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.LINK_DATA}/${linkId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${token?.value}`,
+      },
+    },
+  );
+  const data: responseFormat = await response.json();
   return data;
 }
 
@@ -139,6 +156,21 @@ export async function postAddURLAction(newLink: any) {
       Cookie: `token=${token?.value}`,
     },
     body: JSON.stringify(newLink),
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
+
+export async function putEditURLAction(updatedLink: any, linkId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const response = await fetch(`${API_URL}${ENDPOINTS.EDIT_LINK}/${linkId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+    body: JSON.stringify(updatedLink),
   });
   const data: responseFormat = await response.json();
   return data;
