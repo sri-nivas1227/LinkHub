@@ -40,8 +40,10 @@ export const ENDPOINTS = {
   SIGNUP: "/signup",
   CATEGORIES: "/categories",
   LINKS_BY_CATEGORY: "/urls/category",
+  LINK_DATA: "/urls",
   ALL_LINKS: "/urls/user",
   ADD_LINK: "/urls",
+  EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",
 } as const;

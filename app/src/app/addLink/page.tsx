@@ -3,10 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import AddNewCategory from "@/app/components/AddNewCategory";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getCategoriesAction, postAddURLAction } from "../actions";
+import {
+  getCategoriesAction,
+  postAddURLAction,
+  getLinkDataAction,
+  putEditURLAction,
+} from "../actions";
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import SearchableDropdown from "@/app/components/SearchableDropdown";
 interface Category {
   id: string | null;
@@ -21,11 +26,37 @@ export default function AddLinkPage() {
     new_category: "",
   });
   const [isAdding, setIsAdding] = useState(false);
-
+  const [isEditingLink, setIsEditingLink] = useState(false);
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  // on load fetch the link id from the url params and replace the url without the params
+  const urlParams = useSearchParams();
+  const linkId = urlParams.get("linkId");
+  useEffect(() => {
+    if (linkId) {
+      const fetchLinkData = async () => {
+        const response = await getLinkDataAction(linkId);
+        if (!response.success) {
+          toast.error(response.message);
+          return;
+        }
+        const responseData = response.data;
+        setFormData((prevData) => ({
+          ...prevData,
+          url: responseData.url,
+          title: responseData.title,
+          category_id: responseData.category_id,
+          new_category: "",
+        }));
+        // Remove the query parameter from the URL
+        // const newUrl = window.location.origin + window.location.pathname;
+        // window.history.replaceState({}, document.title, newUrl);
+      };
+      fetchLinkData();
+      setIsEditingLink(true);
+    }
+  }, [linkId]);
 
   const fetchCategories = async () => {
     try {
@@ -56,7 +87,12 @@ export default function AddLinkPage() {
 
     try {
       setIsSubmitting(true);
-      const response = await postAddURLAction(formData);
+      var response;
+      if (isEditingLink) {
+        response = await putEditURLAction(formData, linkId!);
+      } else {
+        response = await postAddURLAction(formData);
+      }
 
       if (!response.success) {
         toast.error(response.message);
@@ -215,7 +251,11 @@ export default function AddLinkPage() {
             disabled={isSubmitting}
             className="rounded-full border border-indigo-500/60 bg-indigo-500/20 px-4 py-3 text-sm font-semibold text-indigo-100 transition hover:bg-indigo-500/30 disabled:opacity-50"
           >
-            {isSubmitting ? "Saving..." : "Save link"}
+            {isSubmitting
+              ? "Saving..."
+              : isEditingLink
+                ? "Update link"
+                : "Save link"}
           </button>
         </div>
       </main>
