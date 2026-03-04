@@ -103,6 +103,7 @@ def get_urls_by_user():
             "data": {"links":links_data}
         }), 200
     except Exception as e:
+        print(f"Error fetching URLs for user {user_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @urlRouter.route('/urls/category', methods=['GET'])
@@ -168,30 +169,89 @@ def search_urls_by_tags():
     except Exception as e:
         return jsonify({"error": str(e)}), 
 
+@urlRouter.route('/urls/<url_id>', methods=['GET'])
+def get_url_by_id(url_id):
+    """Get a specific URL by ID"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
+    try:
+        link = Link.get_by_id(url_id)
+        if link and link.user_id == user_id:
+            return jsonify({
+                "success": True,
+                "message": "URL found",
+                "data": link.to_json()
+            }), 200
+        else:
+            return jsonify({
+                "success": False,
+                "message": "URL not found or unauthorized access"
+            }), 404
+    except Exception as e:
+        return jsonify({"success":False, "error": str(e)}), 500
+
 @urlRouter.route('/urls/<url_id>', methods=['PUT'])
 def update_url(url_id):
     """Update a specific URL by ID"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     try:
         link = Link.get_by_id(url_id)
-        if not link:
-            return jsonify({"message": "URL not found"}), 404
+        if not link or link.user_id != user_id:
+            return jsonify({
+                "success": False,
+                "message": "URL not found or unauthorized access"
+            }), 404
         
         data = request.get_json()
         if not data:
-            return jsonify({"message": "No data provided"}), 400
-        
-        # Update the link
-        success = link.update(data)
+            return jsonify({"success": False, "message": "No data provided"}), 400
+        if data.get("category_id"):
+            del data["new_category"]
+            # Update the link
+            success = link.update(data)
+        else:
+            # Check if the new_category already exists
+            new_category = data.get("new_category")
+            if new_category:
+                new_category_slug = convert_to_slug(new_category)
+                existing_category = Category.get_by_slug(new_category_slug)
+                if existing_category:
+                    # Use existing category ID
+                    data['category_id'] = str(existing_category._id)
+                else:
+                    # Create new category if not provided
+                    new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=user_id)
+                    new_category_object.create()
+                    data['category_id'] = str(new_category_object._id)
+            del data["new_category"]
+            success = link.update(data)
         if success:
             return jsonify({
+                "success": True,
                 "message": "URL updated successfully",
                 "data": link.to_json()
             }), 200
         else:
-            return jsonify({"message": "Update failed"}), 400
+            return jsonify({"success": False, "message": "Update failed"}), 400
             
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error updating URL {url_id} for user {user_id}: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @urlRouter.route('/urls/<url_id>', methods=['DELETE'])
 def delete_url(url_id):
@@ -199,13 +259,13 @@ def delete_url(url_id):
     try:
         link = Link.get_by_id(url_id)
         if not link:
-            return jsonify({"message": "URL not found"}), 404
+            return jsonify({"success": False, "message": "URL not found"}), 404
         
         success = link.delete()
         if success:
-            return jsonify({"message": "URL deleted successfully"}), 200
+            return jsonify({"success": True, "message": "URL deleted successfully"}), 200
         else:
-            return jsonify({"message": "Delete failed"}), 400
+            return jsonify({"success": False, "message": "Delete failed"}), 400
             
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
