@@ -5,14 +5,15 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Copy, Link as LinkIcon, Plus, Sparkles, Edit } from "lucide-react";
 import {
-  checkTokenAction,
   getAllLinksAction,
   getCategoriesAction,
+  getLinkOnSearchAction,
   getLinksFromCategoriesAction,
 } from "../actions";
 import { ROUTES, UI_CONFIG } from "@/config/constants";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import SearchBox from "../components/SearchBox";
 
 interface Category {
   id: string;
@@ -37,6 +38,7 @@ export default function Home() {
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
@@ -80,7 +82,7 @@ export default function Home() {
     };
 
     fetchLinks();
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, searchQuery]);
 
   const selectedCategoryName = useMemo(() => {
     return categories.find((category) => category.id === selectedCategoryId)
@@ -99,6 +101,20 @@ export default function Home() {
   const handleEditLink = (link_id: string) => {
     router.push(`${ROUTES.ADD_LINK}?linkId=${link_id}`);
   };
+
+  useEffect(() => {
+    if(!searchQuery) return;
+    const fetchResultsForQuery = async () => {
+      const response = await getLinkOnSearchAction(searchQuery);
+      if (!response.success) {
+        toast.error(response.message);
+      }
+      const allLinks = response.data.links;
+      setLinks(allLinks);
+    };
+    fetchResultsForQuery();
+  }, [searchQuery]);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-2">
@@ -107,8 +123,9 @@ export default function Home() {
           Curate your best links and keep everything in one sleek feed.
         </p>
       </section>
+      <SearchBox setSearchQuery={setSearchQuery} />
 
-      <section className="flex flex-col gap-3">
+      {!searchQuery && <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-zinc-300">Collections</p>
           <span className="text-xs text-zinc-500">Swipe to explore</span>
@@ -150,13 +167,13 @@ export default function Home() {
                 </button>
               ))}
         </div>
-      </section>
+      </section>}
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-zinc-300">
-              {selectedCategoryName ?? "All Links"}
+              {searchQuery? `Results for: ${searchQuery}` : selectedCategoryName ?? "All Links"}
             </p>
           </div>
           <Link
@@ -217,7 +234,7 @@ export default function Home() {
                   {copiedId === link._id && (
                     <p className="mt-3 text-xs text-emerald-300">Copied!</p>
                   )}
-                  {selectedCategoryId == "all" && (
+                  {(searchQuery || selectedCategoryId == "all") && (
                     <p className="text-xs text-zinc-400 mt-2">
                       Collection Name:{" "}
                       {categories.find((cat) => cat.id === link.category_id)

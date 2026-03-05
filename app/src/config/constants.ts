@@ -42,6 +42,7 @@ export const ENDPOINTS = {
   LINKS_BY_CATEGORY: "/urls/category",
   LINK_DATA: "/urls",
   ALL_LINKS: "/urls/user",
+  SEARCH_LINKS: "/urls/search",
   ADD_LINK: "/urls",
   EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",

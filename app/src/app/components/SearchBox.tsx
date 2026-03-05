@@ -11,7 +11,7 @@ export default function SearchBox({
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setSearchQuery(searchInput);
+      setSearchQuery(searchInput.trim());
     }, 500);
     return () => {
       clearTimeout(handler);
