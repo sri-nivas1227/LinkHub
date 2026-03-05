@@ -50,8 +50,7 @@ export async function postLoginAction(formData: any) {
 }
 
 export async function pingServerAction() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.PING}`, {
     headers: {
       "Content-Type": "application/json",
@@ -88,8 +87,7 @@ export async function logoutAction() {
 
 // Homepage actions
 export async function getCategoriesAction() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.CATEGORIES}`, {
     headers: {
       "Content-Type": "application/json",
@@ -101,8 +99,7 @@ export async function getCategoriesAction() {
 }
 
 export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(
     `${API_URL}${ENDPOINTS.LINKS_BY_CATEGORY}?category_id=${selectedCategoryId}`,
     {
@@ -117,8 +114,7 @@ export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
 }
 
 export async function getAllLinksAction() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.ALL_LINKS}`, {
     headers: {
       "Content-Type": "application/json",
@@ -126,19 +122,18 @@ export async function getAllLinksAction() {
     },
   });
   const data: responseFormat = await response.json();
-  
+
   return data;
 }
 
-export async function getLinkDataAction(linkId: string) {
+export async function getLinkOnSearchAction(searchQuery: string) {
   const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
   const response = await fetch(
-    `${API_URL}${ENDPOINTS.LINK_DATA}/${linkId}`,
+    `${API_URL}${ENDPOINTS.SEARCH_LINKS}?query=${searchQuery}`,
     {
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${token?.value}`,
+        Cookie: `token=${cookieStore.get(AUTH_COOKIE_NAME)?.value}`,
       },
     },
   );
@@ -146,9 +141,20 @@ export async function getLinkDataAction(linkId: string) {
   return data;
 }
 
+export async function getLinkDataAction(linkId: string) {
+  const token = await getToken();
+  const response = await fetch(`${API_URL}${ENDPOINTS.LINK_DATA}/${linkId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function postAddURLAction(newLink: any) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.ADD_LINK}`, {
     method: "POST",
     headers: {
@@ -162,8 +168,7 @@ export async function postAddURLAction(newLink: any) {
 }
 
 export async function putEditURLAction(updatedLink: any, linkId: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.EDIT_LINK}/${linkId}`, {
     method: "PUT",
     headers: {
@@ -178,8 +183,7 @@ export async function putEditURLAction(updatedLink: any, linkId: string) {
 
 // Profile actions
 export async function getProfileAction() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.GET_PROFILE}`, {
     headers: {
       "Content-Type": "application/json",
@@ -191,8 +195,7 @@ export async function getProfileAction() {
 }
 
 export async function postUpdateProfileAction(updatedProfile: any) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_COOKIE_NAME);
+  const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.POST_PROFILE}`, {
     method: "POST",
     headers: {
@@ -203,4 +206,10 @@ export async function postUpdateProfileAction(updatedProfile: any) {
   });
   const data: responseFormat = await response.json();
   return data;
+}
+
+// Helper function to get token from cookies
+async function getToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get(AUTH_COOKIE_NAME);
 }

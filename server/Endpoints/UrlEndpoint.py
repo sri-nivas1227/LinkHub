@@ -143,17 +143,26 @@ def get_urls_by_category():
         return jsonify({"error": str(e)}), 500
 
 @urlRouter.route('/urls/search', methods=['GET'])
-def search_urls_by_tags():
+def search_urls_by_search():
     """Search URLs by tags"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     try:
-        tags = request.args.get('tags')
-        if not tags:
-            return jsonify({"message": "Tags parameter is required"}), 400
+        searchTerm = request.args.get('query')
+        if not searchTerm:
+            return jsonify({"message": "Search term is required"}), 400
         
         # Convert comma-separated tags to list
-        tags_list = [tag.strip() for tag in tags.split(',')]
+        # tags_list = [tag.strip() for tag in tags.split(',')]
         
-        links = Link.search_by_tags(tags_list)
+        links = Link.find_by_searchTerm(searchTerm, user_id)
         # Remove user_id for privacy
         links_data = []
         for link in links:
@@ -163,11 +172,12 @@ def search_urls_by_tags():
             links_data.append(link_json)
         
         return jsonify({
-            "message": f"URLs matching tags: {tags}",
-            "data": links_data
+            "success": True,
+            "message": f"URLs matching tags: {searchTerm}",
+            "data": {"links":links_data}
         }), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 
+        return jsonify({"success":False, "message": str(e)}), 
 
 @urlRouter.route('/urls/<url_id>', methods=['GET'])
 def get_url_by_id(url_id):

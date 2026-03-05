@@ -160,7 +160,21 @@ class Link:
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to search links by tags: {str(e)}")
-    
+    @staticmethod
+    def find_by_searchTerm(searchTerm, user_id):
+        """Search links by title or description"""
+        try:
+            links_data = LinksCollection.find({
+                "$or": [
+                    {"title": {"$regex": searchTerm, "$options": "i"}},
+                    {"description": {"$regex": searchTerm, "$options": "i"}},
+                    {"url": {"$regex": searchTerm, "$options": "i"}}
+                ], "user_id": str(user_id)
+            }).sort("created_at", -1)
+            return [Link(**link_data) for link_data in links_data]
+        except PyMongoError as e:
+            raise Exception(f"Failed to search links by search term: {str(e)}")
+
     @staticmethod
     def increment_visits(link_id):
         """Increment the visit count for a link"""
