@@ -181,6 +181,19 @@ export async function putEditURLAction(updatedLink: any, linkId: string) {
   return data;
 }
 
+export async function deleteURLAction(linkId: string){
+  const token = await getToken();
+  const response = await fetch(`${API_URL}${ENDPOINTS.DELETE_LINK}/${linkId}`, {
+    method:"DELETE",
+    headers:{
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    }
+  });
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 // Profile actions
 export async function getProfileAction() {
   const token = await getToken();

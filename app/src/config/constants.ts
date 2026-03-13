@@ -44,6 +44,7 @@ export const ENDPOINTS = {
   ALL_LINKS: "/urls/user",
   SEARCH_LINKS: "/urls/search",
   ADD_LINK: "/urls",
+  DELETE_LINK:"/urls",
   EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",

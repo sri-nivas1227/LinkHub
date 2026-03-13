@@ -3,8 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Copy, Link as LinkIcon, Plus, Sparkles, Edit } from "lucide-react";
 import {
+  Copy,
+  Link as LinkIcon,
+  Plus,
+  Sparkles,
+  Edit,
+  Trash,
+} from "lucide-react";
+import {
+  deleteURLAction,
   getAllLinksAction,
   getCategoriesAction,
   getLinkOnSearchAction,
@@ -102,8 +110,44 @@ export default function Home() {
     router.push(`${ROUTES.ADD_LINK}?linkId=${link_id}`);
   };
 
+  const handleDeleteLink = async (link_id: string) => {
+    const response = await deleteURLAction(link_id);
+    if (response.success) {
+      setLinks((prev) => prev.filter((item) => item._id != link_id));
+      toast.success("Link Deleted");
+    } else {
+      toast.warning("Deletion Failed");
+    }
+  };
+  const showConfirm = (link_id: string) => {
+    toast.custom((t) => (
+      <div className="w-md border-red-500 bg-white p-4 rounded-lg shadow-lg border flex flex-col gap-3 dark:bg-zinc-900">
+        <p className="text-md text-center font-medium">Are you sure you want to proceed?</p>
+        <div className="flex gap-2 justify-center">
+          <button
+            onClick={() => {
+              toast.dismiss(t);
+            }}
+            className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded dark:bg-zinc-800 dark:hover:bg-zinc-700"
+          >
+            No
+          </button>
+          <button
+            onClick={() => {
+              // Your logic here
+              toast.dismiss(t);
+              handleDeleteLink(link_id);
+            }}
+            className="px-3 py-1 text-xs bg-black text-white rounded hover:bg-zinc-800 dark:bg-white dark:text-black"
+          >
+            Yes
+          </button>
+        </div>
+      </div>
+    ));
+  };
   useEffect(() => {
-    if(!searchQuery) return;
+    if (!searchQuery) return;
     const fetchResultsForQuery = async () => {
       const response = await getLinkOnSearchAction(searchQuery);
       if (!response.success) {
@@ -125,55 +169,59 @@ export default function Home() {
       </section>
       <SearchBox setSearchQuery={setSearchQuery} />
 
-      {!searchQuery && <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-zinc-300">Collections</p>
-          <span className="text-xs text-zinc-500">Swipe to explore</span>
-        </div>
-        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-          {isLoadingCategories ? (
-            <div className=""></div>
-          ) : (
-            <button
-              onClick={() => setSelectedCategoryId("all")}
-              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
-                selectedCategoryId === "all"
-                  ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
-                  : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              All Links
-            </button>
-          )}
+      {!searchQuery && (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-zinc-300">Collections</p>
+            <span className="text-xs text-zinc-500">Swipe to explore</span>
+          </div>
+          <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+            {isLoadingCategories ? (
+              <div className=""></div>
+            ) : (
+              <button
+                onClick={() => setSelectedCategoryId("all")}
+                className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
+                  selectedCategoryId === "all"
+                    ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
+                    : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                All Links
+              </button>
+            )}
 
-          {isLoadingCategories
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={`category-skeleton-${index}`}
-                  className="shimmer h-9 w-24 rounded-full border border-zinc-800"
-                />
-              ))
-            : categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
-                  className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
-                    selectedCategoryId === category.id
-                      ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
-                      : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-        </div>
-      </section>}
+            {isLoadingCategories
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={`category-skeleton-${index}`}
+                    className="shimmer h-9 w-24 rounded-full border border-zinc-800"
+                  />
+                ))
+              : categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategoryId(category.id)}
+                    className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm transition ${
+                      selectedCategoryId === category.id
+                        ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
+                        : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+          </div>
+        </section>
+      )}
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-zinc-300">
-              {searchQuery? `Results for: ${searchQuery}` : selectedCategoryName ?? "All Links"}
+              {searchQuery
+                ? `Results for: ${searchQuery}`
+                : (selectedCategoryName ?? "All Links")}
             </p>
           </div>
           <Link
@@ -222,6 +270,12 @@ export default function Home() {
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
                     >
                       <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={async () => showConfirm(link._id)}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-red-400"
+                    >
+                      <Trash size={16} />
                     </button>
                     <button
                       onClick={() => handleCopy(link._id, link.url)}
