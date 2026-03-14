@@ -266,9 +266,19 @@ def update_url(url_id):
 @urlRouter.route('/urls/<url_id>', methods=['DELETE'])
 def delete_url(url_id):
     """Delete a specific URL by ID"""
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
     try:
-        link = Link.get_by_id(url_id)
+        link = Link.get_by_id(url_id, user_id)
         if not link:
+            print(f"URL with ID {url_id} not found for user {user_id}")
             return jsonify({"success": False, "message": "URL not found"}), 404
         
         success = link.delete()

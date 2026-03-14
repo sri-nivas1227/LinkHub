@@ -2,9 +2,7 @@
 from datetime import datetime
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-from db import db
-
-LinksCollection = db['links']
+from db import links_collection
 
 
 class Link:
@@ -61,7 +59,7 @@ class Link:
             # Remove _id for creation
             if "_id" in link_data:
                 del link_data["_id"]
-            result = LinksCollection.insert_one(link_data)
+            result = links_collection.insert_one(link_data)
             self._id = result.inserted_id
             return str(result.inserted_id)
         except PyMongoError as e:
@@ -82,7 +80,7 @@ class Link:
                 if hasattr(self, key):
                     setattr(self, key, value)
             
-            result = LinksCollection.update_one({"_id": self._id}, {"$set": update_data})
+            result = links_collection.update_one({"_id": self._id}, {"$set": update_data})
             return result.modified_count > 0
         except PyMongoError as e:
             raise Exception(f"Failed to update link: {str(e)}")
@@ -93,20 +91,20 @@ class Link:
             raise ValueError("Cannot delete link without _id")
         
         try:
-            result = LinksCollection.delete_one({"_id": self._id})
+            result = links_collection.delete_one({"_id": self._id})
             return result.deleted_count > 0
         except PyMongoError as e:
             raise Exception(f"Failed to delete link: {str(e)}")
     
     @staticmethod
-    def get_by_id(link_id):
+    def get_by_id(link_id, user_id):
         """Get a link by its ID"""
         try:
             # Convert string ID to ObjectId if necessary
             if isinstance(link_id, str):
                 link_id = ObjectId(link_id)
-            
-            link_data = LinksCollection.find_one({"_id": link_id})
+            print(link_id)
+            link_data = links_collection.find_one({"_id": ObjectId(link_id), "user_id":user_id})
             if link_data:
                 return Link(**link_data)
             return None
@@ -117,7 +115,7 @@ class Link:
     def get_all():
         """Get all links"""
         try:
-            links_data = LinksCollection.find()
+            links_data = links_collection.find()
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to get all links: {str(e)}")
@@ -126,7 +124,7 @@ class Link:
     def get_by_user_id(user_id):
         """Get all links for a specific user"""
         try:
-            links_data = LinksCollection.find({"user_id": user_id})
+            links_data = links_collection.find({"user_id": user_id})
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to get links by user_id: {str(e)}")
@@ -135,7 +133,7 @@ class Link:
     def get_by_category(category_id):
         """Get all links for a specific category"""
         try:
-            links_data = LinksCollection.find({"category_id": category_id})
+            links_data = links_collection.find({"category_id": category_id})
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to get links by category: {str(e)}")
@@ -143,7 +141,7 @@ class Link:
     def get_by_url(url):
         """Get a link by its URL"""
         try:
-            link_data = LinksCollection.find_one({"url": url})
+            link_data = links_collection.find_one({"url": url})
             if link_data:
                 return Link(**link_data)
             return None
@@ -156,7 +154,7 @@ class Link:
         try:
             if isinstance(tags, str):
                 tags = [tags]
-            links_data = LinksCollection.find({"tags": {"$in": tags}})
+            links_data = links_collection.find({"tags": {"$in": tags}})
             return [Link(**link_data) for link_data in links_data]
         except PyMongoError as e:
             raise Exception(f"Failed to search links by tags: {str(e)}")
@@ -164,7 +162,7 @@ class Link:
     def find_by_searchTerm(searchTerm, user_id):
         """Search links by title or description"""
         try:
-            links_data = LinksCollection.find({
+            links_data = links_collection.find({
                 "$or": [
                     {"title": {"$regex": searchTerm, "$options": "i"}},
                     {"description": {"$regex": searchTerm, "$options": "i"}},
@@ -182,7 +180,7 @@ class Link:
             if isinstance(link_id, str):
                 link_id = ObjectId(link_id)
             
-            result = LinksCollection.update_one(
+            result = links_collection.update_one(
                 {"_id": link_id},
                 {"$inc": {"visits": 1}}
             )
@@ -197,7 +195,7 @@ class Link:
         # if isinstance(category_id, str):
         #     category_id = ObjectId(category_id)
         
-        links_data = LinksCollection.find({"category_id": category_id, "user_id":str(user_id)}).limit(limit)
+        links_data = links_collection.find({"category_id": category_id, "user_id":str(user_id)}).limit(limit)
         
         return [Link(**link_data) for link_data in links_data]
         # except PyMongoError as e:
