@@ -20,6 +20,51 @@
 
 🤝 Share collections with friends to collaborate or recommend resources
 
+## Project Outline
+
+### User Stories
+
+As a user, I can:
+
+-   **Sign up** for a new account with my email and password.
+-   **Log in** to my account to access my saved links.
+-   **View all my saved links** on a central dashboard.
+-   **Search** for specific links by title or tags.
+-   **Filter** my links by category.
+-   **Add a new link** by providing a URL, title, and selecting a category.
+-   **Create a new category** while adding a link if it doesn't exist.
+-   **Edit** the title, and category of an existing link.
+-   **Delete** a link that I no longer need.
+-   **Copy a link's URL** to my clipboard with a single click.
+-   **View my profile** information, including my name, email, and a short bio.
+-   **Edit my profile** to update my personal details and social links.
+
+### Technical Overview
+
+LinkHub is a full-stack web application built with a modern tech stack, designed for performance and scalability.
+
+**Frontend:**
+
+-   **Framework:** [Next.js](https://nextjs.org/) (React framework)
+-   **Language:** [TypeScript](https://www.typescriptlang.org/)
+-   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+-   **UI Components:** Custom-built components with animations using [Framer Motion](https://www.framer.com/motion/).
+-   **State Management:** React hooks (`useState`, `useEffect`) and server-side data fetching with Next.js Server Actions.
+-   **User Experience:** The frontend is designed to be a responsive and intuitive single-page application (SPA). It provides instant feedback for user actions with optimistic UI updates and toast notifications for success or error messages.
+
+**Backend:**
+
+-   **Framework:** [Flask](https://flask.palletsprojects.com/) (Python micro-framework)
+-   **Language:** [Python](https://www.python.org/)
+-   **Database:** [MongoDB](https://www.mongodb.com/) (NoSQL database)
+-   **API:** A RESTful API is exposed with clear and organized endpoints for authentication, links, categories, and user profiles.
+-   **Authentication:** [JSON Web Tokens (JWT)](https://jwt.io/) are used for secure authentication and to protect the API endpoints.
+-   **Data Models:** The backend uses clear data models for Users, Links, and Categories, which are stored in the MongoDB database.
+
+**Deployment:**
+
+-   **Containerization:** The entire application is containerized using [Docker](https://www.docker.com/) and can be easily deployed with a single `docker-compose up` command. This ensures a consistent and reproducible environment for both development and production.
+
 ### 🔮 Future Plans
 
 - A Profile page
@@ -29,6 +74,7 @@
 
 ## 🛠️ Getting Started
 **Prerequisites**
+
 
 - Node.js & npm/yarn
 
