@@ -15,12 +15,10 @@ export default function NavBar() {
     const response = await extractTokenAction();
     if (response && typeof response === "object") {
       return (
-        (response as any).username ??
-        (response as any).name ??
-        UI_CONFIG.DEFAULT_USERNAME
+        (response as any).name
       );
     }
-    return UI_CONFIG.DEFAULT_USERNAME;
+    return null;
   };
   const handleLogout = async () => {
     await logoutAction();
@@ -54,22 +52,31 @@ export default function NavBar() {
               <UserRound size={18} />
             </button>
             {profileClicked ? (
-              <div className="absolute top-10 left-5 flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition  hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95">
+              <div className="absolute top-10 right-5 flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition  hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95">
                 <span className="font-semibold text-zinc-200 text-center border-b border-white whitespace-nowrap">
-                  {username}
+                  {username ? username:"New Here?"}
                 </span>
+                {username ? 
                 <span
                   onClick={() => router.push("/profile")}
                   className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center "
                 >
                   Profile
                 </span>
+                :
                 <span
+                  onClick={() => router.push("/auth/signup")}
+                  className="font-light whitespace-nowrap hover:text-zinc-300 hover:underline cursor-pointer text-zinc-400 text-center "
+                >
+                  Create an account
+                </span>
+                }
+                {username && <span
                   onClick={handleLogout}
                   className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center"
                 >
                   Logout
-                </span>
+                </span>}
               </div>
             ) : (
               ""

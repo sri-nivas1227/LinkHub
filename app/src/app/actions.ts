@@ -50,6 +50,8 @@ export async function postLoginAction(formData: any) {
 }
 
 export async function pingServerAction() {
+  const cookieStore = await cookies();
+
   const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.PING}`, {
     headers: {
@@ -181,14 +183,14 @@ export async function putEditURLAction(updatedLink: any, linkId: string) {
   return data;
 }
 
-export async function deleteURLAction(linkId: string){
+export async function deleteURLAction(linkId: string) {
   const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.DELETE_LINK}/${linkId}`, {
-    method:"DELETE",
-    headers:{
+    method: "DELETE",
+    headers: {
       "Content-Type": "application/json",
       Cookie: `token=${token?.value}`,
-    }
+    },
   });
   const data: responseFormat = await response.json();
   return data;
@@ -221,6 +223,20 @@ export async function postUpdateProfileAction(updatedProfile: any) {
   return data;
 }
 
+// Public Endpoint Actions
+export async function getLinksFromPublicCategory(categoryId: string) {
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
 // Helper function to get token from cookies
 async function getToken() {
   const cookieStore = await cookies();

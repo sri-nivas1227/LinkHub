@@ -23,7 +23,7 @@ export const ROUTES = {
 // UI Configuration
 export const UI_CONFIG = {
   COPY_NOTIFICATION_TIMEOUT: 1500,
-  DEFAULT_USERNAME: "Hello User!",
+  DEFAULT_USERNAME: "Hello! New Here?",
 } as const;
 
 // App Metadata
@@ -43,8 +43,9 @@ export const ENDPOINTS = {
   LINK_DATA: "/urls",
   ALL_LINKS: "/urls/user",
   SEARCH_LINKS: "/urls/search",
+  SHARED_CATEGORY: "/share/categories",
   ADD_LINK: "/urls",
-  DELETE_LINK:"/urls",
+  DELETE_LINK: "/urls",
   EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",
