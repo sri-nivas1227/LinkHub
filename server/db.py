@@ -19,6 +19,7 @@ mongo = MongoClient(mongo_uri)
 db = mongo.get_database("linkhub")
 users_collection = db.get_collection("users")
 links_collection = db.get_collection("links")
+categories_collection = db.get_collection("categories")
 
 db.command("ping")
 print("Connected to MongoDB successfully!")

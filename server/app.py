@@ -5,6 +5,7 @@ from Endpoints.UrlEndpoint import urlRouter
 from Endpoints.CategoryEndpoint import categoryRouter
 from Endpoints.AuthEndpoints import auth_router
 from Endpoints.ProfileEndpoints import profile_router
+from Endpoints.ShareEndpoints import share_router
 from flask_cors import CORS
 from db import db
 
@@ -18,6 +19,7 @@ app.register_blueprint(auth_router)
 app.register_blueprint(urlRouter)
 app.register_blueprint(categoryRouter)
 app.register_blueprint(profile_router)
+app.register_blueprint(share_router)
 # Helper function to serialize MongoDB documents
 def serialize_doc(doc):
     """Convert MongoDB document to JSON serializable format"""

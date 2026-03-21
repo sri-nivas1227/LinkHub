@@ -7,10 +7,11 @@ CategoriesCollection = db['categories']
 
 
 class Category:
-    def __init__(self, category, category_slug, user_id, created_at=None, updated_at=None, _id=None):
+    def __init__(self, category, category_slug, user_id, created_at=None, is_public=None, updated_at=None, _id=None):
         self._id = ObjectId(_id) if _id else None
         self.category = category
         self.category_slug = category_slug
+        self.is_public = False  # Default to private category, can be updated later
         self.user_id = user_id
         self.created_at = created_at
         self.updated_at = updated_at
@@ -21,6 +22,7 @@ class Category:
             "category": self.category,
             "category_slug": self.category_slug,
             "user_id": self.user_id,
+            "is_public": self.is_public,
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
@@ -35,6 +37,7 @@ class Category:
             "category": self.category,
             "category_slug": self.category_slug,
             "user_id": self.user_id,
+            "is_public": self.is_public,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
