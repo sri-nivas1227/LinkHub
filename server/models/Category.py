@@ -54,6 +54,17 @@ class Category:
         except PyMongoError as e:
             raise Exception(f"Error creating category: {str(e)}")
     
+    def update(self):
+        """Update an existing category"""
+        if not self._id:
+            raise Exception("Category ID is required for update")
+        try:
+            self.updated_at = datetime.now()
+            category_data = self.to_dict()
+            CategoriesCollection.update_one({"_id": self._id}, {"$set": category_data})
+            return self
+        except PyMongoError as e:
+            raise Exception(f"Error updating category: {str(e)}")
     @staticmethod
     def get_all_by_user_id(user_id):
         try:
@@ -77,7 +88,7 @@ class Category:
     def get_categories_by_user_id(user_id):
         try:
             categories = CategoriesCollection.find({"user_id": user_id})
-            return [{"id": str(cat["_id"]), "name": cat["category"]} for cat in categories]
+            return [{"id": str(cat["_id"]), "name": cat["category"], "is_public": cat["is_public"]} for cat in categories]
         except PyMongoError as e:
             raise Exception(f"Error fetching category names by user ID: {str(e)}")
     

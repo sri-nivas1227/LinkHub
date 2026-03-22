@@ -223,6 +223,26 @@ export async function postUpdateProfileAction(updatedProfile: any) {
   return data;
 }
 
+export async function updateCategoryAction(
+  categoryId: string,
+  updatedCategory: { name?: string; isPublic?: boolean },
+) {
+  const token = await getToken();
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.CATEGORIES}/${categoryId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${token?.value}`,
+      },
+      body: JSON.stringify(updatedCategory),
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 // Public Endpoint Actions
 export async function getLinksFromPublicCategory(categoryId: string) {
   const response = await fetch(

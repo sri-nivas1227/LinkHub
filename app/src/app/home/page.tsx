@@ -22,10 +22,12 @@ import { ROUTES, UI_CONFIG } from "@/config/constants";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import SearchBox from "../components/SearchBox";
+import CategoryHeader from "./components/CategoryHeader";
 
 interface Category {
   id: string;
   name: string;
+  is_public: boolean;
 }
 
 interface LinkType {
@@ -122,7 +124,9 @@ export default function Home() {
   const showConfirm = (link_id: string) => {
     toast.custom((t) => (
       <div className="w-md border-red-500 bg-white p-4 rounded-lg shadow-lg border flex flex-col gap-3 dark:bg-zinc-900">
-        <p className="text-md text-center font-medium">Are you sure you want to proceed?</p>
+        <p className="text-md text-center font-medium">
+          Are you sure you want to proceed?
+        </p>
         <div className="flex gap-2 justify-center">
           <button
             onClick={() => {
@@ -217,13 +221,21 @@ export default function Home() {
 
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <div>
+          {/* <div>
             <p className="text-sm font-medium text-zinc-300">
               {searchQuery
                 ? `Results for: ${searchQuery}`
                 : (selectedCategoryName ?? "All Links")}
             </p>
-          </div>
+          </div> */}
+          <CategoryHeader
+            title={selectedCategoryName}
+            isPublic={
+              categories.find((category) => category.id === selectedCategoryId)
+                ?.is_public
+            }
+            categoryId={selectedCategoryId}
+          />
           <Link
             href={ROUTES.ADD_LINK}
             className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
