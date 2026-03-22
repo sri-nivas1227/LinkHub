@@ -5,6 +5,7 @@ import { User, Mail, Link as LinkIcon, Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 import EditProfileForm from "./components/EditProfileForm";
 import { getProfileAction, postUpdateProfileAction } from "../actions";
+import CategorySettings from "./components/CategorySettings";
 
 interface Link {
   title: string;
@@ -93,6 +94,7 @@ export default function ProfilePage() {
         )}
         {isEditing && <EditProfileForm profile={profile} setIsEditing={setIsEditing} />}
       </main>
+      <CategorySettings />
     </div>
   );
 }
