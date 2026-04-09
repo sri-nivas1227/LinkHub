@@ -34,7 +34,7 @@ export default function CategoryHeader({
         error: "Failed to update category",
       });
     }
-  }, [publicToggle, categoryId, isPublic]);
+  }, [publicToggle]);
 
   const handleSave = () => {
     if (categoryId && categoryTitle && categoryTitle !== title) {
@@ -47,9 +47,10 @@ export default function CategoryHeader({
       setEditCategoryName(false);
     }
   };
+  console.log(isPublic, publicToggle)
   return (
     <div className="w-3/4 flex gap-2 justify-between items-center">
-      <div className="w-3/4 flex items-center gap-2 justify-start">
+      <div className="transition-all ease-linear w-3/4 flex items-center gap-2 justify-start">
         {editCategoryName && title ? (
           <div className="w-3/4">
             <input
@@ -63,7 +64,7 @@ export default function CategoryHeader({
             />
           </div>
         ) : (
-          <p className="w-3/4 text-sm font-medium text-zinc-300">
+          <p className="text-sm font-medium text-zinc-300">
             {categoryTitle ?? "All Links"}
           </p>
         )}

@@ -230,11 +230,11 @@ export default function Home() {
           </div> */}
           <CategoryHeader
             title={selectedCategoryName}
+            categoryId={selectedCategoryId}
             isPublic={
               categories.find((category) => category.id === selectedCategoryId)
                 ?.is_public
             }
-            categoryId={selectedCategoryId}
           />
           <Link
             href={ROUTES.ADD_LINK}
