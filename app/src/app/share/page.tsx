@@ -29,22 +29,18 @@ export default function Share() {
   const urlParams = useSearchParams();
   const categoryId = urlParams.get("categoryId");
   useEffect(() => {
-    console.log("fetching urls")
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
         let responsedata;
         responsedata = await getLinksFromPublicCategory(categoryId!);
-        console.log(responsedata)
         const allLinks = Array.isArray(responsedata?.data?.links)
           ? responsedata.data.links
           : [];
         const category = responsedata.data.category ?? "";
-        console.log(allLinks, category)
         setCategory(category);
         setLinks(allLinks);
       } catch (error) {
-        console.log(error);
         toast.error("Failed to load links. Please try again.");
         setLinks([]);
       } finally {
@@ -65,7 +61,6 @@ export default function Share() {
       console.error("Copy failed:", error);
     }
   };
-  console.log(links)
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-2">

@@ -16,11 +16,10 @@ def get_public_view_category(category_id):
     # category["links"] = links
     # Convert ObjectId to string for JSON serialization
     category["_id"] = str(category["_id"])
-    print(f"Fetched category: {category}, with links: {links}")
     return make_response(
         {"success": True, 
          "message":"Public Category links fetched successfully",
-        "data": {"category":category.get("category"), "category_id":category_id, "links":links}
+        "data": {"category":category.get("name"), "category_id":category_id, "links":links}
         },
         200)
 

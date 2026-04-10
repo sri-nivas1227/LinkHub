@@ -7,11 +7,11 @@ CategoriesCollection = db['categories']
 
 
 class Category:
-    def __init__(self, category, category_slug, user_id, created_at=None, is_public=None, updated_at=None, _id=None):
+    def __init__(self, name, category_slug, user_id, created_at=None, is_public=None, updated_at=None, _id=None):
         self._id = ObjectId(_id) if _id else None
-        self.category = category
+        self.name = name
         self.category_slug = category_slug
-        self.is_public = False  # Default to private category, can be updated later
+        self.is_public = is_public  
         self.user_id = user_id
         self.created_at = created_at
         self.updated_at = updated_at
@@ -19,7 +19,7 @@ class Category:
     def to_dict(self):
         """Convert Category object to dictionary"""
         doc = {
-            "category": self.category,
+            "name": self.name,
             "category_slug": self.category_slug,
             "user_id": self.user_id,
             "is_public": self.is_public,
@@ -34,7 +34,7 @@ class Category:
         """Convert Category object to JSON-serializable dictionary"""
         return {
             "_id": str(self._id) if self._id else None,
-            "category": self.category,
+            "name": self.name,
             "category_slug": self.category_slug,
             "user_id": self.user_id,
             "is_public": self.is_public,
@@ -88,7 +88,7 @@ class Category:
     def get_categories_by_user_id(user_id):
         try:
             categories = CategoriesCollection.find({"user_id": user_id})
-            return [{"id": str(cat["_id"]), "name": cat["category"], "is_public": cat["is_public"]} for cat in categories]
+            return [{"id": str(cat["_id"]), "name": cat["name"], "is_public": cat["is_public"]} for cat in categories]
         except PyMongoError as e:
             raise Exception(f"Error fetching category names by user ID: {str(e)}")
     

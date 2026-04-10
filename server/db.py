@@ -14,7 +14,6 @@ if os.getenv("ENV") == "production" and all([mongo_username, mongo_password, mon
     mongo_uri = f"mongodb+srv://{mongo_username}:{mongo_password}@{mongo_cluster}/{mongo_db}?retryWrites=true&w=majority"
 else:
     mongo_uri = "mongodb://localhost:27017/linkhub"
-
 mongo = MongoClient(mongo_uri)
 db = mongo.get_database("linkhub")
 users_collection = db.get_collection("users")

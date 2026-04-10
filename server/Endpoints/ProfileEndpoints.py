@@ -16,7 +16,6 @@ def update_profile():
     if not is_valid_token:
         return make_response({"success": False, "message": "Invalid or missing token"}, 401)
     data = request.get_json()
-    print("Received profile update data:", data)
     name  = data.get("name")
     description = data.get("description")
     profile_links = data.get("links")
@@ -33,7 +32,6 @@ def update_profile():
     user.profile['description'] = description
     user.profile['links'] = profile_links
     user.update(user.to_dict())
-    print("updating profile")
     return make_response({"success":True, "message":"Profile Updated Successfully"}, 200)
 
 
