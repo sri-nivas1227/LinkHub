@@ -31,7 +31,6 @@ def signup():
         full_name=full_name,
         password=hashpw(password.encode("utf-8"), gensalt()).decode("utf-8"),
     )
-    print(user, "user data to db")
     user_id = user.create()
     if user_id:
         return make_response(

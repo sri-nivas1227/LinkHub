@@ -1,40 +1,21 @@
 import { Toggle } from "@/app/components/Toggle";
 import { Globe, PenLine, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { updateCategoryAction } from "@/app/actions";
+import { getCategoryDetailsAction, updateCategoryAction } from "@/app/actions";
 import { toast } from "sonner";
+import { Category } from "@/app/types";
 
 export default function CategoryHeader({
   title,
-  isPublic = false,
   categoryId,
 }: {
   title: string | undefined;
-  isPublic?: boolean;
   categoryId?: string;
 }) {
-  const [publicToggle, setPublicToggle] = useState<boolean>(isPublic);
+  const [category, setCategory] = useState<Category>();
+  const [publicToggle, setPublicToggle] = useState<boolean>(false);
   const [editCategoryName, setEditCategoryName] = useState<boolean>(false);
-  const [categoryTitle, setCategoryTitle] = useState<string | undefined>(title);
-
-  useEffect(() => {
-    setEditCategoryName(false);
-    setCategoryTitle(title);
-    setPublicToggle(isPublic);
-  }, [title, isPublic]);
-
-  useEffect(() => {
-    if (categoryId && publicToggle !== isPublic) {
-      const promise = updateCategoryAction(categoryId, {
-        isPublic: publicToggle,
-      });
-      toast.promise(promise, {
-        loading: "Updating category...",
-        success: "Category updated successfully",
-        error: "Failed to update category",
-      });
-    }
-  }, [publicToggle]);
+  const [categoryTitle, setCategoryTitle] = useState<string | undefined>();
 
   const handleSave = () => {
     if (categoryId && categoryTitle && categoryTitle !== title) {
@@ -47,7 +28,48 @@ export default function CategoryHeader({
       setEditCategoryName(false);
     }
   };
-  console.log(isPublic, publicToggle)
+  const handlePublicToggle = (checked: boolean) => {
+    if (category && categoryId && checked != publicToggle) {
+      const promise = updateCategoryAction(categoryId, { isPublic: checked });
+      toast.promise(promise, {
+        loading: "Updating category ...",
+        success: "Category updated successfully",
+        error: "Failed to update category",
+      });
+      promise.then((data) => {
+        if (data.success) {
+          setPublicToggle(checked);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    const getCategoryDetails = async () => {
+      if (categoryId == "all") {
+        return;
+      }
+      try {
+        const responseData = await getCategoryDetailsAction(categoryId!);
+        if (responseData.success) {
+          setCategory(responseData.data);
+        }
+      } catch (error) {
+        toast.error("Failed to load links. Please try again.");
+      } finally {
+      }
+    };
+    getCategoryDetails();
+  }, [categoryId, publicToggle]);
+  useEffect(() => {
+    if (category) {
+      setPublicToggle(category.is_public);
+      setCategoryTitle(category.name);
+    }
+  }, [category]);
+  if (categoryId != "all" && !category) {
+    return <div className="">Loading Category...</div>;
+  }
   return (
     <div className="w-3/4 flex gap-2 justify-between items-center">
       <div className="transition-all ease-linear w-3/4 flex items-center gap-2 justify-start">
@@ -100,7 +122,7 @@ export default function CategoryHeader({
             size={16}
           />
           <Toggle
-            onChange={setPublicToggle}
+            onChange={handlePublicToggle}
             checked={publicToggle}
             label="Public"
             size="sm"

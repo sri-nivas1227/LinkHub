@@ -42,7 +42,7 @@ def create_url():
             # Create new category if not provided
             new_category = data.get("new_category")
             new_category_slug = convert_to_slug(new_category)
-            new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=user_id)
+            new_category_object = Category(name=new_category, category_slug=new_category_slug, user_id=user_id)
             new_category_object.create()
             data['category_id'] = str(new_category_object._id)
     
@@ -54,7 +54,7 @@ def create_url():
         if existing_link.get("category"):
             category = Category.get_by_id(existing_link['category_id'], user_id=user_id)
             if category:
-                return jsonify({"success":False,"message": f"URL already exists in category {category.category}"}), 409
+                return jsonify({"success":False,"message": f"URL already exists in category {category.name}"}), 409
         return jsonify({"success":False,"message": f"URL already exists in {existing_link['_id']}"}, 409)
     
     # Create new Link object
@@ -103,7 +103,6 @@ def get_urls_by_user():
             "data": {"links":links_data}
         }), 200
     except Exception as e:
-        print(f"Error fetching URLs for user {user_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @urlRouter.route('/urls/category', methods=['GET'])
@@ -137,7 +136,7 @@ def get_urls_by_category():
         
         return jsonify({
             "message": f"URLs for category {category_id}",
-            "data": {"category":category.category, "links":links_data}
+            "data": {"category":category.name, "links":links_data}
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -245,7 +244,7 @@ def update_url(url_id):
                     data['category_id'] = str(existing_category._id)
                 else:
                     # Create new category if not provided
-                    new_category_object = Category(category=new_category, category_slug=new_category_slug, user_id=user_id)
+                    new_category_object = Category(name=new_category, category_slug=new_category_slug, user_id=user_id)
                     new_category_object.create()
                     data['category_id'] = str(new_category_object._id)
             del data["new_category"]
@@ -260,7 +259,6 @@ def update_url(url_id):
             return jsonify({"success": False, "message": "Update failed"}), 400
             
     except Exception as e:
-        print(f"Error updating URL {url_id} for user {user_id}: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 @urlRouter.route('/urls/<url_id>', methods=['DELETE'])
@@ -278,7 +276,6 @@ def delete_url(url_id):
     try:
         link = Link.get_by_id(url_id, user_id)
         if not link:
-            print(f"URL with ID {url_id} not found for user {user_id}")
             return jsonify({"success": False, "message": "URL not found"}), 404
         
         success = link.delete()

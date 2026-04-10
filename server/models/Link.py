@@ -103,7 +103,6 @@ class Link:
             # Convert string ID to ObjectId if necessary
             if isinstance(link_id, str):
                 link_id = ObjectId(link_id)
-            print(link_id)
             link_data = links_collection.find_one({"_id": ObjectId(link_id), "user_id":user_id})
             if link_data:
                 return Link(**link_data)

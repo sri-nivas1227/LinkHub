@@ -100,6 +100,21 @@ export async function getCategoriesAction() {
   return data;
 }
 
+export async function getCategoryDetailsAction(categoryId: string) {
+  const token = await getToken();
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.CATEGORIES}/${categoryId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${token?.value}`,
+      },
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function getLinksFromCategoriesAction(selectedCategoryId: string) {
   const token = await getToken();
   const response = await fetch(
