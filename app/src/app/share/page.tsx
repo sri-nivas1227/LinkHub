@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import SearchBox from "../components/SearchBox";
 import { Copy, LinkIcon, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -19,7 +19,7 @@ interface LinkType {
   tags: string[];
 }
 
-export default function Share() {
+function Share() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
@@ -80,7 +80,7 @@ export default function Share() {
                   className="shimmer h-20 rounded-2xl border border-zinc-800"
                 />
               ))
-            : links.map((link,index) => (
+            : links.map((link, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 10 }}
@@ -157,5 +157,13 @@ export default function Share() {
         Built with LinkHub © 2026.
       </footer>
     </div>
+  );
+}
+
+export default function SharePage() {
+  return (
+    <Suspense>
+      <Share />
+    </Suspense>
   );
 }
