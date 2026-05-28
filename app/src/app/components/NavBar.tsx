@@ -29,7 +29,7 @@ export default function NavBar() {
   }, []);
   return (
     <nav className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-md items-center justify-between px-4 py-3">
+      <div className="mx-auto flex md:w-2/3 w-md items-center justify-between px-4 py-3">
         <Link
           href={ROUTES.HOME}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-indigo-300 text-sm font-semibold tracking-tight"

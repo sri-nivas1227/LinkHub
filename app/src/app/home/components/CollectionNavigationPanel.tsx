@@ -35,9 +35,9 @@ export default function CollectionNavigationPanel() {
       <SearchBox setSearchQuery={setSearchQuery} />
 
       {!searchQuery && (
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-zinc-300">Collections</p>
+        <section className="flex flex-col gap-3 my-4">
+          <div className="flex md:flex-col md:items-start items-center justify-between">
+            <p className="text-sm md:text-xl md:font-semibold font-medium text-zinc-300">Collections</p>
             <span className="text-xs text-zinc-500">Swipe to explore</span>
           </div>
           <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">

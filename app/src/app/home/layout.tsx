@@ -23,7 +23,7 @@ export default function HomeLayout({
   return (
     <div className="min-h-screen">
       <NavBar />
-      <main className="mx-auto w-full max-w-md px-4 pb-24 pt-6">
+      <main className="mx-auto w-md md:w-2/3 px-4 pb-24 pt-6">
         {children}
       </main>
     </div>
