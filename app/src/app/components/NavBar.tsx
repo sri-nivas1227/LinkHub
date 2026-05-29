@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
-import { LinkIcon, Search, UserRound } from "lucide-react";
+import { PersonStanding } from "lucide-react";
 import { useEffect, useState } from "react";
 import { extractTokenAction, logoutAction } from "../actions";
 import { useRouter } from "next/navigation";
 import { ROUTES, UI_CONFIG, APP_CONFIG } from "@/config/constants";
+// get logo from public folder
+import Logo from "@/app/assets/StashD-Logo.png";
+import Image from "next/image";
 
 export default function NavBar() {
   const [profileClicked, setProfileClicked] = useState<boolean>(false);
@@ -14,9 +17,7 @@ export default function NavBar() {
   const getUsername = async () => {
     const response = await extractTokenAction();
     if (response && typeof response === "object") {
-      return (
-        (response as any).name
-      );
+      return (response as any).name;
     }
     return null;
   };
@@ -28,13 +29,11 @@ export default function NavBar() {
     getUsername().then((value) => setUsername(value));
   }, []);
   return (
-    <nav className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-md">
+    <nav className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-700/50 backdrop-blur-md">
       <div className="mx-auto flex md:w-2/3 w-md items-center justify-between px-4 py-3">
-        <Link
-          href={ROUTES.HOME}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-indigo-300 text-sm font-semibold tracking-tight"
-        >
-          <LinkIcon size={18} />
+        <Link href={ROUTES.HOME} className="flex items-center justify-center">
+          {/* <LinkIcon className="w-6 h-6" /> */}
+          <Image src={Logo} alt="StashD Logo" className="w-28 invert" />
         </Link>
         <div className="flex items-center gap-2">
           {/* <button
@@ -46,41 +45,44 @@ export default function NavBar() {
           <div className="relative">
             <button
               aria-label="User profile"
-              onClick={() => setProfileClicked((prev) => !prev)}
-              className="cursor-pointer inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/60 text-zinc-300 transition hover:text-zinc-100"
+              // onClick={() => setProfileClicked((prev) => !prev)}
+              onClick={() => router.push("/profile")}
+              className="cursor-pointer inline-flex items-center justify-center"
             >
-              <UserRound size={18} />
+              <PersonStanding className="md:w-10 md:h-10" />
             </button>
-            {profileClicked ? (
+            {/* {profileClicked ? (
               <div className="absolute top-10 right-5 flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition  hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95">
                 <span className="font-semibold text-zinc-200 text-center border-b border-white whitespace-nowrap">
-                  {username ? username:"New Here?"}
+                  {username ? username : "New Here?"}
                 </span>
-                {username ? 
-                <span
-                  onClick={() => router.push("/profile")}
-                  className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center "
-                >
-                  Profile
-                </span>
-                :
-                <span
-                  onClick={() => router.push("/auth/signup")}
-                  className="font-light whitespace-nowrap hover:text-zinc-300 hover:underline cursor-pointer text-zinc-400 text-center "
-                >
-                  Create an account
-                </span>
-                }
-                {username && <span
-                  onClick={handleLogout}
-                  className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center"
-                >
-                  Logout
-                </span>}
+                {username ? (
+                  <span
+                    onClick={() => router.push("/profile")}
+                    className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center "
+                  >
+                    Profile
+                  </span>
+                ) : (
+                  <span
+                    onClick={() => router.push("/auth/signup")}
+                    className="font-light whitespace-nowrap hover:text-zinc-300 hover:underline cursor-pointer text-zinc-400 text-center "
+                  >
+                    Create an account
+                  </span>
+                )}
+                {username && (
+                  <span
+                    onClick={handleLogout}
+                    className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center"
+                  >
+                    Logout
+                  </span>
+                )}
               </div>
             ) : (
               ""
-            )}
+            )} */}
           </div>
         </div>
       </div>
