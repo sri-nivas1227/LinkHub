@@ -191,7 +191,7 @@ def get_url_by_id(url_id):
             "message": "Invalid or missing token"
         }), 401
     try:
-        link = Link.get_by_id(url_id)
+        link = Link.get_by_id(url_id, user_id)
         if link and link.user_id == user_id:
             return jsonify({
                 "success": True,
@@ -219,7 +219,7 @@ def update_url(url_id):
             "message": "Invalid or missing token"
         }), 401
     try:
-        link = Link.get_by_id(url_id)
+        link = Link.get_by_id(url_id, user_id)
         if not link or link.user_id != user_id:
             return jsonify({
                 "success": False,

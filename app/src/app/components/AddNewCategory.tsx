@@ -47,7 +47,7 @@ export default function AddNewCategory({
             setSelectedCategory(e);
           }}
           name="new_category"
-          placeholder="Enter new category"
+          placeholder="Enter new collection name"
           className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
         />
         <div className="flex gap-2">

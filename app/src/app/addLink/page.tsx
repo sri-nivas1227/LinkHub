@@ -179,7 +179,7 @@ function AddLinkForm() {
           </label>
 
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-zinc-300">Category</span>
+            <span className="text-sm text-zinc-300">Collection</span>
             {!formData.new_category && (
               <SearchableDropdown
                 options={categoryList.map((category) => ({
@@ -204,8 +204,8 @@ function AddLinkForm() {
               {!formData.new_category && (
                 <p className="text-xs text-zinc-400 mt-2">
                   {isAdding
-                    ? "Creating a new category..."
-                    : "Want to create a new category?"}
+                    ? "Creating a new Collection..."
+                    : "Want to create a new Collection?"}
                 </p>
               )}
               {!isAdding && !formData.new_category && (
@@ -233,7 +233,7 @@ function AddLinkForm() {
             {formData.new_category && (
               <div className="flex items-center justify-between gap-4">
                 <p className="mt-2 text-sm text-zinc-300">
-                  New Category:{" "}
+                  New Collection:{" "}
                   <b className="text-base">
                     {selectedCategoryName || formData.new_category}
                   </b>
