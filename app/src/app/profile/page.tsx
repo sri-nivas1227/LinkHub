@@ -4,7 +4,13 @@ import { motion } from "framer-motion";
 import { User, Mail, Link as LinkIcon, Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 import EditProfileForm from "./components/EditProfileForm";
-import { getProfileAction, postUpdateProfileAction } from "../actions";
+import {
+  getProfileAction,
+  logoutAction,
+  postUpdateProfileAction,
+} from "../actions";
+import { ROUTES } from "@/config/constants";
+import { useRouter } from "next/navigation";
 
 interface Link {
   title: string;
@@ -17,12 +23,17 @@ interface Profile {
   links: Link[];
 }
 export default function ProfilePage() {
+  const router = useRouter();
+
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const handleEditClick = () => {
     setIsEditing(true);
   };
-
+  const handleLogout = async () => {
+    await logoutAction();
+    router.push(ROUTES.LOGIN);
+  };
   useEffect(() => {
     const fetchProfile = async () => {
       const profileData = await getProfileAction();
@@ -88,10 +99,20 @@ export default function ProfilePage() {
                   </div>
                 ))}
               </div>
+              <div className="mt-6">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex justify-center items-center space-x-2 rounded-md bg-red-500 p-2 text-lg font-medium text-white hover:bg-red-600 cursor-pointer"
+                >
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
-        {isEditing && <EditProfileForm profile={profile} setIsEditing={setIsEditing} />}
+        {isEditing && (
+          <EditProfileForm profile={profile} setIsEditing={setIsEditing} />
+        )}
       </main>
     </div>
   );
