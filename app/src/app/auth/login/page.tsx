@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { postLoginAction } from "../../actions";
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
-export default function Page() {
+function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -95,5 +95,13 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <LoginPage />
+    </Suspense>
   );
 }
