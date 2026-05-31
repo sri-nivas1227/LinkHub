@@ -24,6 +24,14 @@ export default function SignUpPage() {
       setLoading(false);
       return;
     }
+    if (!isPasswordStrong(form.password)) {
+      // todo: set error like a checklist for password strength (at least 8 characters, one uppercase, one lowercase, one number, and one special character)
+      setError(
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+      );
+      setLoading(false);
+      return;
+    }
     try {
       const response = await postSignupAction(form);
       if (response.success) {
@@ -41,7 +49,19 @@ export default function SignUpPage() {
       setLoading(false);
     }
   };
+  // validate password strength
+  const isPasswordStrong = (password: string) => {
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
 
+  // handle enter key press for form submission
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSignUp();
+    }
+  };
   return (
     <div className="w-full h-full flex items-center justify-center p-6">
       <div className="w-full max-w-md text-left">
