@@ -1,10 +1,4 @@
-"use client";
-import { useEffect } from "react";
 import NavBar from "../components/NavBar";
-import { pingServerAction } from "../actions";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/config/constants";
-
 export default function ShareLayout({
   children,
 }: Readonly<{

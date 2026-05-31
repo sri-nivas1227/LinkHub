@@ -10,7 +10,6 @@ import Logo from "@/app/assets/StashD-Logo.png";
 import Image from "next/image";
 
 export default function NavBar() {
-  const [profileClicked, setProfileClicked] = useState<boolean>(false);
   const [username, setUsername] = useState<string | null>("");
   const router = useRouter();
 
@@ -20,10 +19,6 @@ export default function NavBar() {
       return (response as any).name;
     }
     return null;
-  };
-  const handleLogout = async () => {
-    await logoutAction();
-    router.push(ROUTES.LOGIN);
   };
   useEffect(() => {
     getUsername().then((value) => setUsername(value));
@@ -36,53 +31,19 @@ export default function NavBar() {
           <Image src={Logo} alt="StashD Logo" className="w-28 invert" />
         </Link>
         <div className="flex items-center gap-2">
-          {/* <button
-            aria-label="Search"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/60 text-zinc-300 transition hover:text-zinc-100"
-          >
-            <Search size={18} />
-          </button> */}
           <div className="relative">
             <button
-              aria-label="User profile"
-              // onClick={() => setProfileClicked((prev) => !prev)}
+              title="User profile"
               onClick={() => router.push("/profile")}
               className="cursor-pointer inline-flex items-center justify-center"
             >
               <PersonStanding className="md:w-10 md:h-10" />
-            </button>
-            {/* {profileClicked ? (
-              <div className="absolute top-10 right-5 flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition  hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95">
-                <span className="font-semibold text-zinc-200 text-center border-b border-white whitespace-nowrap">
-                  {username ? username : "New Here?"}
+              {username && (
+                <span className=" text-white capitalize rounded-full px-1">
+                  {username}
                 </span>
-                {username ? (
-                  <span
-                    onClick={() => router.push("/profile")}
-                    className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center "
-                  >
-                    Profile
-                  </span>
-                ) : (
-                  <span
-                    onClick={() => router.push("/auth/signup")}
-                    className="font-light whitespace-nowrap hover:text-zinc-300 hover:underline cursor-pointer text-zinc-400 text-center "
-                  >
-                    Create an account
-                  </span>
-                )}
-                {username && (
-                  <span
-                    onClick={handleLogout}
-                    className="font-light hover:text-zinc-300 cursor-pointer text-zinc-400 text-center"
-                  >
-                    Logout
-                  </span>
-                )}
-              </div>
-            ) : (
-              ""
-            )} */}
+              )}
+            </button>
           </div>
         </div>
       </div>
