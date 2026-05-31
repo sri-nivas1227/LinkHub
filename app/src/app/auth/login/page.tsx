@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { postLoginAction } from "../../actions";
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
 export default function Page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,8 @@ export default function Page() {
     if (result.success) {
       // Redirect or update UI
       setLoading(false);
-      router.push(ROUTES.HOME);
+      const redirect = searchParams.get("redirect");
+      router.push(redirect ?? ROUTES.HOME);
     } else {
       if (result.data?.redirect) {
         toast.error("User doesn't exist. Redirecting to signup.");
