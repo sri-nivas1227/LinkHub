@@ -8,7 +8,7 @@ export default function ProfileLayout({
   return (
     <section className="min-h-screen">
           <NavBar />
-          <div className="mx-auto w-full max-w-md pb-24 pt-6">
+          <div className="mx-auto w-full pb-24 pt-6">
             {children}
           </div>
         </section>
