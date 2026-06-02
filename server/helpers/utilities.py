@@ -25,3 +25,9 @@ def validate_and_get_token_payload(token: str) -> bool:
     except jwt.InvalidTokenError:
         return False, None
 
+import secrets
+
+def generate_numeric_otp(length=6):
+    # Generates secure random choices from a string of digits
+    digits = "0123456789"
+    return "".join(secrets.choice(digits) for _ in range(length))
