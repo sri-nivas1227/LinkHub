@@ -6,7 +6,8 @@ import os
 from datetime import datetime
 from helpers.utilities import validate_and_get_token_payload
 from models.User import User
-
+from models.OTP import OTP
+from helpers.resend_emailer import send_onboarding_otp
 load_dotenv()
 auth_router = Blueprint("auth", __name__)
 
@@ -33,10 +34,62 @@ def signup():
     )
     user_id = user.create()
     if user_id:
+        # Trigger Verification Email with OTP
+        email_verification_data = send_onboarding_otp(email,)
+        otp_data = OTP.build_otp_object(otp=email_verification_data.get("otp"), user_id=user_id)
+        otp_inserted_id = otp_data.create()
         return make_response(
-            {"success": True, "message": "User registered successfully"}, 201
+            {"success": True, "message": "User registered and OTP sent successfully to the Email!", "otp_id":otp_inserted_id}, 201
         )
 
+@auth_router.route("/auth/verify_otp", methods=["POST"])
+def verify_OTP():
+    data = request.get_json()
+    user_OTP = data.get("otp")
+    user_email = data.get("email")
+    otp_id = data.get("otp_id")
+    is_otp_verified = OTP.verify_otp(user_OTP, otp_id)
+
+    if not is_otp_verified:
+        return make_response(
+            {
+                "success": False,
+                "message": "OTP not verified. Try again!",
+            },
+            400,
+        )
+    
+    # update user with email verified
+    verify_email_confirmation = User.verify_user_email(user_email)
+    if verify_email_confirmation:
+        user = User.get_by_email(user_email)
+        jwt_secret = os.getenv("JWT_SECRET")
+        jwt_token = jwt.encode(
+            {
+                "user_id": str(user._id),
+                "name": user.full_name,
+                "datetime": str(datetime.now()),
+            },
+            jwt_secret,
+            algorithm="HS256",
+        )
+        # write jwt token to the cookies
+
+        return make_response(
+            {
+                "success": True,
+                "message": "Login successful",
+                "data": {"token": jwt_token},
+            },
+            200,
+        )
+    else:
+        return make_response(
+            {
+                "success": False,
+                "message": "OTP not verified. Try again!"
+            },400
+        )
 
 @auth_router.route("/login", methods=["POST"])
 def login():

@@ -12,6 +12,7 @@ class User:
         username=None,
         profile =None,
         preferences=None,
+        email_verified=False,
         _id=None,
     ):
         self._id = ObjectId(_id) if _id else None
@@ -21,6 +22,7 @@ class User:
         self.password = password
         self.profile = profile if profile else {"description": "", "links": []}
         self.preferences = preferences
+        self.email_verified = email_verified
 
     def to_dict(self):
         """Convert User object to dictionary"""
@@ -32,6 +34,7 @@ class User:
             "password": self.password,
             "profile": self.profile,
             "preferences": self.preferences,
+            "email_verified": self.email_verified,
         }
 
     def to_json(self):
@@ -43,6 +46,7 @@ class User:
             "username": self.username,
             "profile": self.profile,
             "preferences": self.preferences,
+            "email_verified": self.email_verified
         }
 
     def create(self):
@@ -103,3 +107,8 @@ class User:
         if user:
             return User(**user)
         return None
+
+    @staticmethod
+    def verify_user_email(user_email:str):
+        user = User.get_by_email(user_email)
+        return user.update({"email_verified":True})

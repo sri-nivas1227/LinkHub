@@ -16,9 +16,13 @@ else:
     mongo_uri = "mongodb://localhost:27017/linkhub"
 mongo = MongoClient(mongo_uri)
 db = mongo.get_database("linkhub")
+
+# COLLECTIONS
 users_collection = db.get_collection("users")
 links_collection = db.get_collection("links")
 categories_collection = db.get_collection("categories")
+otp_collection = db.get_collection("otps")
+
 
 db.command("ping")
 print("Connected to MongoDB successfully!")

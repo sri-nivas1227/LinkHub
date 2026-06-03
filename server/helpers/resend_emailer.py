@@ -41,7 +41,7 @@ def send_onboarding_otp(toEmail:str):
             """
     email_data = send_email(fromEmail=fromEmail, toEmails=toEmails, subject=subject, bodyType=bodyType, body=body)
     return {
-            "OTP": random_OTP,
+            "otp": random_OTP,
             "email_data": email_data
         }
 
