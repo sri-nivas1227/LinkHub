@@ -27,7 +27,29 @@ export async function postSignupAction(formData: {
   const responseData: responseFormat = await response.json();
   return responseData;
 }
-
+export async function postVerifyOTPAuthAction(formData: {
+  otp: string;
+  email: string;
+  otp_id: string;
+}) {
+  {
+    const response = await fetch(`${API_URL}${ENDPOINTS.VERIFY_OTP_AUTH}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    const responseData: responseFormat = await response.json();
+    if (response.ok) {
+      // 2. Set the cookie on the server side
+      const cookieStore = await cookies();
+      cookieStore.set(AUTH_COOKIE_NAME, responseData.data.token, COOKIE_CONFIG);
+      return responseData;
+    }
+    return responseData;
+  }
+}
 export async function postLoginAction(formData: any) {
   // 1. Call your external API
   const response = await fetch(`${API_URL}${ENDPOINTS.LOGIN}`, {
