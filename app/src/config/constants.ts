@@ -15,11 +15,19 @@ export const ROUTES = {
   HOME: "/home",
   LOGIN: "/auth/login",
   SIGNUP: "/auth/signup",
+  VERIFY_EMAIL: "/auth/verifyEmail",
   ADD_LINK: "/addLink",
   PROFILE: "/profile",
   ROOT: "/",
 } as const;
 
+// PUBLIC_PATHS
+export const PUBLIC_PATHS = [
+  ROUTES.ROOT,
+  ROUTES.LOGIN,
+  ROUTES.SIGNUP,
+  ROUTES.VERIFY_EMAIL,
+];
 // UI Configuration
 export const UI_CONFIG = {
   COPY_NOTIFICATION_TIMEOUT: 1500,
@@ -38,6 +46,7 @@ export const ENDPOINTS = {
   PING: "/ping",
   LOGIN: "/login",
   SIGNUP: "/signup",
+  VERIFY_OTP_AUTH: "/auth/verify_otp",
   CATEGORIES: "/categories",
   LINKS_BY_CATEGORY: "/urls/category",
   LINK_DATA: "/urls",

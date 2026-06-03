@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pingServerAction } from "./app/actions";
-import { ROUTES } from "./config/constants";
+import { ROUTES, PUBLIC_PATHS } from "./config/constants";
 
-const PUBLIC_PATHS = [ROUTES.ROOT, ROUTES.LOGIN, ROUTES.SIGNUP];
 
 function isPublic(pathname: string) {
   return PUBLIC_PATHS.some((path) => pathname === path);
