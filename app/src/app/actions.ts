@@ -1,5 +1,5 @@
 "use server";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import {
   API_URL,
@@ -25,29 +25,58 @@ export async function postSignupAction(formData: {
     body: JSON.stringify(formData),
   });
   const responseData: responseFormat = await response.json();
+  const setCookieHeader = response.headers.get("set-cookie");
+  if (setCookieHeader != null) {
+    const token = setCookieHeader?.split(";")[0].split("=")[1];
+
+    const cookieStore = await cookies();
+    cookieStore.set("X-OTPVerifier", token, {
+      httpOnly: true,
+      maxAge: 5000,
+      path: "/",
+      sameSite: "none",
+      secure: true,
+    });
+  }
   return responseData;
 }
-export async function postVerifyOTPAuthAction(formData: {
-  otp: string;
-  email: string;
-  otp_id: string;
-}) {
+export async function postVerifyOTPAuthAction(otp: string) {
   {
-    const response = await fetch(`${API_URL}${ENDPOINTS.VERIFY_OTP_AUTH}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    const responseData: responseFormat = await response.json();
-    if (response.ok) {
-      // 2. Set the cookie on the server side
-      const cookieStore = await cookies();
-      cookieStore.set(AUTH_COOKIE_NAME, responseData.data.token, COOKIE_CONFIG);
-      return responseData;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("X-OTPVerifier")?.value;
+    if (token) {
+      const payload = jwt.decode(token);
+      if (typeof payload == "object") {
+        const requestData = {
+          otp: otp,
+          user_id: payload!.user_id,
+          otp_id: payload!.otp_id,
+        };
+        const response = await fetch(`${API_URL}${ENDPOINTS.VERIFY_OTP_AUTH}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+        const responseData: responseFormat = await response.json();
+        if (response.ok) {
+          // 2. Set the cookie on the server side
+          const cookieStore = await cookies();
+          cookieStore.set(
+            AUTH_COOKIE_NAME,
+            responseData.data.token,
+            COOKIE_CONFIG,
+          );
+          return responseData;
+        }
+        return responseData;
+      }
     }
-    return responseData;
+  }
+  return {
+    "success": false,
+    "message": "Something went wrong!"
   }
 }
 export async function postLoginAction(formData: any) {
