@@ -1,9 +1,10 @@
 "use client";
-import { postVerifyOTPAuthAction } from "@/app/actions";
+import { postResendOTPAction, postVerifyOTPAuthAction } from "@/app/actions";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { ROUTES } from "@/config/constants";
+import { toast } from "sonner";
 function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,9 +29,32 @@ function VerifyEmail() {
       const response = await postVerifyOTPAuthAction(form.otp);
       if (response.success) {
         // OTP verified successfully, redirect to login page
-        router.push(ROUTES.LOGIN);
+        toast.success("OTP verified successfully! You are Logged In🎉.");
+        router.push(ROUTES.HOME);
       } else {
         setError(response.message || "OTP Verification Failed :/ Try again!");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleResendOTP = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await postResendOTPAction();
+      if (response.success) {
+        toast.success("OTP resent successfully! Check your email.");
+      } else {
+        // setError(response.message || "OTP Verification Failed :/ Try again!");
+        if(response.data.hasOwnProperty("redirect")){
+          toast.error(response.message || "OTP Verification Failed. Try again!", {
+            description: "Redirecting to login page...",
+          });
+          router.push(response.data?.redirect);
+        }
       }
     } catch (err) {
       setError("Network error");
@@ -82,7 +106,10 @@ function VerifyEmail() {
         </div>
         <div className="mt-6 text-sm text-zinc-400">
           Didn't receive the OTP?{" "}
-          <button className="text-indigo-300 hover:text-indigo-200">
+          <button
+            onClick={handleResendOTP}
+            className="text-indigo-300 hover:text-indigo-200"
+          >
             Resend OTP
           </button>
         </div>
