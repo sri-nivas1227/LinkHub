@@ -78,12 +78,12 @@ class OTP:
         return None
     @staticmethod
     def verify_otp(otp, otp_id):
-        otp_object = otp_collection.find(filter={"_id":ObjectId(otp_id), "active":True})
+        otp_object = otp_collection.find_one(filter={"_id":ObjectId(otp_id), "active":True})
         if otp_object.get("otp") == otp:
             if otp_object.get("expires_at") >=datetime.now():
                 otp_object["verified"] = True
                 otp_object["active"] = False
-                otp_collection.update_one(filter={"_id":ObjectId(otp_id)},update=otp_object)
+                otp_collection.update_one(filter={"_id":ObjectId(otp_id)},update={"$set":otp_object})
                 return True
         return False
 

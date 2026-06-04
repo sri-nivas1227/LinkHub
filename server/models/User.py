@@ -109,6 +109,6 @@ class User:
         return None
 
     @staticmethod
-    def verify_user_email(user_email:str):
-        user = User.get_by_email(user_email)
+    def verify_user_email(user_id:str):
+        user = User.get_by_id(user_id=user_id)
         return user.update({"email_verified":True})

@@ -38,15 +38,28 @@ def signup():
         email_verification_data = send_onboarding_otp(email,)
         otp_data = OTP.build_otp_object(otp=email_verification_data.get("otp"), user_id=user_id)
         otp_inserted_id = otp_data.create()
-        return make_response(
-            {"success": True, "message": "User registered and OTP sent successfully to the Email!", "otp_id":otp_inserted_id}, 201
+        jwt_secret = os.getenv("JWT_SECRET")
+        jwt_token = jwt.encode(
+            {
+                "user_id": str(user._id),
+                "otp_id": otp_inserted_id,
+                "datetime": str(datetime.now()),
+            },
+            jwt_secret,
+            algorithm="HS256",
         )
+        response = make_response(
+            {"success": True, "message": "User registered and OTP sent successfully to the Email!", "data":{"otp_id":otp_inserted_id}}, 201
+        )
+        response.set_cookie("X-OTPVerifier",jwt_token, max_age=5000, httponly=True, samesite="None", secure=True )
+        return response
+
 
 @auth_router.route("/auth/verify_otp", methods=["POST"])
 def verify_OTP():
     data = request.get_json()
     user_OTP = data.get("otp")
-    user_email = data.get("email")
+    user_id = data.get("user_id")
     otp_id = data.get("otp_id")
     is_otp_verified = OTP.verify_otp(user_OTP, otp_id)
 
@@ -60,9 +73,9 @@ def verify_OTP():
         )
     
     # update user with email verified
-    verify_email_confirmation = User.verify_user_email(user_email)
+    verify_email_confirmation = User.verify_user_email(user_id)
     if verify_email_confirmation:
-        user = User.get_by_email(user_email)
+        user = User.get_by_id(user_id)
         jwt_secret = os.getenv("JWT_SECRET")
         jwt_token = jwt.encode(
             {

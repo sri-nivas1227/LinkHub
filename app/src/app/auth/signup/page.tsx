@@ -35,16 +35,20 @@ export default function SignUpPage() {
     try {
       const response = await postSignupAction(form);
       if (response.success) {
-        const result = await postLoginAction(form);
-        if (result.success) {
-          router.push(ROUTES.HOME);
-          toast.success("Account created successfully! Welcome to LinkHub! 🎉");
-        }
+        toast.success(
+          "Welcome to LinkHub! Please verify your email to continue.",
+        );
+        router.push(
+          ROUTES.VERIFY_EMAIL);
+        return;
       } else {
         setError(response.message || "Signup Failed :/ Try again!");
       }
     } catch (err) {
-      setError("Network error");
+      // todo: add a report issue button when error occurs to let users report the issue with pre-filled error details
+      setError(
+        `Network error: ${err instanceof Error ? `: ${err.message}` : ""}`,
+      );
     } finally {
       setLoading(false);
     }
