@@ -47,6 +47,7 @@ export const ENDPOINTS = {
   LOGIN: "/login",
   SIGNUP: "/signup",
   VERIFY_OTP_AUTH: "/auth/verify_otp",
+  RESEND_OTP: "/auth/resend_otp",
   CATEGORIES: "/categories",
   LINKS_BY_CATEGORY: "/urls/category",
   LINK_DATA: "/urls",
