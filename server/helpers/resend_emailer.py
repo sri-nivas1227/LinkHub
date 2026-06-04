@@ -45,5 +45,21 @@ def send_onboarding_otp(toEmail:str):
             "email_data": email_data
         }
 
+def send_login_otp(toEmail: str):
+    random_OTP = generate_numeric_otp()
 
+    # Email Params
+    fromEmail = "StashD <StashD@srinivasmekala.dev>"
+    toEmails = [toEmail]
+    subject = "Welcome! Your OTP to login in to StashD."
+    bodyType = "html"
+    body = f"""
+            <strong style="font-size:24px">OTP: {random_OTP}</strong>
+            <p> Welcome to StashD! Save your links and categorize them easily. No lost link from now on.</p>
+            """
+    email_data = send_email(fromEmail=fromEmail, toEmails=toEmails, subject=subject, bodyType=bodyType, body=body)
+    return {
+            "otp": random_OTP,
+            "email_data": email_data
+        }
     

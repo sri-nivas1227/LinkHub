@@ -87,5 +87,15 @@ class OTP:
                 return True
         return False
 
+    @staticmethod
+    def inactivate_otp(otp_id):
+        update_data = {
+            "active":False,
+            "verified":False
+        }
+        otp_collection.update_one(filter={"_id":ObjectId(otp_id)},update={"$set":update_data})
+        return True
+
+
 
 
