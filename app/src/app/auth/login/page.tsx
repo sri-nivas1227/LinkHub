@@ -16,6 +16,11 @@ function LoginPage() {
   const handleLogin = async () => {
     // Handle login logic here
     setLoading(true);
+    if (email === "" || password === "") {
+      setError("Please fill in all fields!");
+      setLoading(false);
+      return;
+    }
     const result = await postLoginAction({ email, password });
     if (result.success) {
       // Redirect or update UI
@@ -24,8 +29,7 @@ function LoginPage() {
       router.push(redirect ?? ROUTES.HOME);
     } else {
       if (result.data?.redirect) {
-        toast.error("User doesn't exist. Redirecting to signup.");
-
+        toast.error(result.message || "Login failed. Please try again.");
         router.push(result.data.redirect);
         return;
       }
@@ -33,6 +37,29 @@ function LoginPage() {
       setLoading(false);
     }
   };
+  const handleLoginWithOTP = async () => {
+     setLoading(true);
+     if (email === "") {
+      setError("Please fill in email address!");
+      setLoading(false);
+      return;
+    }
+    const result = await postLoginAction({ email, password, otp: true });
+    if (result.success) {
+      // Redirect or update UI
+      setLoading(false);
+      const redirect = searchParams.get("redirect");
+      router.push(redirect ?? ROUTES.HOME);
+    } else {
+      if (result.data?.redirect) {
+        toast.error(result.message || "Login failed. Please try again.");
+        router.push(result.data.redirect);
+        return;
+      }
+      toast.error(result.message || "Login failed. Please try again.");
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="w-full h-full flex items-center justify-center p-6">
@@ -60,7 +87,11 @@ function LoginPage() {
             />
           </div>
           <div>
+            <div className="flex items-center justify-between">
+              
             <label className="text-sm text-zinc-300">Password</label>
+            <span onClick={handleLoginWithOTP} className="text-xs text-indigo-300 underline cursor-pointer">Login with OTP instead.</span>
+            </div>
             <input
               type="password"
               name="password"
