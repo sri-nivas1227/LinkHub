@@ -13,6 +13,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async () => {
     // Handle login logic here
     setLoading(true);
@@ -38,8 +39,8 @@ function LoginPage() {
     }
   };
   const handleLoginWithOTP = async () => {
-     setLoading(true);
-     if (email === "") {
+    setLoading(true);
+    if (email === "") {
       setError("Please fill in email address!");
       setLoading(false);
       return;
@@ -59,7 +60,7 @@ function LoginPage() {
       toast.error(result.message || "Login failed. Please try again.");
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="w-full h-full flex items-center justify-center p-6">
@@ -88,18 +89,30 @@ function LoginPage() {
           </div>
           <div>
             <div className="flex items-center justify-between">
-              
-            <label className="text-sm text-zinc-300">Password</label>
-            <span onClick={handleLoginWithOTP} className="text-xs text-indigo-300 underline cursor-pointer">Login with OTP instead.</span>
+              <label className="text-sm text-zinc-300">Password</label>
+              <span
+                onClick={handleLoginWithOTP}
+                className="text-xs text-indigo-300 underline cursor-pointer"
+              >
+                Login with OTP instead.
+              </span>
             </div>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
             />
+            <p
+              onClick={() => {
+                setShowPassword((prev) => !prev);
+              }}
+              className="text-end m-1 text-xs cursor-pointer select-none text-indigo-300"
+            >
+              Show Password
+            </p>
           </div>
           {error && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">

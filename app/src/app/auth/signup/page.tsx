@@ -11,6 +11,7 @@ export default function SignUpPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -38,8 +39,7 @@ export default function SignUpPage() {
         toast.success(
           "Welcome to LinkHub! Please verify your email to continue.",
         );
-        router.push(
-          ROUTES.VERIFY_EMAIL);
+        router.push(ROUTES.VERIFY_EMAIL);
         return;
       } else {
         setError(response.message || "Signup Failed :/ Try again!");
@@ -105,7 +105,7 @@ export default function SignUpPage() {
           <div>
             <label className="text-sm text-zinc-300">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Create a strong password"
               value={form.password}
@@ -113,6 +113,14 @@ export default function SignUpPage() {
               required
               className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
             />
+            <p
+              onClick={() => {
+                setShowPassword((prev) => !prev);
+              }}
+              className="text-end m-1 text-xs cursor-pointer select-none text-indigo-300"
+            >
+              Show Password
+            </p>
           </div>
           {error && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
