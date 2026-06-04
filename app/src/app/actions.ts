@@ -75,8 +75,65 @@ export async function postVerifyOTPAuthAction(otp: string) {
     }
   }
   return {
-    "success": false,
-    "message": "Something went wrong!"
+    success: false,
+    message: "Something went wrong!",
+  };
+}
+
+export async function postResendOTPAction() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("X-OTPVerifier")?.value;
+  console.log(token)
+  if (token) {
+    const payload = jwt.decode(token);
+    console.log(payload);
+    if (typeof payload == "object") {
+      const requestData = {
+        user_id: payload!.user_id,
+        otp_id: payload!.otp_id,
+      };
+      const response = await fetch(`${API_URL}${ENDPOINTS.RESEND_OTP}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+      const responseData: responseFormat = await response.json();
+      const setCookieHeader = response.headers.get("set-cookie");
+      if (setCookieHeader != null) {
+        const token = setCookieHeader?.split(";")[0].split("=")[1];
+
+        const cookieStore = await cookies();
+        cookieStore.delete("X-OTPVerifier");
+        cookieStore.set("X-OTPVerifier", token, {
+          httpOnly: true,
+          maxAge: 5000,
+          path: "/",
+          sameSite: "none",
+          secure: true,
+        });
+      }
+      return responseData;
+    }
+    else{
+      return {
+      "success": false,
+      "message": "Something went wrong! Please Login.",
+      "data":{
+        "redirect": "/auth/login"
+      }
+    }
+    }
+  }
+  else{
+    return {
+      "success": false,
+      "message": "Session Expired! Please login again.",
+      "data":{
+        "redirect": "/auth/login"
+      }
+    }
   }
 }
 export async function postLoginAction(formData: any) {
@@ -93,7 +150,12 @@ export async function postLoginAction(formData: any) {
   if (response.ok) {
     // 2. Set the cookie on the server side
     const cookieStore = await cookies();
-    cookieStore.set(AUTH_COOKIE_NAME, responseData.data.token, COOKIE_CONFIG);
+    const setCookieHeader = response.headers.get("set-cookie");
+    if (setCookieHeader != null) {
+      const token = setCookieHeader?.split(";")[0].split("=")[1];
+      const name = setCookieHeader?.split(";")[0].split("=")[0];
+      cookieStore.set(name, token, COOKIE_CONFIG);
+    }
     return responseData;
   }
 
