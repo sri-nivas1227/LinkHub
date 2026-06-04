@@ -90,7 +90,7 @@ export default function LinkList({
       setIsLoadingLinks(true);
       try {
         const responseData = searchQuery
-        ? await getLinkOnSearchAction(searchQuery)
+          ? await getLinkOnSearchAction(searchQuery)
           : selectedCategoryId === "all"
             ? await getAllLinksAction()
             : await getLinksFromCategoriesAction(selectedCategoryId);
@@ -110,7 +110,7 @@ export default function LinkList({
         setIsLoadingLinks(false);
       }
     };
-    
+
     fetchLinks();
   }, [selectedCategoryId, searchQuery]);
 
@@ -146,26 +146,25 @@ export default function LinkList({
                 className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center">
-                    <Image
-                      src={`https://www.google.com/s2/favicons?domain=${link.url}&sz=64`}
-                      alt="favicon"
-                      width={24}
-                      height={24}
-                      className="h-8 w-8"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-sm font-semibold tracking-tight text-zinc-100"
-                    >
-                      {link.title}
-                    </a>
-                    <p className="truncate text-xs text-zinc-400">{link.url}</p>
-                  </div>
+                  <Link href={link.url} target="_blank" rel="noreferrer" className="w-3/4 flex items-start gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center">
+                      <Image
+                        src={`https://www.google.com/s2/favicons?domain=${link.url}&sz=64`}
+                        alt="favicon"
+                        width={24}
+                        height={24}
+                        className="h-8 w-8"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold tracking-tight text-zinc-100">
+                        {link.title}
+                      </span>
+                      <p className="truncate text-xs text-zinc-400">
+                        {link.url}
+                      </p>
+                    </div>
+                  </Link>
                   <button
                     onClick={() => handleEditLink(link._id)}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
@@ -222,4 +221,3 @@ export default function LinkList({
     </section>
   );
 }
-
