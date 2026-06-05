@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { postUpdateProfileAction } from "@/app/actions";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Link {
   title: string;
@@ -17,8 +17,13 @@ interface Profile {
   links: Link[];
 }
 
-const EditProfileForm = ({ profile, setIsEditing }: { profile: Profile | null; setIsEditing: (isEditing: boolean) => void }) => {
-  const router = useRouter();
+const EditProfileForm = ({
+  profile,
+  setIsEditing,
+}: {
+  profile: Profile | null;
+  setIsEditing: (isEditing: boolean) => void;
+}) => {
   const [updatedProfile, setUpdatedProfile] = useState<Profile>(
     profile || {
       name: "",
@@ -62,6 +67,7 @@ const EditProfileForm = ({ profile, setIsEditing }: { profile: Profile | null; s
     const response = await postUpdateProfileAction(updatedProfile);
     if (response.success) {
       // Handle success (e.g., show a success message, redirect, etc.)
+      toast.success("Profile updated successfully!");
       setIsEditing(false);
     } else {
       // Handle error (e.g., show an error message)
@@ -72,7 +78,7 @@ const EditProfileForm = ({ profile, setIsEditing }: { profile: Profile | null; s
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 rounded-lg bg-zinc-900/30 p-6 shadow-md"
+      className="space-y-6 rounded-lg bg-zinc-700/50 p-6 shadow-md"
     >
       <h2 className="text-2xl font-bold text-zinc-200">Edit Profile</h2>
       <div className="space-y-4">

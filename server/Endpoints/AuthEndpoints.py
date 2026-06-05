@@ -206,6 +206,37 @@ def login():
         {"success": False, "message": "Invalid email or password"}, 401
     )
 
+@auth_router.route("/auth/update_password", methods=["PUT"])
+def update_password():
+    token = request.cookies.get("token")
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if not is_valid_token:
+        return make_response({"success": False, "message": "Invalid or missing token"}, 401)
+
+    user_id = payload.get("user_id")
+    user = User.get_by_id(user_id)
+    if not user:
+        return make_response({"success":False, "message":"User does not exist"}, 401)
+
+    data = request.get_json()
+    currentPassword = data.get("currentPassword")
+    newPassword = data.get("newPassword")
+    if checkpw(
+        currentPassword.encode("utf-8"), user.password.encode("utf-8")
+    ):
+        is_user_updated = user.update({  "password": hashpw(newPassword.encode("utf-8"), gensalt()).decode("utf-8")})
+        if is_user_updated:
+            return make_response({
+                "success": True,
+                "message": "Password has been successfully updated. Please login with your new password!"
+            }, 200)
+    return make_response({
+        "success": False,
+        "message": "Something went wrong! Please try again."
+    })
+        
+    
+
 
 @auth_router.route("/ping", methods=["GET"])
 def ping():

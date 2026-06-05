@@ -59,4 +59,5 @@ export const ENDPOINTS = {
   EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",
+  UPDATE_PASSWORD: "/auth/update_password",
 } as const;

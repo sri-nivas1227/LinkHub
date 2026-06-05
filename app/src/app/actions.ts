@@ -83,7 +83,6 @@ export async function postVerifyOTPAuthAction(otp: string) {
 export async function postResendOTPAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get("X-OTPVerifier")?.value;
-  console.log(token)
   if (token) {
     const payload = jwt.decode(token);
     console.log(payload);
@@ -115,25 +114,23 @@ export async function postResendOTPAction() {
         });
       }
       return responseData;
-    }
-    else{
+    } else {
       return {
-      "success": false,
-      "message": "Something went wrong! Please Login.",
-      "data":{
-        "redirect": "/auth/login"
-      }
+        success: false,
+        message: "Something went wrong! Please Login.",
+        data: {
+          redirect: "/auth/login",
+        },
+      };
     }
-    }
-  }
-  else{
+  } else {
     return {
-      "success": false,
-      "message": "Session Expired! Please login again.",
-      "data":{
-        "redirect": "/auth/login"
-      }
-    }
+      success: false,
+      message: "Session Expired! Please login again.",
+      data: {
+        redirect: "/auth/login",
+      },
+    };
   }
 }
 export async function postLoginAction(formData: any) {
@@ -368,6 +365,25 @@ export async function updateCategoryAction(
     },
   );
   const data: responseFormat = await response.json();
+  return data;
+}
+
+export async function postChangePasswordAction(formData: {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+}) {
+  const token = await getToken();
+  const response = await fetch(`${API_URL}${ENDPOINTS.UPDATE_PASSWORD}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token?.value}`,
+    },
+    body: JSON.stringify(formData),
+  });
+  const data: responseFormat = await response.json();
+
   return data;
 }
 
