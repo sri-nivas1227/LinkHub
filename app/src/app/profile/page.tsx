@@ -120,7 +120,7 @@ export default function ProfilePage() {
               <div className="mt-6">
                 <button
                   onClick={handleChangePassword}
-                  className="w-full flex justify-center items-center space-x-2 rounded-md bg-zinc-500 p-2 text-lg font-medium text-white hover:bg-red-600 cursor-pointer"
+                  className="w-full flex justify-center items-center space-x-2 rounded-md bg-zinc-500 p-2 text-lg font-medium text-white hover:bg-zinc-600 cursor-pointer"
                 >
                   <span>Change Password</span>
                 </button>

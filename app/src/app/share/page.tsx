@@ -154,7 +154,7 @@ function Share() {
       </section>
 
       <footer className="pt-4 text-center text-xs text-zinc-500">
-        Built with LinkHub © 2026.
+        Built with ❤️ by Srinivas Mekala © 2026.
       </footer>
     </div>
   );

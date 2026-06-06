@@ -68,7 +68,7 @@ function LoginPage() {
         <div className="mb-8">
           <p className="text-sm text-zinc-400">Welcome back</p>
           <h1 className="text-3xl font-semibold text-white">
-            Sign in to LinkHub
+            Sign in to StashD
           </h1>
           <p className="text-sm text-zinc-400 mt-2">
             Access your saved links, categories, and collections in one place.

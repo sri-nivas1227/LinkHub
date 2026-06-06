@@ -1,6 +1,6 @@
-# LinkHub
+# StashD
 
-## Design System & Implementation Brief: LinkHub
+## Design System & Implementation Brief: StashD
 1. Aesthetic DNA (The "Vibe")
 Theme: Deep Midnight Minimalist.
 
@@ -38,7 +38,7 @@ Each card should feature a small favicon, a bold title, and a truncated URL.
 Include a "Quick Copy" icon button on each card.
 
 Footer
-Style: Minimalist text. "Built with LinkHub © 2026."
+Style: Minimalist text. "Built with StashD © 2026."
 
 Floating Action Button (FAB): A prominent "+" button fixed at the bottom right for mobile, or bottom center, to quickly add a new link.
 
@@ -59,4 +59,4 @@ Empty State: A beautiful, centered illustration or icon when a collection is emp
 Hover Effects: On desktop, cards should subtly lift or glow when hovered. On mobile, use active-press scaling (scale-95).
 
 5. Instructions for the Agent
-"Using Next.js and Tailwind CSS, build the LinkHub interface described above. Focus on high-quality spacing (gap, padding). Ensure the dark theme uses Zinc scales for a sophisticated look rather than pure black. Use a mobile-first approach where the UI stays centered in a slim column on large screens. Prioritize smooth transitions between collection filters."
+"Using Next.js and Tailwind CSS, build the StashD interface described above. Focus on high-quality spacing (gap, padding). Ensure the dark theme uses Zinc scales for a sophisticated look rather than pure black. Use a mobile-first approach where the UI stays centered in a slim column on large screens. Prioritize smooth transitions between collection filters."

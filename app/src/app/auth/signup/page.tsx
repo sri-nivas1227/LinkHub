@@ -37,7 +37,7 @@ export default function SignUpPage() {
       const response = await postSignupAction(form);
       if (response.success) {
         toast.success(
-          "Welcome to LinkHub! Please verify your email to continue.",
+          "Welcome to StashD! Please verify your email to continue.",
         );
         router.push(ROUTES.VERIFY_EMAIL);
         return;
@@ -71,7 +71,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md text-left">
         <div className="mb-8">
           <p className="text-sm text-zinc-400">Create your account</p>
-          <h1 className="text-3xl font-semibold text-white">Join LinkHub</h1>
+          <h1 className="text-3xl font-semibold text-white">Join StashD</h1>
           <p className="text-sm text-zinc-400 mt-2">
             Start organizing your links with smart categories and quick access.
           </p>

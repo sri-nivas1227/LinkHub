@@ -11,6 +11,9 @@ import {
   Share2,
   Sparkles,
 } from "lucide-react";
+import { ROUTES } from "@/config/constants";
+import Image from "next/image";
+import Logo from "@/app/assets/StashD-Logo.png";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -44,6 +47,7 @@ const features = [
     title: "Send a whole collection to a friend",
     description:
       "One link. They get everything. No account needed on their end.",
+    incoming: true,
   },
   {
     icon: Globe,
@@ -82,19 +86,22 @@ const STAGGER = {
 
 export default function HomePage() {
   return (
-    <div className="w-3/4 flex flex-col gap-10 pb-32">
+    <div className="w-full lg:w-3/4 flex flex-col gap-10 pb-32 px-4 sm:px-0">
       <section className="mt-10">
-        <h1 className="text-3xl font-bold">LinkHub</h1>
+        <Link href={ROUTES.HOME} className="flex items-center justify-center">
+          {/* <LinkIcon className="w-6 h-6" /> */}
+          <Image src={Logo} alt="StashD Logo" className="w-48 invert" />
+        </Link>{" "}
       </section>
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <section className="flex flex-col justify-center items-center gap-5 pt-12 px-2">
+      <section className="flex flex-col justify-center items-center gap-5  p2-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-1.5 text-xs font-medium text-indigo-300 w-fit"
+          className="flex items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300 w-fit"
         >
-          <Sparkles size={12} />
+          <Sparkles size={14} />
           hey, quick question 👋
         </motion.div>
 
@@ -102,7 +109,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="w-1/2 text-center text-4xl font-bold tracking-tight text-zinc-100 leading-snug"
+          className="w-full md:w-1/2 text-center text-4xl font-bold tracking-tight text-zinc-100 leading-snug"
         >
           Ever saved a link and then… just never found it again?
         </motion.h1>
@@ -111,20 +118,21 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-1/2 text-sm text-zinc-400 leading-relaxed"
+          className="w-full md:w-1/2 text-center text-sm md:text-base text-zinc-400 leading-relaxed"
         >
           You're deep in research mode — writing a paper, prepping for an exam,
           planning a trip — and your links are{" "}
-          <span className="text-zinc-300 font-semibold">everywhere</span>.
-          Instagram saves. A YouTube playlist. Three browser tabs. A notes app
-          you haven't opened in weeks.
+          <span className="text-zinc-300 font-semibold">everywhere</span>.{" "}
+          <i>Instagram saves</i>. <i>A YouTube playlist</i>.{" "}
+          <i>Three browser tabs</i>.{" "}
+          <i>A notes app you haven't opened in weeks</i>.
         </motion.p>
-
+        <i></i>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-sm text-zinc-400 leading-relaxed"
+          className="text-sm text-zinc-400 leading-relaxed text-center"
         >
           Yeah. That chaos ends here. 👇
         </motion.p>
@@ -133,7 +141,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="w-1/3 flex flex-col gap-3 pt-2"
+          className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 flex flex-col gap-3 pt-2"
         >
           <Link
             href="/auth/signup"
@@ -188,13 +196,15 @@ export default function HomePage() {
               <span className="text-sm text-zinc-500 line-through">
                 {silo.label}
               </span>
-              <span className="text-xs text-zinc-600 ml-auto">{silo.note}</span>
+              <span className="text-xs text-zinc-600 ml-auto hidden sm:inline">
+                {silo.note}
+              </span>
             </div>
           ))}
           <div className="flex items-center gap-3 rounded-xl border border-indigo-500/40 bg-indigo-500/10 px-4 py-3 shadow-[0_0_20px_rgba(99,102,241,0.15)]">
             <span className="text-xs text-indigo-400">✓</span>
             <span className="text-sm font-medium text-indigo-200">
-              LinkHub — all of it, one place, finally 🎉
+              StashD — all of it, one place, finally 🎉
             </span>
           </div>
         </motion.div>
@@ -215,7 +225,7 @@ export default function HomePage() {
             Think of it as your personal corner of the internet. 🏠
           </h2>
           <p className="text-sm text-zinc-400 leading-relaxed">
-            LinkHub is where you drop any link — from anywhere — tag it, toss it
+            StashD is where you drop any link — from anywhere — tag it, toss it
             into a collection, and find it again whenever. No platform
             restrictions, no chaos, no scrolling through history for twenty
             minutes going{" "}
@@ -303,7 +313,7 @@ export default function HomePage() {
           viewport={{ once: true }}
           className="flex flex-col gap-3"
         >
-          {features.map(({ icon: Icon, title, description }) => (
+          {features.map(({ icon: Icon, title, description, incoming }) => (
             <motion.div
               key={title}
               variants={STAGGER.item}
@@ -320,13 +330,20 @@ export default function HomePage() {
                   {description}
                 </p>
               </div>
+              {/*  if it's an incoming feature, show an arrow on the right */}
+              {incoming && (
+                <div className="ml-auto flex items-center text-orange-400">
+                  <span className="text-xs">coming soon</span>
+                </div>
+              )}
             </motion.div>
           ))}
         </motion.div>
       </section>
 
       {/* ── SHARE HIGHLIGHT ───────────────────────────────────────────────── */}
-      <section className="px-2">
+      {/* todo: Uncomment this after share feature gets introduced */}
+      {/* <section className="px-2">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -370,7 +387,7 @@ export default function HomePage() {
             </div>
           </div>
         </motion.div>
-      </section>
+      </section> */}
 
       {/* ── CLOSER ────────────────────────────────────────────────────────── */}
       <section className="flex flex-col gap-4 px-2">
@@ -406,13 +423,13 @@ export default function HomePage() {
         >
           <Link
             href="/auth/signup"
-            className="w-1/2 flex items-center justify-center rounded-full border border-indigo-500/60 bg-indigo-500 py-3 text-sm font-semibold text-white shadow-[0_20px_50px_-20px_rgba(99,102,241,0.9)] transition hover:brightness-110"
+            className="w-full sm:w-1/2 flex items-center justify-center rounded-full border border-indigo-500/60 bg-indigo-500 py-3 text-sm font-semibold text-white shadow-[0_20px_50px_-20px_rgba(99,102,241,0.9)] transition hover:brightness-110"
           >
             Let&apos;s go 🚀
           </Link>
           <Link
             href="/auth/login"
-            className="w-1/2 flex items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/60 py-3 text-sm font-semibold text-zinc-400 transition hover:text-zinc-200"
+            className="w-full sm:w-1/2 flex items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/60 py-3 text-sm font-semibold text-zinc-400 transition hover:text-zinc-200"
           >
             Already have an account? Sign in
           </Link>
@@ -421,7 +438,7 @@ export default function HomePage() {
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
       <footer className="pt-4 text-center text-xs text-zinc-600 flex flex-col gap-1">
-        <p>Built with LinkHub © 2026.</p>
+        <p>Built with StashD © 2026.</p>
         <p>
           Open source ·{" "}
           <a

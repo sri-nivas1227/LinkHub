@@ -36,12 +36,12 @@ export const UI_CONFIG = {
 
 // App Metadata
 export const APP_CONFIG = {
-  NAME: "LinkHub",
+  NAME: "StashD",
   LOGO: "LH",
   DESCRIPTION: "Your personal hub for curated links.",
 } as const;
 
-// LinkHub API Endpoints
+// StashD API Endpoints
 export const ENDPOINTS = {
   PING: "/ping",
   LOGIN: "/login",
@@ -76,5 +76,5 @@ export const FOOTER_LINKS = {
   ABOUT: "",
   CHANGELOG: "",
   REPORT_ISSUE: "",
-  TERMS: ""
-}
+  TERMS: "",
+};
