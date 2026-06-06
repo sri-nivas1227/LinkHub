@@ -61,3 +61,20 @@ export const ENDPOINTS = {
   POST_PROFILE: "/profile",
   UPDATE_PASSWORD: "/auth/update_password",
 } as const;
+
+// Footer Data
+
+// Social Links
+export const SOCIAL_LINKS = {
+  GITHUB: "https://github.com/sri-nivas1227",
+  X_TWITTER: "https://x.com/sri_nivas1227",
+  LINKEDIN: "https://www.linkedin.com/in/sri-nivas1227",
+  GOFUNDME: "",
+};
+
+export const FOOTER_LINKS = {
+  ABOUT: "",
+  CHANGELOG: "",
+  REPORT_ISSUE: "",
+  TERMS: ""
+}
