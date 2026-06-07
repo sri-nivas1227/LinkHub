@@ -76,8 +76,8 @@ export const SOCIAL_LINKS = {
 };
 
 export const FOOTER_LINKS = {
-  ABOUT: "",
-  CHANGELOG: "",
-  REPORT_ISSUE: "",
-  TERMS: "",
+  ABOUT: "/",
+  CHANGELOG: "/",
+  REPORT_ISSUE: "/feedback",
+  TERMS: "/",
 };
