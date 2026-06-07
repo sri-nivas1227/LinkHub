@@ -387,6 +387,26 @@ export async function postChangePasswordAction(formData: {
   return data;
 }
 
+// Admin actions
+export async function postReportIssueAction(issueData: any) {
+  const formData = new FormData();
+
+  for (const [key, value] of Object.entries(issueData)) {
+    if (value instanceof File) {
+      formData.append(key, value, value.name);
+    } else {
+      formData.append(key, String(value));
+    }
+  }
+  console.log(issueData);
+  const response = await fetch(`${API_URL}${ENDPOINTS.REPORT_ISSUE}`, {
+    method: "POST",
+    body: formData,
+  });
+  const data: responseFormat = await response.json();
+  console.log(data);
+  return data;
+}
 // Public Endpoint Actions
 export async function getLinksFromPublicCategory(categoryId: string) {
   const response = await fetch(
