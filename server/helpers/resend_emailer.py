@@ -6,10 +6,9 @@ from helpers.utilities import generate_numeric_otp
 
 
 load_dotenv()
-
-def send_email(fromEmail:str, toEmails:list[str], subject:str,bodyType:str, body:str):
+RESEND_EMAIL_DOMAIN = os.getenv("RESEND_EMAIL_DOMAIN")
+def send_email(fromEmail:str, toEmails:list[str], subject:str,bodyType:str, body:str, attachments):
     resend.api_key = os.getenv("RESEND_API_KEY")
-    print(resend.api_key)
     params: resend.Emails.SendParams = {
         "from": fromEmail,
         "to": toEmails,
@@ -19,7 +18,8 @@ def send_email(fromEmail:str, toEmails:list[str], subject:str,bodyType:str, body
         params["text"] = body
     if bodyType == "html":
         params["html"] = body
-
+    if attachments:
+        params["attachments"] = attachments
     try:
         email = resend.Emails.send(params=params)
     except Exception as e :
@@ -31,7 +31,7 @@ def send_onboarding_otp(toEmail:str):
     random_OTP = generate_numeric_otp()
 
     # Email Params
-    fromEmail = "StashD <onboarding.StashD@srinivasmekala.dev>"
+    fromEmail = f"StashD <onboarding@{RESEND_EMAIL_DOMAIN}>"
     toEmails = [toEmail]
     subject = "Welcome! Your OTP to verify your Email."
     bodyType = "html"
@@ -49,7 +49,7 @@ def send_login_otp(toEmail: str):
     random_OTP = generate_numeric_otp()
 
     # Email Params
-    fromEmail = "StashD <StashD@srinivasmekala.dev>"
+    fromEmail = f"StashD <verify@{RESEND_EMAIL_DOMAIN}>"
     toEmails = [toEmail]
     subject = "Welcome! Your OTP to login in to StashD."
     bodyType = "html"

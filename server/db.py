@@ -22,7 +22,7 @@ users_collection = db.get_collection("users")
 links_collection = db.get_collection("links")
 categories_collection = db.get_collection("categories")
 otp_collection = db.get_collection("otps")
-
+bug_report_collection = db.get_collection("bugReport")
 
 db.command("ping")
 print("Connected to MongoDB successfully!")
