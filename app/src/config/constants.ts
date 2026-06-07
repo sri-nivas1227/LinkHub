@@ -19,6 +19,7 @@ export const ROUTES = {
   ADD_LINK: "/addLink",
   PROFILE: "/profile",
   ROOT: "/",
+  FEEDBACK: "/feedback",
 } as const;
 
 // PUBLIC_PATHS
@@ -27,6 +28,7 @@ export const PUBLIC_PATHS = [
   ROUTES.LOGIN,
   ROUTES.SIGNUP,
   ROUTES.VERIFY_EMAIL,
+  ROUTES.FEEDBACK,
 ];
 // UI Configuration
 export const UI_CONFIG = {
@@ -60,6 +62,7 @@ export const ENDPOINTS = {
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",
   UPDATE_PASSWORD: "/auth/update_password",
+  REPORT_ISSUE: "/admin/report_issue",
 } as const;
 
 // Footer Data
