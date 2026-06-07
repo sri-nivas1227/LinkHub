@@ -8,14 +8,16 @@ import Link from "next/link";
 import { FOOTER_LINKS, SOCIAL_LINKS } from "@/config/constants";
 export default function Footer() {
   return (
-    <footer className="w-3/4 m-auto py-2 border-t border-zinc-800 text-center text-sm text-zinc-500">
-      <main className="p-1 grid grid-cols-3 items-center justify-between">
+    <footer className="w-full px-4 sm:px-8 md:px-16 m-auto py-4 border-t border-zinc-800 text-center text-sm text-zinc-500">
+      <main className="p-1 grid grid-cols-1 md:grid-cols-3 items-center justify-between gap-8 md:gap-4">
         <section className="flex flex-col items-center justify-center gap-2">
-          <Image alt="Logo" src={Logo} className="invert w-32" />
-          <span className="">Stash you Links. Stay Organized.</span>
+          <Image alt="Logo" src={Logo} className="invert w-24 md:w-32" />
+          <span className="text-xs sm:text-sm">
+            Stash your Links. Stay Organized.
+          </span>
         </section>
         <section className="">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href={FOOTER_LINKS.ABOUT} className="whitespace-nowrap">
               About
             </Link>
@@ -38,7 +40,7 @@ export default function Footer() {
                   alt="GitHub"
                   src={GitHub}
                   title="GitHub"
-                  className="w-9 h-9 invert inline-block"
+                  className="w-8 h-8 invert inline-block"
                 />
               </Link>
             </li>
@@ -48,7 +50,7 @@ export default function Footer() {
                   alt="LinkedIn"
                   src={LinkedIn}
                   title="LinkedIn"
-                  className="w-9 h-9 invert inline-block"
+                  className="w-8 h-8 invert inline-block"
                 />
               </Link>
             </li>
@@ -58,7 +60,7 @@ export default function Footer() {
                   alt="XTwitter"
                   src={XTwitter}
                   title="X/Twitter"
-                  className="w-8 h-8 invert inline-block"
+                  className="w-7 h-7 invert inline-block"
                 />
               </Link>
             </li>
@@ -68,14 +70,14 @@ export default function Footer() {
                   alt="GoFundMe"
                   src={GoFundMe}
                   title="GoFundMe"
-                  className="w-10 h-10 invert inline-block"
+                  className="w-9 h-9 invert inline-block"
                 />
               </Link>
             </li>
           </ul>
         </section>
       </main>
-      <div className="">
+      <div className="mt-8">
         Built with ❤️ by{" "}
         <a
           href="https://srinivasmekala.dev"
@@ -87,7 +89,7 @@ export default function Footer() {
         </a>
         . All rights reserved.
       </div>
-      <div className="">
+      <div className="mt-1">
         &copy; {new Date().getFullYear()} StashD. Version 1.0.0.
       </div>
     </footer>
