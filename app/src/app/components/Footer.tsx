@@ -77,7 +77,7 @@ export default function Footer() {
           </ul>
         </section>
       </main>
-      <div className="mt-8">
+      <div className="">
         Built with ❤️ by{" "}
         <a
           href="https://srinivasmekala.dev"

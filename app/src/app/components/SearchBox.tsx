@@ -19,7 +19,7 @@ export default function SearchBox({
     };
   }, [searchInput]);
   return (
-    <div className="flex items-center gap-10">
+    <div className="flex items-center gap-10 mb-8">
       <div className="w-full md:w-3/4 flex items-center px-2 outline-none border rounded-2xl border-zinc-700 focus-within:border-indigo-500 transition-colors">
         <input
           type="text"
