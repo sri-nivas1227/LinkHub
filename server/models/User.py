@@ -111,4 +111,6 @@ class User:
     @staticmethod
     def verify_user_email(user_id:str):
         user = User.get_by_id(user_id=user_id)
-        return user.update({"email_verified":True})
+        if not user.email_verified:
+            return user.update({"email_verified":True})
+        return True

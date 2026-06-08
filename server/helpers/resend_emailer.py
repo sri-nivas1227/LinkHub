@@ -3,11 +3,12 @@ import os
 import resend
 from dotenv import load_dotenv
 from helpers.utilities import generate_numeric_otp
+from helpers.Email_Templates import get_login_email_template, get_registration_email_template
 
 
 load_dotenv()
 RESEND_EMAIL_DOMAIN = os.getenv("RESEND_EMAIL_DOMAIN")
-def send_email(fromEmail:str, toEmails:list[str], subject:str,bodyType:str, body:str, attachments):
+def send_email(fromEmail:str, toEmails:list[str], subject:str,bodyType:str, body:str, attachments=None):
     resend.api_key = os.getenv("RESEND_API_KEY")
     params: resend.Emails.SendParams = {
         "from": fromEmail,
@@ -33,12 +34,9 @@ def send_onboarding_otp(toEmail:str):
     # Email Params
     fromEmail = f"StashD <onboarding@{RESEND_EMAIL_DOMAIN}>"
     toEmails = [toEmail]
-    subject = "Welcome! Your OTP to verify your Email."
+    subject = f"{random_OTP} is your StashD verification code"
     bodyType = "html"
-    body = f"""
-            <strong style="font-size:24px">OTP: {random_OTP}</strong>
-            <p> Welcome to StashD! Save your links and categorize them easily. No lost link from now on.</p>
-            """
+    body = get_registration_email_template(otp=random_OTP)
     email_data = send_email(fromEmail=fromEmail, toEmails=toEmails, subject=subject, bodyType=bodyType, body=body)
     return {
             "otp": random_OTP,
@@ -51,12 +49,9 @@ def send_login_otp(toEmail: str):
     # Email Params
     fromEmail = f"StashD <verify@{RESEND_EMAIL_DOMAIN}>"
     toEmails = [toEmail]
-    subject = "Welcome! Your OTP to login in to StashD."
+    subject = f"{random_OTP} is your StashD login code",
     bodyType = "html"
-    body = f"""
-            <strong style="font-size:24px">OTP: {random_OTP}</strong>
-            <p> Welcome to StashD! Save your links and categorize them easily. No lost link from now on.</p>
-            """
+    body = get_login_email_template(otp=random_OTP)
     email_data = send_email(fromEmail=fromEmail, toEmails=toEmails, subject=subject, bodyType=bodyType, body=body)
     return {
             "otp": random_OTP,
