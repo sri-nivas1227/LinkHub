@@ -28,7 +28,6 @@ export default function LinkList({
 }: Props) {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const router = useRouter();
   const selectedCategoryName = useMemo(() => {
     return categories.find((category) => category.id === selectedCategoryId)
@@ -37,8 +36,7 @@ export default function LinkList({
   const handleCopy = async (id: string, url: string) => {
     try {
       await navigator.clipboard.writeText(url);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), UI_CONFIG.COPY_NOTIFICATION_TIMEOUT);
+      toast.success("Link Copied to Clipboard!");
     } catch (error) {
       console.error("Copy failed:", error);
     }
@@ -129,7 +127,7 @@ export default function LinkList({
         </Link>
       </div>
 
-      <div className="flex flex-col md:grid md:grid-cols-2 gap-3">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-3 gap-3">
         {isLoadingLinks
           ? Array.from({ length: 3 }).map((_, index) => (
               <div
@@ -146,8 +144,13 @@ export default function LinkList({
                 className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95"
               >
                 <div className="flex items-start gap-3">
-                  <Link href={link.url} target="_blank" rel="noreferrer" className="w-3/4 flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center">
+                    <Link
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block text-sm font-semibold tracking-tight text-zinc-100"
+                    >
                       <Image
                         src={`https://www.google.com/s2/favicons?domain=${link.url}&sz=64`}
                         alt="favicon"
@@ -155,16 +158,28 @@ export default function LinkList({
                         height={24}
                         className="h-8 w-8"
                       />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold tracking-tight text-zinc-100">
-                        {link.title}
-                      </span>
-                      <p className="truncate text-xs text-zinc-400">
+                    </Link>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block text-sm font-semibold tracking-tight text-zinc-100"
+                    >
+                      {link.title}
+                    </Link>
+                    <p className="">
+                      <Link
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block truncate text-xs text-zinc-400 font-semibold tracking-tight"
+                      >
                         {link.url}
-                      </p>
-                    </div>
-                  </Link>
+                      </Link>
+                    </p>
+                  </div>
                   <button
                     onClick={() => handleEditLink(link._id)}
                     className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
@@ -185,9 +200,6 @@ export default function LinkList({
                     <Copy size={16} />
                   </button>
                 </div>
-                {copiedId === link._id && (
-                  <p className="mt-3 text-xs text-emerald-300">Copied!</p>
-                )}
                 {(searchQuery || selectedCategoryId == "all") && (
                   <p className="text-xs text-zinc-400 mt-2">
                     Collection Name:{" "}
