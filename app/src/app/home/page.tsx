@@ -13,10 +13,6 @@ export default function Home() {
       </section>
       <CollectionNavigationPanel />
 
-      <footer className="pt-4 text-center text-xs text-zinc-500">
-        Built with ❤️ by Srinivas Mekala © 2026.
-      </footer>
-
       <Link
         href="/addLink"
         className="md:hidden fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full border border-indigo-500/60 bg-indigo-500 text-white shadow-[0_20px_50px_-20px_rgba(99,102,241,0.9)] transition hover:brightness-110 md:right-1/2 md:translate-x-[210px]"
