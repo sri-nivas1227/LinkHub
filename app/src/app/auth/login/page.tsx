@@ -49,8 +49,11 @@ function LoginPage() {
     if (result.success) {
       // Redirect or update UI
       setLoading(false);
+      toast.success(
+        result.message || "OTP sent to your email. Please check and login.",
+      );
       const redirect = searchParams.get("redirect");
-      router.push(redirect ?? ROUTES.HOME);
+      router.push(result.data.redirect ?? redirect ?? ROUTES.HOME);
     } else {
       if (result.data?.redirect) {
         toast.error(result.message || "Login failed. Please try again.");

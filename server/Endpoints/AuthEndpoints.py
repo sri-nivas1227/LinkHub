@@ -165,7 +165,7 @@ def login():
         )
         response = make_response(
             {
-                "success": False,
+                "success": False if not is_otp_login else True,
                 "message": "Please verify your email before Logging in." if not is_otp_login else "An OTP has been sent to your email.",
                 "data": {
                     "redirect": "/auth/verifyEmail"

@@ -49,7 +49,7 @@ def send_login_otp(toEmail: str):
     # Email Params
     fromEmail = f"StashD <verify@{RESEND_EMAIL_DOMAIN}>"
     toEmails = [toEmail]
-    subject = f"{random_OTP} is your StashD login code",
+    subject = f"{random_OTP} is your StashD login code"
     bodyType = "html"
     body = get_login_email_template(otp=random_OTP)
     email_data = send_email(fromEmail=fromEmail, toEmails=toEmails, subject=subject, bodyType=bodyType, body=body)
