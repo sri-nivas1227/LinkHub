@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import AddNewCategory from "@/app/components/AddNewCategory";
+import SearchableDropdown from "@/app/components/SearchableDropdown";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import {
@@ -12,7 +13,6 @@ import {
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import SearchableDropdown from "@/app/components/SearchableDropdown";
 import { Suspense } from "react";
 interface Category {
   id: string | null;
@@ -83,6 +83,18 @@ function AddLinkForm() {
       (!formData.category_id && !formData.new_category)
     ) {
       toast.error("All Fields are required");
+      return;
+    }
+    const protocolRegex =
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+    const noProtocolRegex =
+      /^[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+    console.log(new RegExp(noProtocolRegex).test(formData.url));
+    if (
+      !protocolRegex.test(formData.url) &&
+      !noProtocolRegex.test(formData.url)
+    ) {
+      toast.error("Please enter a valid URL");
       return;
     }
 
@@ -180,7 +192,7 @@ function AddLinkForm() {
 
           <div className="flex flex-col gap-2">
             <span className="text-sm text-zinc-300">Collection</span>
-            {!formData.new_category && (
+            {/* {!formData.new_category && (
               <SearchableDropdown
                 options={categoryList.map((category) => ({
                   label: category.name,
@@ -197,11 +209,30 @@ function AddLinkForm() {
                   }));
                 }}
               />
+            )} */}
+            {!formData.new_category && (
+              <SearchableDropdown
+                options={categoryList.map((category) => ({
+                  label: category.name,
+                  value: category.id || "",
+                  new_category: "",
+                }))}
+                selectedValue={formData.category_id}
+                handleChange={(
+                  item: { value?: string; new_category?: string } | null,
+                ) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    category_id: item?.value || "",
+                    new_category: item?.new_category || "",
+                  }));
+                }}
+              />
             )}
             <div
               className={`${isAdding ? "flex flex-col gap-2" : "flex items-center justify-between"}`}
             >
-              {!formData.new_category && (
+              {/* {!formData.new_category && (
                 <p className="text-xs text-zinc-400 mt-2">
                   {isAdding
                     ? "Creating a new Collection..."
@@ -215,7 +246,7 @@ function AddLinkForm() {
                 >
                   Add new
                 </button>
-              )}
+              )} */}
               {isAdding && (
                 <AddNewCategory
                   setIsAdding={setIsAdding}

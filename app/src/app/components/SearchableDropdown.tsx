@@ -1,160 +1,294 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  KeyboardEvent,
-  useMemo,
-} from "react";
+"use client";
 
-interface SearchableDropdownProps<T> {
+import { useState, useRef, useEffect, useCallback } from "react";
+
+type Option = {
+  label: string;
+  value: string;
+};
+
+interface SearchableDropdownProps<T>  {
   options: T[];
-  label: keyof T;
-  id: string;
-  selectedVal: string | null;
+  selectedValue?: string ;
   handleChange: (item: T | null) => void;
   placeholder?: string;
-}
+};
 
 const SearchableDropdown = <T extends Record<string, any>>({
   options,
-  label,
-  id,
-  selectedVal,
+  selectedValue,
   handleChange,
-  placeholder = "Select...",
+  placeholder = "Select an option...",
 }: SearchableDropdownProps<T>) => {
-  const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(-1);
-
+  const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Filter options based on query
-  const filteredOptions = options.filter((option) =>
-    String(option[label]).toLowerCase().includes(query.toLowerCase()),
+  const selectedOption = options.find((o) => o.value === selectedValue);
+
+  const filtered = options.filter((o) =>
+    o.label.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const hasExactMatch = options.some(
+    (o) => o.label.toLowerCase() === search.toLowerCase(),
+  );
+
+  const showAddNew =
+    search.trim().length > 0 && !hasExactMatch && filtered.length === 0;
+  const showAddNewAtBottom =
+    search.trim().length > 0 && !hasExactMatch && filtered.length > 0;
+
+  const open = useCallback(() => {
+    setIsOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }, []);
+
+  const close = useCallback(() => {
+    setIsOpen(false);
+    setSearch("");
+  }, []);
+
+  const select = (value: string, label: string) => {
+    const item = { value } as unknown as T;
+    handleChange(item);
+    close();
+  };
+
+  const handleAddNew = () => {
+    const trimmed = search.trim();
+    if (!trimmed) return;
+    const item = { new_category: trimmed } as unknown as T;
+    handleChange(item);
+    close();
+  };
+
+  // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handler = (e: MouseEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(e.target as Node)
       ) {
-        setIsOpen(false);
+        close();
       }
     };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [close]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Reset focused index when dropdown opens or filter changes
+  // Close on Escape
   useEffect(() => {
-    setFocusedIndex(-1);
-  }, [isOpen, query]);
-
-  // Scroll focused element into view
-  useEffect(() => {
-    if (focusedIndex !== -1 && optionsRef.current) {
-      const focusedElement = optionsRef.current.children[
-        focusedIndex
-      ] as HTMLElement;
-      if (focusedElement) {
-        focusedElement.scrollIntoView({ block: "nearest" });
-      }
-    }
-  }, [focusedIndex]);
-
-  const selectOption = (option: T) => {
-    setQuery("");
-    handleChange(option);
-    setIsOpen(false);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!isOpen) {
-      if (e.key === "ArrowDown" || e.key === "Enter") setIsOpen(true);
-      return;
-    }
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setFocusedIndex((prev) =>
-          prev < filteredOptions.length - 1 ? prev + 1 : prev,
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (focusedIndex !== -1 && filteredOptions[focusedIndex]) {
-          selectOption(filteredOptions[focusedIndex]);
-        }
-        break;
-      case "Escape":
-        setIsOpen(false);
-        break;
-    }
-  };
-  const selectedCategoryName = useMemo(() => {
-    return options.find((category) => category.value === selectedVal)?.label;
-  }, [options, selectedVal]);
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [close]);
 
   return (
-    <div className="relative text-gray-800 font-sans" ref={containerRef}>
-      <div className="relative">
-        <input
-          type="text"
-          value={query || selectedCategoryName || ""}
-          placeholder={placeholder}
-          onKeyDown={handleKeyDown}
-          className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/70 px-4 py-3 text-sm text-zinc-100 outline-none transition focus:border-indigo-500/60"
-          onChange={(e) => {
-            setQuery(e.target.value);
-            handleChange(null);
-            setIsOpen(true);
-          }}
-          onClick={() => setIsOpen(true)}
-        />
-        <div
-          className={`absolute right-3 top-1/2 -translate-y-1/2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+    <div
+      ref={containerRef}
+      className="relative w-full text-gray-800 font-semibold"
+    >
+      {/* Trigger */}
+      <button
+        type="button"
+        onClick={() => (isOpen ? close() : open())}
+        className={`
+          w-full flex items-center justify-between gap-2
+          px-3.5 py-2.5 rounded-2xl border border-zinc-800 bg-zinc-950/70 text-sm
+          transition-all duration-150 outline-none
+          ${
+            isOpen
+              ? "border-indigo-500 ring-2 ring-indigo-100 shadow-sm"
+              : "border-gray-300 hover:border-gray-400 shadow-sm"
+          }
+        `}
+      >
+        <span
+          className={
+            selectedOption
+              ? "text-gray-200 font-normal"
+              : "text-gray-400 font-normal"
+          }
         >
-          <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[5px] border-t-gray-400" />
-        </div>
-      </div>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <svg
+          className={`w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
 
+      {/* Dropdown panel */}
       {isOpen && (
-        <div
-          ref={optionsRef}
-          className="absolute top-full left-0 z-[1000] w-full mt-1 max-h-52 overflow-y-auto rounded-2xl border border-zinc-600 bg-zinc-950 shadow-lg "
-        >
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option, index) => {
-              const isSelected = option[label] === selectedVal;
-              const isFocused = index === focusedIndex;
-
-              return (
-                <div
-                  key={`${id}-${index}`}
-                  onMouseEnter={() => setFocusedIndex(index)}
-                  onClick={() => selectOption(option)}
-                  className={`px-3 py-2 cursor-pointer transition-colors ${
-                    isSelected || isFocused
-                      ? "bg-zinc-700 text-white"
-                      : "text-gray-400 hover:bg-zinc-600"
-                  }`}
+        <div className="absolute z-50 mt-1.5 w-full rounded-2xl border border-zinc-800 bg-zinc-950 shadow-lg overflow-hidden">
+          {/* Search input */}
+          <div className="p-2 border-b border-gray-500">
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl border border-zinc-800 bg-zinc-950/70 focus-within:border-indigo-400 focus-within:bg-zinc-900/70 transition-all">
+              <svg
+                className="w-3.5 h-3.5 text-gray-300 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                />
+              </svg>
+              <input
+                ref={inputRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search or add new..."
+                className="w-full text-sm outline-none text-gray-300 placeholder-gray-400"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {option[label]}
-                </div>
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Options list */}
+          <ul className="max-h-56 overflow-y-auto py-1">
+            {filtered.map((option) => {
+              const isSelected = option.value === selectedValue;
+              return (
+                <li key={option.value}>
+                  <button
+                    type="button"
+                    onClick={() => select(option.value, option.label)}
+                    className={`
+                      w-full flex items-center justify-between px-3.5 py-2 text-sm text-left
+                      transition-colors duration-100
+                      ${
+                        isSelected
+                          ? "bg-gray-400 text-indigo-700 font-medium"
+                          : "text-gray-300 hover:bg-gray-400/70 hover:text-gray-900"
+                      }
+                    `}
+                  >
+                    <span>{option.label}</span>
+                    {isSelected && (
+                      <svg
+                        className="w-4 h-4 text-indigo-500 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </li>
               );
-            })
-          ) : (
-            <div className="px-3 py-2 text-gray-400 italic">No results</div>
-          )}
+            })}
+
+            {/* "Add New" at bottom when there are partial matches */}
+            {showAddNewAtBottom && (
+              <li>
+                <button
+                  type="button"
+                  onClick={handleAddNew}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-sm text-left text-gray-100 hover:text-gray-900 hover:bg-gray-400/70 border-t border-gray-400 transition-colors duration-100"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>
+                    Add New:{" "}
+                    <span className="">&ldquo;{search.trim()}&rdquo;</span>
+                  </span>
+                </button>
+              </li>
+            )}
+
+            {/* "Add New" as the only option when no results */}
+            {showAddNew && (
+              <li>
+                <button
+                  type="button"
+                  onClick={handleAddNew}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-sm text-left text-gray-100 hover:text-gray-900 hover:bg-gray-400/70 transition-colors duration-100"
+                >
+                  <svg
+                    className="w-3.5 h-3.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>
+                    Add New:{" "}
+                    <span className="font-medium">
+                      &ldquo;{search.trim()}&rdquo;
+                    </span>
+                  </span>
+                </button>
+              </li>
+            )}
+
+            {/* No search input, no options at all */}
+            {!search && options.length === 0 && (
+              <li className="px-3.5 py-3 text-sm text-gray-400 text-center">
+                No options available
+              </li>
+            )}
+          </ul>
         </div>
       )}
     </div>
