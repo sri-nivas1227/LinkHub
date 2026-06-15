@@ -21,3 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 🐞Fix: Fetching name with right argument and saving it to the database without fail
 -  Updated logo with an icon
+
+
+## [2.0.1] - 2026-06-15
+
+### Added
+- URL validation in AddLinkForm.
+- Search and add new category features in SearchableDropdown.
+
+### Changed
+- Enhanced AddLinkForm and SearchableDropdown functionality.
+- Improved user experience in CollectionNavigationPanel with cursor pointer on buttons.
+- Enhanced OTP login flow with success messages and adjusted login response.
+
+### Fixed
+- Email subject formatting in login OTP email.
