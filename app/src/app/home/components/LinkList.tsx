@@ -1,12 +1,8 @@
 import Link from "next/link";
-import CategoryHeader from "./CategoryHeader";
-import { motion } from "framer-motion";
-import { Copy, Edit, LinkIcon, Sparkles, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Category, LinkType } from "@/app/types";
-import { ROUTES, UI_CONFIG } from "@/config/constants";
+
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import {
   deleteURLAction,
@@ -14,7 +10,8 @@ import {
   getLinkOnSearchAction,
   getLinksFromCategoriesAction,
 } from "@/app/actions";
-import Image from "next/image";
+import LinkBox from "./LinkBox";
+import { Sparkles } from "lucide-react";
 
 interface Props {
   selectedCategoryId: string;
@@ -28,23 +25,6 @@ export default function LinkList({
 }: Props) {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
-  const router = useRouter();
-  const selectedCategoryName = useMemo(() => {
-    return categories.find((category) => category.id === selectedCategoryId)
-      ?.name;
-  }, [categories, selectedCategoryId]);
-  const handleCopy = async (id: string, url: string) => {
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link Copied to Clipboard!");
-    } catch (error) {
-      console.error("Copy failed:", error);
-    }
-  };
-  const handleEditLink = (link_id: string) => {
-    router.push(`${ROUTES.ADD_LINK}?linkId=${link_id}`);
-  };
-
   const handleDeleteLink = async (link_id: string) => {
     const response = await deleteURLAction(link_id);
     if (response.success) {
@@ -114,19 +94,6 @@ export default function LinkList({
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <CategoryHeader
-          title={selectedCategoryName}
-          categoryId={selectedCategoryId}
-        />
-        <Link
-          href={ROUTES.ADD_LINK}
-          className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
-        >
-          Add link
-        </Link>
-      </div>
-
       <div className="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-3 gap-3">
         {isLoadingLinks
           ? Array.from({ length: 3 }).map((_, index) => (
@@ -136,78 +103,17 @@ export default function LinkList({
               />
             ))
           : links.map((link) => (
-              <motion.div
+              <LinkBox
                 key={link._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center">
-                    <Link
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-sm font-semibold tracking-tight text-zinc-100"
-                    >
-                      <Image
-                        src={`https://www.google.com/s2/favicons?domain=${link.url}&sz=64`}
-                        alt="favicon"
-                        width={24}
-                        height={24}
-                        className="h-8 w-8"
-                      />
-                    </Link>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-sm font-semibold tracking-tight text-zinc-100"
-                    >
-                      {link.title}
-                    </Link>
-                    <p className="">
-                      <Link
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block truncate text-xs text-zinc-400 font-semibold tracking-tight"
-                      >
-                        {link.url}
-                      </Link>
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleEditLink(link._id)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={async () => showConfirm(link._id)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-red-400"
-                  >
-                    <Trash size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleCopy(link._id, link.url)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
-                    aria-label="Quick copy"
-                  >
-                    <Copy size={16} />
-                  </button>
-                </div>
-                {(searchQuery || selectedCategoryId == "all") && (
-                  <p className="text-xs text-zinc-400 mt-2">
-                    Collection Name:{" "}
-                    {categories.find((cat) => cat.id === link.category_id)
-                      ?.name || "Uncategorized"}
-                  </p>
-                )}
-              </motion.div>
+                link={link}
+                category_name={
+                  searchQuery || selectedCategoryId == "all"
+                    ? categories.find((cat) => cat.id === link.category_id)
+                        ?.name || null
+                    : null
+                }
+                showDeleteConfirm={showConfirm}
+              />
             ))}
       </div>
 

@@ -1,16 +1,23 @@
 "use client";
 import SearchBox from "@/app/components/SearchBox";
 import LinkList from "./LinkList";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Category } from "@/app/types";
 import { getCategoriesAction } from "@/app/actions";
 import { toast } from "sonner";
+import CategoryHeader from "./CategoryHeader";
+import Link from "next/link";
+import { ROUTES } from "@/config/constants";
 
-export default function CollectionNavigationPanel() {
+export default function DataPanel() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const selectedCategoryName = useMemo(() => {
+      return categories.find((category) => category.id === selectedCategoryId)
+        ?.name;
+    }, [categories, selectedCategoryId]);
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
@@ -79,10 +86,18 @@ export default function CollectionNavigationPanel() {
               ))}
         </div>
       </section>
-      {/* 
-       )}
-      */}
-
+      <div className="flex items-center justify-between my-4">
+        <CategoryHeader
+          title={selectedCategoryName}
+          categoryId={selectedCategoryId}
+        />
+        <Link
+          href={ROUTES.ADD_LINK}
+          className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
+        >
+          Add link
+        </Link>
+      </div>
       <LinkList
         categories={categories}
         selectedCategoryId={selectedCategoryId}

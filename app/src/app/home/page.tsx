@@ -1,17 +1,21 @@
 import Link from "next/link";
-import CollectionNavigationPanel from "./components/CollectionNavigationPanel";
 import { Plus } from "lucide-react";
+import DataPanel from "./components/DataPanel";
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-6">
       <section className="hidden md:flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Stash your Links</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Stash your Links
+        </h1>
         <p className="text-sm text-zinc-400">
-          It's easier to categorize and find your links with Stashd. Create collections, add tags, and search through your links effortlessly.
+          It's easier to categorize and find your links with Stashd. Create
+          collections, add tags, and search through your links effortlessly.
         </p>
       </section>
-      <CollectionNavigationPanel />
+      
+      <DataPanel />
 
       <Link
         href="/addLink"
