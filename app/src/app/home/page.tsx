@@ -14,8 +14,8 @@ export default function Home() {
           collections, add tags, and search through your links effortlessly.
         </p>
       </section>
-      
-      <DataPanel />
+
+      <DataPanel showAddLinkButton showCategoryList showCategoryHeader />
 
       <Link
         href="/addLink"

@@ -8,16 +8,34 @@ import { toast } from "sonner";
 import CategoryHeader from "./CategoryHeader";
 import Link from "next/link";
 import { ROUTES } from "@/config/constants";
+import { Plus } from "lucide-react";
 
-export default function DataPanel() {
+interface DataPanelProps {
+  showAddLinkButton?: boolean;
+  showCategoryList?: boolean;
+  showCategoryHeader?: boolean;
+  categoryId?: string;
+}
+export default function DataPanel({
+  showAddLinkButton,
+  showCategoryList,
+  showCategoryHeader,
+  categoryId=undefined,
+}: DataPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const selectedCategoryName = useMemo(() => {
-      return categories.find((category) => category.id === selectedCategoryId)
-        ?.name;
-    }, [categories, selectedCategoryId]);
+    if (categoryId) {
+      return null;
+    }
+    return (
+      categories.find((category) => category.id === selectedCategoryId)?.name ||
+      null
+    );
+  }, [categories, selectedCategoryId]);
+
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoadingCategories(true);
@@ -34,14 +52,15 @@ export default function DataPanel() {
         setIsLoadingCategories(false);
       }
     };
-
-    fetchCategories();
+    if (!categoryId) {
+      fetchCategories();
+    }
   }, []);
   return (
     <div className="">
       <div className="flex items-center gap-10 mb-8">
         {/* SEARCH BOX */}
-      <SearchBox setSearchQuery={setSearchQuery} />
+        <SearchBox setSearchQuery={setSearchQuery} />
         {/* ADD LINK BUTTON */}
         {showAddLinkButton && (
           <Link
@@ -54,62 +73,68 @@ export default function DataPanel() {
         )}
       </div>
 
-      
-      <section className="flex flex-col gap-3 my-4">
-        <div className="flex md:flex-col md:items-start items-center justify-between">
-          <p className="text-sm md:text-xl md:font-semibold font-medium text-zinc-300">
-            Collections
-          </p>
-          <span className="text-xs text-zinc-500">Swipe to explore</span>
-        </div>
-        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-          {isLoadingCategories ? (
-            <div className=""></div>
-          ) : (
-            <button
-              onClick={() => setSelectedCategoryId("all")}
-              className={`whitespace-nowrap cursor-pointer rounded-full border px-4 py-2 text-sm transition ${
-                selectedCategoryId === "all"
-                  ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
-                  : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              All Links
-            </button>
-          )}
-          {isLoadingCategories
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <div
-                  key={`category-skeleton-${index}`}
-                  className="shimmer h-9 w-24 rounded-full border border-zinc-800"
-                />
-              ))
-            : categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
-                  className={`whitespace-nowrap cursor-pointer rounded-full border px-4 py-2 text-sm transition ${
-                    selectedCategoryId === category.id
-                      ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
-                      : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-        </div>
-      </section>
+      {/* CATEGORY LIST */}
+      {showCategoryList && (
+        <section className="flex flex-col gap-3 my-4">
+          <div className="flex md:flex-col md:items-start items-center justify-between">
+            <h2 className="text-sm md:text-xl md:font-semibold font-medium text-zinc-300">
+              Collections
+            </h2>
+            <span className="text-xs text-zinc-500">Swipe to explore</span>
+          </div>
+          <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+            {isLoadingCategories ? (
+              <div className=""></div>
+            ) : (
+              <button
+                onClick={() => setSelectedCategoryId("all")}
+                className={`whitespace-nowrap cursor-pointer rounded-full border px-4 py-2 text-sm transition ${
+                  selectedCategoryId === "all"
+                    ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
+                    : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                All Links
+              </button>
+            )}
+            {isLoadingCategories
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={`category-skeleton-${index}`}
+                    className="shimmer h-9 w-24 rounded-full border border-zinc-800"
+                  />
+                ))
+              : categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategoryId(category.id)}
+                    className={`whitespace-nowrap cursor-pointer rounded-full border px-4 py-2 text-sm transition ${
+                      selectedCategoryId === category.id
+                        ? "border-indigo-500 bg-indigo-500/15 text-indigo-200 shadow-[0_0_20px_rgba(99,102,241,0.25)]"
+                        : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+          </div>
+        </section>
+      )}
       <div className="flex items-center justify-between my-4">
-        <CategoryHeader
-          title={selectedCategoryName}
-          categoryId={selectedCategoryId}
-        />
-        <Link
-          href={ROUTES.ADD_LINK}
-          className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
-        >
-          Add link
-        </Link>
+        {showCategoryHeader && (
+          <CategoryHeader
+            title={selectedCategoryName}
+            categoryId={selectedCategoryId}
+          />
+        )}
+        {showAddLinkButton && (
+          <Link
+            href={ROUTES.ADD_LINK}
+            className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
+          >
+            Add link
+          </Link>
+        )}
       </div>
       <LinkList
         selectedCategory={{ selectedCategoryId, selectedCategoryName }}
