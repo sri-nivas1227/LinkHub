@@ -112,8 +112,7 @@ export default function DataPanel() {
         </Link>
       </div>
       <LinkList
-        categories={categories}
-        selectedCategoryId={selectedCategoryId}
+        selectedCategory={{ selectedCategoryId, selectedCategoryName }}
         searchQuery={searchQuery}
       />
     </div>

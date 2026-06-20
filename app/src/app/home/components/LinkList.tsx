@@ -14,15 +14,13 @@ import LinkBox from "./LinkBox";
 import { Sparkles } from "lucide-react";
 
 interface Props {
-  selectedCategoryId: string;
-  categories: Category[];
+  selectedCategory: {
+    selectedCategoryId: string;
+    selectedCategoryName: string | null;
+  };
   searchQuery: string;
 }
-export default function LinkList({
-  selectedCategoryId,
-  categories,
-  searchQuery,
-}: Props) {
+export default function LinkList({ selectedCategory, searchQuery }: Props) {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
   const handleDeleteLink = async (link_id: string) => {
@@ -69,9 +67,11 @@ export default function LinkList({
       try {
         const responseData = searchQuery
           ? await getLinkOnSearchAction(searchQuery)
-          : selectedCategoryId === "all"
+          : selectedCategory.selectedCategoryId === "all"
             ? await getAllLinksAction()
-            : await getLinksFromCategoriesAction(selectedCategoryId);
+            : await getLinksFromCategoriesAction(
+                selectedCategory.selectedCategoryId,
+              );
 
         const allLinks = Array.isArray(responseData?.data?.links)
           ? responseData.data.links
@@ -90,7 +90,7 @@ export default function LinkList({
     };
 
     fetchLinks();
-  }, [selectedCategoryId, searchQuery]);
+  }, [selectedCategory.selectedCategoryId, searchQuery]);
 
   return (
     <section className="flex flex-col gap-4">
@@ -107,9 +107,8 @@ export default function LinkList({
                 key={link._id}
                 link={link}
                 category_name={
-                  searchQuery || selectedCategoryId == "all"
-                    ? categories.find((cat) => cat.id === link.category_id)
-                        ?.name || null
+                  searchQuery || selectedCategory.selectedCategoryId == "all"
+                    ? selectedCategory.selectedCategoryName || null
                     : null
                 }
                 showDeleteConfirm={showConfirm}
