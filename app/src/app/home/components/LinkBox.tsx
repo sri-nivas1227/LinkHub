@@ -15,8 +15,16 @@ interface LinkBoxProps {
   };
   category_name: string | null;
   showDeleteConfirm: (link_id: string) => void;
+  canDelete?: boolean;
+  canEdit?: boolean;
 }
-const LinkBox = ({ link, category_name, showDeleteConfirm }: LinkBoxProps) => {
+const LinkBox = ({
+  link,
+  category_name,
+  showDeleteConfirm,
+  canDelete,
+  canEdit,
+}: LinkBoxProps) => {
   const router = useRouter();
 
   const handleCopy = async (url: string) => {
@@ -76,18 +84,22 @@ const LinkBox = ({ link, category_name, showDeleteConfirm }: LinkBoxProps) => {
             </Link>
           </p>
         </div>
-        <button
-          onClick={() => handleEditLink(link._id)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
-        >
-          <Edit size={16} />
-        </button>
-        <button
-          onClick={async () => showDeleteConfirm(link._id)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-red-400"
-        >
-          <Trash size={16} />
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => handleEditLink(link._id)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
+          >
+            <Edit size={16} />
+          </button>
+        )}
+        {canDelete && (
+          <button
+            onClick={async () => showDeleteConfirm(link._id)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-red-400"
+          >
+            <Trash size={16} />
+          </button>
+        )}
         <button
           onClick={() => handleCopy(link.url)}
           className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"

@@ -133,6 +133,8 @@ export default function LinkList({
                     : null
                 }
                 showDeleteConfirm={showConfirm}
+                canDelete={!showPublic}
+                canEdit={!showPublic}
               />
             ))}
       </div>
