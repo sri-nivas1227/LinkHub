@@ -9,9 +9,10 @@ import {
   getAllLinksAction,
   getLinkOnSearchAction,
   getLinksFromCategoriesAction,
+  getLinksFromPublicCategory,
 } from "@/app/actions";
 import LinkBox from "./LinkBox";
-import { Sparkles } from "lucide-react";
+import { CircleAlert, Sparkles } from "lucide-react";
 
 interface Props {
   selectedCategory: {
@@ -19,8 +20,13 @@ interface Props {
     selectedCategoryName: string | null;
   };
   searchQuery: string;
+  showPublic?: boolean;
 }
-export default function LinkList({ selectedCategory, searchQuery }: Props) {
+export default function LinkList({
+  selectedCategory,
+  searchQuery,
+  showPublic,
+}: Props) {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
   const handleDeleteLink = async (link_id: string) => {
@@ -65,22 +71,37 @@ export default function LinkList({ selectedCategory, searchQuery }: Props) {
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
-        const responseData = searchQuery
-          ? await getLinkOnSearchAction(searchQuery)
-          : selectedCategory.selectedCategoryId === "all"
-            ? await getAllLinksAction()
-            : await getLinksFromCategoriesAction(
-                selectedCategory.selectedCategoryId,
-              );
+        if (showPublic && selectedCategory.selectedCategoryId) {
+          const responseData = await getLinksFromPublicCategory(
+            selectedCategory.selectedCategoryId,
+            searchQuery,
+          );
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
+          console.log("Fetched public links:", allLinks);
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
+        } else {
+          const responseData = searchQuery
+            ? await getLinkOnSearchAction(searchQuery)
+            : selectedCategory.selectedCategoryId === "all"
+              ? await getAllLinksAction()
+              : await getLinksFromCategoriesAction(
+                  selectedCategory.selectedCategoryId,
+                );
 
-        const allLinks = Array.isArray(responseData?.data?.links)
-          ? responseData.data.links
-          : [];
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
 
-        if (!responseData.success && searchQuery) {
-          toast.error(responseData.message);
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
         }
-        setLinks(allLinks);
       } catch (error) {
         toast.error("Failed to load links. Please try again.");
         setLinks([]);
@@ -102,9 +123,9 @@ export default function LinkList({ selectedCategory, searchQuery }: Props) {
                 className="shimmer h-20 rounded-2xl border border-zinc-800"
               />
             ))
-          : links.map((link) => (
+          : links.map((link, index) => (
               <LinkBox
-                key={link._id}
+                key={link._id ?? index}
                 link={link}
                 category_name={
                   searchQuery || selectedCategory.selectedCategoryId == "all"
@@ -119,20 +140,30 @@ export default function LinkList({ selectedCategory, searchQuery }: Props) {
       {!isLoadingLinks && links.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-10 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-indigo-300">
-            <Sparkles size={20} />
+            {showPublic ? (
+              <CircleAlert className="w-full h-full" />
+            ) : (
+              <Sparkles size={20} />
+            )}
           </div>
           <div>
-            <p className="text-sm font-semibold">No links yet</p>
+            <p className="text-sm font-semibold">
+              {showPublic ? "No Data Available" : "No links yet"}
+            </p>
             <p className="text-xs text-zinc-500">
-              Add the first link to light up this collection.
+              {showPublic
+                ? "This collection is empty or the search query did not match any links."
+                : "Add the first link to light up this collection."}
             </p>
           </div>
-          <Link
-            href="/addLink"
-            className="rounded-full border border-indigo-500/60 bg-indigo-500/15 px-4 py-2 text-xs font-semibold text-indigo-200"
-          >
-            Add your first link
-          </Link>
+          {!showPublic && (
+            <Link
+              href="/addLink"
+              className="rounded-full border border-indigo-500/60 bg-indigo-500/15 px-4 py-2 text-xs font-semibold text-indigo-200"
+            >
+              Add your first link
+            </Link>
+          )}
         </div>
       )}
     </section>

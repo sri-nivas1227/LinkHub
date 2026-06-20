@@ -14,20 +14,22 @@ interface DataPanelProps {
   showAddLinkButton?: boolean;
   showCategoryList?: boolean;
   showCategoryHeader?: boolean;
+  showPublic?: boolean;
   categoryId?: string;
 }
 export default function DataPanel({
   showAddLinkButton,
   showCategoryList,
   showCategoryHeader,
-  categoryId=undefined,
+  showPublic,
+  categoryId = undefined,
 }: DataPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const selectedCategoryName = useMemo(() => {
-    if (categoryId) {
+    if (showPublic && categoryId) {
       return null;
     }
     return (
@@ -52,7 +54,7 @@ export default function DataPanel({
         setIsLoadingCategories(false);
       }
     };
-    if (!categoryId) {
+    if (!categoryId && !showPublic) {
       fetchCategories();
     }
   }, []);
@@ -137,8 +139,13 @@ export default function DataPanel({
         )}
       </div>
       <LinkList
-        selectedCategory={{ selectedCategoryId, selectedCategoryName }}
+        selectedCategory={
+          showPublic && categoryId
+            ? { selectedCategoryId: categoryId, selectedCategoryName: null }
+            : { selectedCategoryId, selectedCategoryName }
+        }
         searchQuery={searchQuery}
+        showPublic={showPublic}
       />
     </div>
   );

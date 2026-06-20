@@ -20,6 +20,7 @@ export const ROUTES = {
   PROFILE: "/profile",
   ROOT: "/",
   FEEDBACK: "/feedback",
+  SHARE: "/share"
 } as const;
 
 // PUBLIC_PATHS
@@ -29,6 +30,7 @@ export const PUBLIC_PATHS = [
   ROUTES.SIGNUP,
   ROUTES.VERIFY_EMAIL,
   ROUTES.FEEDBACK,
+  ROUTES.SHARE,
 ];
 // UI Configuration
 export const UI_CONFIG = {

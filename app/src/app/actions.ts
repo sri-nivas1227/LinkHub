@@ -408,9 +408,9 @@ export async function postReportIssueAction(issueData: any) {
   return data;
 }
 // Public Endpoint Actions
-export async function getLinksFromPublicCategory(categoryId: string) {
+export async function getLinksFromPublicCategory(categoryId: string, searchQuery: string) {
   const response = await fetch(
-    `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}`,
+    `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}?search=${searchQuery}`,
     {
       method: "GET",
       headers: {
