@@ -39,9 +39,22 @@ export default function DataPanel() {
   }, []);
   return (
     <div className="">
+      <div className="flex items-center gap-10 mb-8">
+        {/* SEARCH BOX */}
       <SearchBox setSearchQuery={setSearchQuery} />
+        {/* ADD LINK BUTTON */}
+        {showAddLinkButton && (
+          <Link
+            href="/addLink"
+            className="hidden md:flex items-center justify-center rounded-2xl p-2 border bg-gray-50 font-semibold text-indigo-500 transition hover:bg-indigo-500 hover:border-indigo-500 hover:text-gray-50 hover:brightness-110"
+            aria-label="Add new link"
+          >
+            <Plus size={22} className="font-semibold" /> Add New Link
+          </Link>
+        )}
+      </div>
 
-      {/* {!searchQuery && ( */}
+      
       <section className="flex flex-col gap-3 my-4">
         <div className="flex md:flex-col md:items-start items-center justify-between">
           <p className="text-sm md:text-xl md:font-semibold font-medium text-zinc-300">
