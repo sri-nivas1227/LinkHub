@@ -36,3 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Email subject formatting in login OTP email.
+
+## [2.1.0] - 2026-06-21
+
+### Added
+- Share page: collections can be made public and shared via link.
+- Edit and delete controls now handled correctly for public (non-owner) users.
+
+### Changed
+- AddLink button moved out of SearchBox into its own component.
+- Buttons and data rendered conditionally based on ownership/auth state.

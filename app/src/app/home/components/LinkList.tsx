@@ -1,50 +1,34 @@
 import Link from "next/link";
-import CategoryHeader from "./CategoryHeader";
-import { motion } from "framer-motion";
-import { Copy, Edit, LinkIcon, Sparkles, Trash } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Category, LinkType } from "@/app/types";
-import { ROUTES, UI_CONFIG } from "@/config/constants";
+
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 import {
   deleteURLAction,
   getAllLinksAction,
   getLinkOnSearchAction,
   getLinksFromCategoriesAction,
+  getLinksFromPublicCategory,
 } from "@/app/actions";
-import Image from "next/image";
+import LinkBox from "./LinkBox";
+import { CircleAlert, Sparkles } from "lucide-react";
 
 interface Props {
-  selectedCategoryId: string;
-  categories: Category[];
+  selectedCategory: {
+    selectedCategoryId: string;
+    selectedCategoryName: string | null;
+  };
   searchQuery: string;
+  showPublic?: boolean;
 }
 export default function LinkList({
-  selectedCategoryId,
-  categories,
+  selectedCategory,
   searchQuery,
+  showPublic,
 }: Props) {
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
   const [links, setLinks] = useState<LinkType[]>([]);
-  const router = useRouter();
-  const selectedCategoryName = useMemo(() => {
-    return categories.find((category) => category.id === selectedCategoryId)
-      ?.name;
-  }, [categories, selectedCategoryId]);
-  const handleCopy = async (id: string, url: string) => {
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link Copied to Clipboard!");
-    } catch (error) {
-      console.error("Copy failed:", error);
-    }
-  };
-  const handleEditLink = (link_id: string) => {
-    router.push(`${ROUTES.ADD_LINK}?linkId=${link_id}`);
-  };
-
   const handleDeleteLink = async (link_id: string) => {
     const response = await deleteURLAction(link_id);
     if (response.success) {
@@ -87,20 +71,37 @@ export default function LinkList({
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
-        const responseData = searchQuery
-          ? await getLinkOnSearchAction(searchQuery)
-          : selectedCategoryId === "all"
-            ? await getAllLinksAction()
-            : await getLinksFromCategoriesAction(selectedCategoryId);
+        if (showPublic && selectedCategory.selectedCategoryId) {
+          const responseData = await getLinksFromPublicCategory(
+            selectedCategory.selectedCategoryId,
+            searchQuery,
+          );
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
+          console.log("Fetched public links:", allLinks);
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
+        } else {
+          const responseData = searchQuery
+            ? await getLinkOnSearchAction(searchQuery)
+            : selectedCategory.selectedCategoryId === "all"
+              ? await getAllLinksAction()
+              : await getLinksFromCategoriesAction(
+                  selectedCategory.selectedCategoryId,
+                );
 
-        const allLinks = Array.isArray(responseData?.data?.links)
-          ? responseData.data.links
-          : [];
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
 
-        if (!responseData.success && searchQuery) {
-          toast.error(responseData.message);
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
         }
-        setLinks(allLinks);
       } catch (error) {
         toast.error("Failed to load links. Please try again.");
         setLinks([]);
@@ -110,23 +111,10 @@ export default function LinkList({
     };
 
     fetchLinks();
-  }, [selectedCategoryId, searchQuery]);
+  }, [selectedCategory.selectedCategoryId, searchQuery]);
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <CategoryHeader
-          title={selectedCategoryName}
-          categoryId={selectedCategoryId}
-        />
-        <Link
-          href={ROUTES.ADD_LINK}
-          className="text-xs font-medium text-indigo-300 transition hover:text-indigo-200"
-        >
-          Add link
-        </Link>
-      </div>
-
       <div className="flex flex-col lg:grid lg:grid-cols-2 2xl:grid-cols-3 gap-3">
         {isLoadingLinks
           ? Array.from({ length: 3 }).map((_, index) => (
@@ -135,99 +123,49 @@ export default function LinkList({
                 className="shimmer h-20 rounded-2xl border border-zinc-800"
               />
             ))
-          : links.map((link) => (
-              <motion.div
-                key={link._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 shadow-[0_8px_30px_-20px_rgba(0,0,0,0.6)] transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-[0_12px_40px_-20px_rgba(99,102,241,0.45)] active:scale-95"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center">
-                    <Link
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-sm font-semibold tracking-tight text-zinc-100"
-                    >
-                      <Image
-                        src={`https://www.google.com/s2/favicons?domain=${link.url}&sz=64`}
-                        alt="favicon"
-                        width={24}
-                        height={24}
-                        className="h-8 w-8"
-                      />
-                    </Link>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block text-sm font-semibold tracking-tight text-zinc-100"
-                    >
-                      {link.title}
-                    </Link>
-                    <p className="">
-                      <Link
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block truncate text-xs text-zinc-400 font-semibold tracking-tight"
-                      >
-                        {link.url}
-                      </Link>
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleEditLink(link._id)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={async () => showConfirm(link._id)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-red-400"
-                  >
-                    <Trash size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleCopy(link._id, link.url)}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-zinc-300 transition hover:text-indigo-200"
-                    aria-label="Quick copy"
-                  >
-                    <Copy size={16} />
-                  </button>
-                </div>
-                {(searchQuery || selectedCategoryId == "all") && (
-                  <p className="text-xs text-zinc-400 mt-2">
-                    Collection Name:{" "}
-                    {categories.find((cat) => cat.id === link.category_id)
-                      ?.name || "Uncategorized"}
-                  </p>
-                )}
-              </motion.div>
+          : links.map((link, index) => (
+              <LinkBox
+                key={link._id ?? index}
+                link={link}
+                category_name={
+                  searchQuery || selectedCategory.selectedCategoryId == "all"
+                    ? selectedCategory.selectedCategoryName || null
+                    : null
+                }
+                showDeleteConfirm={showConfirm}
+                canDelete={!showPublic}
+                canEdit={!showPublic}
+              />
             ))}
       </div>
 
       {!isLoadingLinks && links.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-10 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 text-indigo-300">
-            <Sparkles size={20} />
+            {showPublic ? (
+              <CircleAlert className="w-full h-full" />
+            ) : (
+              <Sparkles size={20} />
+            )}
           </div>
           <div>
-            <p className="text-sm font-semibold">No links yet</p>
+            <p className="text-sm font-semibold">
+              {showPublic ? "No Data Available" : "No links yet"}
+            </p>
             <p className="text-xs text-zinc-500">
-              Add the first link to light up this collection.
+              {showPublic
+                ? "This collection is empty or the search query did not match any links."
+                : "Add the first link to light up this collection."}
             </p>
           </div>
-          <Link
-            href="/addLink"
-            className="rounded-full border border-indigo-500/60 bg-indigo-500/15 px-4 py-2 text-xs font-semibold text-indigo-200"
-          >
-            Add your first link
-          </Link>
+          {!showPublic && (
+            <Link
+              href="/addLink"
+              className="rounded-full border border-indigo-500/60 bg-indigo-500/15 px-4 py-2 text-xs font-semibold text-indigo-200"
+            >
+              Add your first link
+            </Link>
+          )}
         </div>
       )}
     </section>

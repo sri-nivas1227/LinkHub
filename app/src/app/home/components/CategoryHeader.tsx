@@ -9,7 +9,7 @@ export default function CategoryHeader({
   title,
   categoryId,
 }: {
-  title: string | undefined;
+  title: string | null;
   categoryId?: string;
 }) {
   const [category, setCategory] = useState<Category>();

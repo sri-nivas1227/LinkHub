@@ -7,7 +7,7 @@ CategoriesCollection = db['categories']
 
 
 class Category:
-    def __init__(self, name, category_slug, user_id, created_at=None, is_public=None, updated_at=None, _id=None):
+    def __init__(self, name, category_slug, user_id, created_at=None, is_public=False, updated_at=None, _id=None):
         self._id = ObjectId(_id) if _id else None
         self.name = name
         self.category_slug = category_slug
