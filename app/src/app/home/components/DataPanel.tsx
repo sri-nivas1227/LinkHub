@@ -2,8 +2,15 @@
 import SearchBox from "@/app/components/SearchBox";
 import LinkList from "./LinkList";
 import { useEffect, useMemo, useState } from "react";
-import { Category } from "@/app/types";
-import { getCategoriesAction } from "@/app/actions";
+import { Category, LinkType } from "@/app/types";
+import {
+  deleteURLAction,
+  getAllLinksAction,
+  getCategoriesAction,
+  getLinkOnSearchAction,
+  getLinksFromCategoriesAction,
+  getLinksFromPublicCategory,
+} from "@/app/actions";
 import { toast } from "sonner";
 import CategoryHeader from "./CategoryHeader";
 import Link from "next/link";
@@ -28,6 +35,9 @@ export default function DataPanel({
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
+  const [links, setLinks] = useState<LinkType[]>([]);
+  const [isLoadingLinks, setIsLoadingLinks] = useState(true);
+
   const selectedCategoryName = useMemo(() => {
     if (showPublic && categoryId) {
       return null;
@@ -37,6 +47,11 @@ export default function DataPanel({
       null
     );
   }, [categories, selectedCategoryId]);
+
+  const categoryNameForLinks = useMemo(() => {
+    if (showPublic) return null;
+    return searchQuery || selectedCategoryId === "all" ? selectedCategoryName : null;
+  }, [searchQuery, selectedCategoryId, selectedCategoryName, showPublic]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -58,6 +73,56 @@ export default function DataPanel({
       fetchCategories();
     }
   }, []);
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      setIsLoadingLinks(true);
+      try {
+        if (showPublic && categoryId) {
+          const responseData = await getLinksFromPublicCategory(categoryId, searchQuery);
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
+        } else {
+          const responseData = searchQuery
+            ? await getLinkOnSearchAction(searchQuery)
+            : selectedCategoryId === "all"
+              ? await getAllLinksAction()
+              : await getLinksFromCategoriesAction(selectedCategoryId);
+
+          const allLinks = Array.isArray(responseData?.data?.links)
+            ? responseData.data.links
+            : [];
+
+          if (!responseData.success && searchQuery) {
+            toast.error(responseData.message);
+          }
+          setLinks(allLinks);
+        }
+      } catch {
+        toast.error("Failed to load links. Please try again.");
+        setLinks([]);
+      } finally {
+        setIsLoadingLinks(false);
+      }
+    };
+
+    fetchLinks();
+  }, [selectedCategoryId, searchQuery, showPublic, categoryId]);
+
+  const handleDeleteLink = async (link_id: string) => {
+    const response = await deleteURLAction(link_id);
+    if (response.success) {
+      setLinks((prev) => prev.filter((item) => item._id !== link_id));
+      toast.success("Link Deleted");
+    } else {
+      toast.warning("Deletion Failed");
+    }
+  };
   return (
     <div className="">
       <div className="flex items-center gap-10 mb-8">
@@ -139,13 +204,11 @@ export default function DataPanel({
         )}
       </div>
       <LinkList
-        selectedCategory={
-          showPublic && categoryId
-            ? { selectedCategoryId: categoryId, selectedCategoryName: null }
-            : { selectedCategoryId, selectedCategoryName }
-        }
-        searchQuery={searchQuery}
+        links={links}
+        isLoading={isLoadingLinks}
         showPublic={showPublic}
+        categoryName={categoryNameForLinks}
+        onDeleteLink={handleDeleteLink}
       />
     </div>
   );
