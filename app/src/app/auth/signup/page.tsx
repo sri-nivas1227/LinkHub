@@ -1,16 +1,28 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { postLoginAction, postSignupAction } from "../../actions";
+import {
+  postSignupAction,
+  postVerifyUsernameAvailability,
+} from "../../actions";
 import { ROUTES } from "@/config/constants";
 import { toast } from "sonner";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [usernameMessage, setUsernameMessage] = useState({
+    success: false,
+    message: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,13 +32,17 @@ export default function SignUpPage() {
   const handleSignUp = async () => {
     setLoading(true);
     setError(null);
-    if (form.email === "" || form.name === "" || form.password === "") {
+    if (
+      form.email === "" ||
+      form.name === "" ||
+      form.username === "" ||
+      form.password === ""
+    ) {
       setError("Please fill all fields!");
       setLoading(false);
       return;
     }
     if (!isPasswordStrong(form.password)) {
-      // todo: set error like a checklist for password strength (at least 8 characters, one uppercase, one lowercase, one number, and one special character)
       setError(
         "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
       );
@@ -66,6 +82,53 @@ export default function SignUpPage() {
       handleSignUp();
     }
   };
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (form.username.trim() === "") {
+        setUsernameMessage((prev) => ({
+          ...prev,
+          success: false,
+          message: "",
+        }));
+        return;
+      }
+      console.log(/^[a-zA-Z0-9_]+$/.test(form.username.trim()));
+      if (!/^[a-zA-Z0-9_]+$/.test(form.username.trim())) {
+        setUsernameMessage((prev) => ({
+          ...prev,
+          success: false,
+          message:
+            "Username can only contain letters, numbers, and underscores.",
+        }));
+      } else if (form.username.length < 3 || form.username.length > 20) {
+        setUsernameMessage((prev) => ({
+          ...prev,
+          success: false,
+          message: "Username must be between 3 and 20 characters long.",
+        }));
+      } else {
+        const usernameAvailable = await postVerifyUsernameAvailability(
+          form.username.trim(),
+        );
+        if (usernameAvailable.success) {
+          setUsernameMessage((prev) => ({
+            ...prev,
+            success: true,
+            message: "Username is available!",
+          }));
+        } else {
+          setUsernameMessage((prev) => ({
+            ...prev,
+            success: false,
+            message: "Username is already taken. Please choose another one.",
+          }));
+        }
+      }
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [form.username]);
   return (
     <div className="w-full h-full flex items-center justify-center p-6">
       <div className="w-full max-w-md text-left">
@@ -89,6 +152,28 @@ export default function SignUpPage() {
               required
               className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
             />
+          </div>
+          <div>
+            <label className="text-sm text-zinc-300">Username</label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Choose a unique username"
+              value={form.username}
+              onChange={handleChange}
+              required
+              className="mt-2 w-full rounded-xl bg-zinc-900/60 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+            />
+            {!usernameMessage.success && form.username.trim() !== "" && (
+              <span className="text-red-400 text-sm">
+                {usernameMessage.message}
+              </span>
+            )}
+            {usernameMessage.success && (
+              <span className="text-green-400 text-sm">
+                {usernameMessage.message}
+              </span>
+            )}
           </div>
           <div>
             <label className="text-sm text-zinc-300">Email</label>
@@ -129,7 +214,7 @@ export default function SignUpPage() {
           )}
           <button
             type="button"
-            disabled={loading}
+            disabled={loading || !usernameMessage.success}
             onClick={handleSignUp}
             className="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-medium py-3 transition disabled:opacity-60"
           >

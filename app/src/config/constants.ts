@@ -50,6 +50,7 @@ export const ENDPOINTS = {
   PING: "/ping",
   LOGIN: "/login",
   SIGNUP: "/signup",
+  VERIFY_USERNAME: "/signup/verify_username",
   VERIFY_OTP_AUTH: "/auth/verify_otp",
   RESEND_OTP: "/auth/resend_otp",
   CATEGORIES: "/categories",

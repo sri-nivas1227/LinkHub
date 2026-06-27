@@ -40,6 +40,18 @@ export async function postSignupAction(formData: {
   }
   return responseData;
 }
+export async function postVerifyUsernameAvailability(username: string) {
+  const response = await fetch(`${API_URL}${ENDPOINTS.VERIFY_USERNAME}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username: username }),
+  });
+  const responseData: responseFormat = await response.json();
+  return responseData;
+}
+
 export async function postVerifyOTPAuthAction(otp: string) {
   {
     const cookieStore = await cookies();
@@ -408,7 +420,10 @@ export async function postReportIssueAction(issueData: any) {
   return data;
 }
 // Public Endpoint Actions
-export async function getLinksFromPublicCategory(categoryId: string, searchQuery: string) {
+export async function getLinksFromPublicCategory(
+  categoryId: string,
+  searchQuery: string,
+) {
   const response = await fetch(
     `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}?search=${searchQuery}`,
     {
