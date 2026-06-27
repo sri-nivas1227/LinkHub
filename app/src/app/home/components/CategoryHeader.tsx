@@ -55,7 +55,7 @@ export default function CategoryHeader({
       if (!response.success) {
         toast.error("Failed to fetch Public URL");
       } else {
-        handleCopy(`${window.location.origin}/${response.data.public_url}`);
+        handleCopy(`${window.location.origin}/share/${response.data.public_url}`);
       }
     }
   };
