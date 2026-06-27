@@ -94,7 +94,7 @@ export default function CategoryHeader({
     return <div className="">Loading Category...</div>;
   }
   return (
-    <div className="w-3/4 flex gap-2 justify-between items-center">
+    <div className="w-3/4 flex gap-2 items-center">
       <div className="transition-all ease-linear w-1/2 flex items-center gap-2 justify-start">
         {editCategoryName && title ? (
           <div className="w-3/4">
@@ -140,7 +140,7 @@ export default function CategoryHeader({
       </div>
       {title && (
         <>
-          <div className="flex gap-2 items-center justify-center">
+          <div className="flex gap-2 items-center justify-start">
             <Toggle
               onChange={handlePublicToggle}
               checked={publicToggle}
@@ -152,13 +152,13 @@ export default function CategoryHeader({
               size={16}
             /> */}
           </div>
-          <div
+          {publicToggle && <div
             onClick={handleCopyPublicCollectionLink}
             className="mx-2 flex items-center justify-center hover:text-indigo-500 cursor-pointer gap-1 text-xs whitespace-nowrap"
           >
             <Copy size={16} />
             <span>{"Copy Public Link"}</span>
-          </div>
+          </div>}
         </>
       )}
     </div>

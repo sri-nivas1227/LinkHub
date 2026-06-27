@@ -435,12 +435,14 @@ export async function postReportIssueAction(issueData: any) {
   return data;
 }
 // Public Endpoint Actions
-export async function getLinksFromPublicCategory(
-  categoryId: string,
+export async function getLinksFromPublicCollection(
+  username: string,
+  collectionSlug: string,
   searchQuery: string,
 ) {
+  const params = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : "";
   const response = await fetch(
-    `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}?search=${searchQuery}`,
+    `${API_URL}${ENDPOINTS.SHARED_COLLECTION}/${username}/${collectionSlug}${params}`,
     {
       method: "GET",
       headers: {

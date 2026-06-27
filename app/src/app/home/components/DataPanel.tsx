@@ -9,7 +9,7 @@ import {
   getCategoriesAction,
   getLinkOnSearchAction,
   getLinksFromCategoriesAction,
-  getLinksFromPublicCategory,
+  getLinksFromPublicCollection,
 } from "@/app/actions";
 import { toast } from "sonner";
 import CategoryHeader from "./CategoryHeader";
@@ -22,14 +22,16 @@ interface DataPanelProps {
   showCategoryList?: boolean;
   showCategoryHeader?: boolean;
   showPublic?: boolean;
-  categoryId?: string;
+  username?: string;
+  collectionSlug?: string;
 }
 export default function DataPanel({
   showAddLinkButton,
   showCategoryList,
   showCategoryHeader,
   showPublic,
-  categoryId = undefined,
+  username,
+  collectionSlug,
 }: DataPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -39,14 +41,12 @@ export default function DataPanel({
   const [isLoadingLinks, setIsLoadingLinks] = useState(true);
 
   const selectedCategoryName = useMemo(() => {
-    if (showPublic && categoryId) {
-      return null;
-    }
+    if (showPublic) return null;
     return (
       categories.find((category) => category.id === selectedCategoryId)?.name ||
       null
     );
-  }, [categories, selectedCategoryId]);
+  }, [categories, selectedCategoryId, showPublic]);
 
   const categoryNameForLinks = useMemo(() => {
     if (showPublic) return null;
@@ -69,7 +69,7 @@ export default function DataPanel({
         setIsLoadingCategories(false);
       }
     };
-    if (!categoryId && !showPublic) {
+    if (!showPublic) {
       fetchCategories();
     }
   }, []);
@@ -78,8 +78,8 @@ export default function DataPanel({
     const fetchLinks = async () => {
       setIsLoadingLinks(true);
       try {
-        if (showPublic && categoryId) {
-          const responseData = await getLinksFromPublicCategory(categoryId, searchQuery);
+        if (showPublic && username && collectionSlug) {
+          const responseData = await getLinksFromPublicCollection(username, collectionSlug, searchQuery);
           const allLinks = Array.isArray(responseData?.data?.links)
             ? responseData.data.links
             : [];
@@ -112,7 +112,7 @@ export default function DataPanel({
     };
 
     fetchLinks();
-  }, [selectedCategoryId, searchQuery, showPublic, categoryId]);
+  }, [selectedCategoryId, searchQuery, showPublic, username, collectionSlug]);
 
   const handleDeleteLink = async (link_id: string) => {
     const response = await deleteURLAction(link_id);
