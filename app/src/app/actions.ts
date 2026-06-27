@@ -380,6 +380,21 @@ export async function updateCategoryAction(
   return data;
 }
 
+export async function getCollectionPublicURLAction(formData: { categoryId: string }) {
+  const token = await getToken();
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.GENERATE_PUBLIC_COLLECTION_URL}/${formData.categoryId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${token?.value}`,
+      },
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function postChangePasswordAction(formData: {
   currentPassword: string;
   newPassword: string;

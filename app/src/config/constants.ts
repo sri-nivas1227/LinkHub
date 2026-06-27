@@ -55,6 +55,7 @@ export const ENDPOINTS = {
   RESEND_OTP: "/auth/resend_otp",
   CATEGORIES: "/categories",
   LINKS_BY_CATEGORY: "/urls/category",
+  GENERATE_PUBLIC_COLLECTION_URL: "/categories/generate_public_url",
   LINK_DATA: "/urls",
   ALL_LINKS: "/urls/user",
   SEARCH_LINKS: "/urls/search",

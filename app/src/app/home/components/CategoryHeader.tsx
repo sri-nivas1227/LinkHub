@@ -1,7 +1,11 @@
 import { Toggle } from "@/app/components/Toggle";
-import { Globe, PenLine, Save, X } from "lucide-react";
+import { Copy, PenLine, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getCategoryDetailsAction, updateCategoryAction } from "@/app/actions";
+import {
+  getCategoryDetailsAction,
+  getCollectionPublicURLAction,
+  updateCategoryAction,
+} from "@/app/actions";
 import { toast } from "sonner";
 import { Category } from "@/app/types";
 
@@ -43,7 +47,26 @@ export default function CategoryHeader({
       });
     }
   };
-
+  const handleCopyPublicCollectionLink = async () => {
+    if (categoryId) {
+      const response = await getCollectionPublicURLAction({
+        categoryId: categoryId,
+      });
+      if (!response.success) {
+        toast.error("Failed to fetch Public URL");
+      } else {
+        handleCopy(`${window.location.origin}/${response.data.public_url}`);
+      }
+    }
+  };
+  const handleCopy = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link Copied to Clipboard!");
+    } catch (error) {
+      console.error("Copy failed:", error);
+    }
+  };
   useEffect(() => {
     const getCategoryDetails = async () => {
       if (categoryId == "all") {
@@ -72,7 +95,7 @@ export default function CategoryHeader({
   }
   return (
     <div className="w-3/4 flex gap-2 justify-between items-center">
-      <div className="transition-all ease-linear w-3/4 flex items-center gap-2 justify-start">
+      <div className="transition-all ease-linear w-1/2 flex items-center gap-2 justify-start">
         {editCategoryName && title ? (
           <div className="w-3/4">
             <input
@@ -116,18 +139,27 @@ export default function CategoryHeader({
         )}
       </div>
       {title && (
-        <div className="flex gap-2 items-center justify-center">
-          <Globe
-            className={`${publicToggle ? "text-indigo-500" : ""}`}
-            size={16}
-          />
-          <Toggle
-            onChange={handlePublicToggle}
-            checked={publicToggle}
-            label="Public"
-            size="sm"
-          />
-        </div>
+        <>
+          <div className="flex gap-2 items-center justify-center">
+            <Toggle
+              onChange={handlePublicToggle}
+              checked={publicToggle}
+              label="Public"
+              size="sm"
+            />
+            {/* <Globe
+              className={`${publicToggle ? "text-indigo-500" : ""}`}
+              size={16}
+            /> */}
+          </div>
+          <div
+            onClick={handleCopyPublicCollectionLink}
+            className="mx-2 flex items-center justify-center hover:text-indigo-500 cursor-pointer gap-1 text-xs whitespace-nowrap"
+          >
+            <Copy size={16} />
+            <span>{"Copy Public Link"}</span>
+          </div>
+        </>
       )}
     </div>
   );
