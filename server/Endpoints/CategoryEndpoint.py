@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from bson import ObjectId
 from models.Category import Category
+from models.User import User
 import datetime
 from helpers.utilities import validate_and_get_token_payload, convert_to_slug
 
@@ -96,3 +97,32 @@ def get_category(category_id):
             "success": False,
             "message": "Category not found or you don't have permission to view it"
         }), 404
+
+@categoryRouter.route('/categories/generate_public_url/<category_id>', methods=['GET'])
+def generate_collection_public_url(category_id:str):
+    # get token from cookies
+    token = request.cookies.get('token')
+    is_valid_token, payload = validate_and_get_token_payload(token) if token else False
+    if is_valid_token:
+        user_id = payload.get('user_id')
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Invalid or missing token"
+        }), 401
+    
+    category = Category.get_by_id(category_id=category_id, user_id=user_id)
+    user = User.get_by_id(user_id=user_id)
+    if user and category.is_public:
+        return jsonify({
+            "success": True,
+            "message": "Category details",
+            "data": {
+                "public_url": f"{user.username}/{category.category_slug}"
+            }
+        }), 200 
+    else:
+         return jsonify({
+            "success": False,
+            "message": "Failed to fetch Public URL"
+        }), 401

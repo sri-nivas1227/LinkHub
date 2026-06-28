@@ -5,6 +5,7 @@ from helpers.utilities import (
 from db import users_collection
 from bson import ObjectId
 from models.User import User
+from models.Category import Category
 
 profile_router = Blueprint("profile", __name__)
 
@@ -51,6 +52,7 @@ def getProfile():
     
     response_data = {
         "name": user.full_name,
+        "username": user.username,
         "email": user.email,
         "description": profile_data.get("description", ""),
         "links": profile_data.get("links", []),
@@ -58,7 +60,36 @@ def getProfile():
     return make_response(
             {
                 "success": True,
-                "message":"Profile fetched successfully", 
+                "message":"Profile fetched successfully",
                 "data":{"profile": response_data}
             },200
         )
+
+
+@profile_router.route("/profile/<username>", methods=["GET"])
+def get_public_profile(username: str):
+    user = User.get_by_username(username)
+    if not user:
+        return make_response({"success": False, "message": "User not found"}, 404)
+
+    all_categories = Category.get_all_by_user_id(str(user._id))
+    public_collections = [
+        {"name": cat.name, "slug": cat.category_slug}
+        for cat in all_categories if cat.is_public
+    ]
+
+    profile_data = user.profile if user.profile else {}
+    return make_response(
+        {
+            "success": True,
+            "message": "Public profile fetched successfully",
+            "data": {
+                "name": user.full_name,
+                "username": user.username,
+                "description": profile_data.get("description", ""),
+                "links": profile_data.get("links", []),
+                "public_collections": public_collections,
+            }
+        },
+        200
+    )

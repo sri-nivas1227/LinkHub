@@ -20,7 +20,7 @@ export const ROUTES = {
   PROFILE: "/profile",
   ROOT: "/",
   FEEDBACK: "/feedback",
-  SHARE: "/share"
+  SHARE: "/share",
 } as const;
 
 // PUBLIC_PATHS
@@ -50,19 +50,22 @@ export const ENDPOINTS = {
   PING: "/ping",
   LOGIN: "/login",
   SIGNUP: "/signup",
+  VERIFY_USERNAME: "/signup/verify_username",
   VERIFY_OTP_AUTH: "/auth/verify_otp",
   RESEND_OTP: "/auth/resend_otp",
   CATEGORIES: "/categories",
   LINKS_BY_CATEGORY: "/urls/category",
+  GENERATE_PUBLIC_COLLECTION_URL: "/categories/generate_public_url",
   LINK_DATA: "/urls",
   ALL_LINKS: "/urls/user",
   SEARCH_LINKS: "/urls/search",
-  SHARED_CATEGORY: "/share/categories",
+  SHARED_COLLECTION: "/share",
   ADD_LINK: "/urls",
   DELETE_LINK: "/urls",
   EDIT_LINK: "/urls",
   GET_PROFILE: "/profile",
   POST_PROFILE: "/profile",
+  PUBLIC_PROFILE: "/profile",
   UPDATE_PASSWORD: "/auth/update_password",
   REPORT_ISSUE: "/admin/report_issue",
 } as const;

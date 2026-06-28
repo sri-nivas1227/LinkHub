@@ -109,8 +109,22 @@ class User:
         return None
 
     @staticmethod
+    def get_by_username(usernmae:str):
+        user = users_collection.find_one(filter={"username":usernmae.strip()})
+        if user:
+            return User(**user)
+        return None
+
+    @staticmethod
     def verify_user_email(user_id:str):
         user = User.get_by_id(user_id=user_id)
         if not user.email_verified:
             return user.update({"email_verified":True})
         return True
+
+    @staticmethod
+    def is_username_exists(username:str):
+        user = users_collection.find_one({"username":username})
+        if user:
+            return True
+        return False

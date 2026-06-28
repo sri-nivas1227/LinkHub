@@ -40,6 +40,18 @@ export async function postSignupAction(formData: {
   }
   return responseData;
 }
+export async function postVerifyUsernameAvailability(username: string) {
+  const response = await fetch(`${API_URL}${ENDPOINTS.VERIFY_USERNAME}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username: username }),
+  });
+  const responseData: responseFormat = await response.json();
+  return responseData;
+}
+
 export async function postVerifyOTPAuthAction(otp: string) {
   {
     const cookieStore = await cookies();
@@ -334,6 +346,19 @@ export async function getProfileAction() {
   return data;
 }
 
+export async function getPublicProfileAction(username: string) {
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.PUBLIC_PROFILE}/${username}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function postUpdateProfileAction(updatedProfile: any) {
   const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.POST_PROFILE}`, {
@@ -362,6 +387,21 @@ export async function updateCategoryAction(
         Cookie: `token=${token?.value}`,
       },
       body: JSON.stringify(updatedCategory),
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
+export async function getCollectionPublicURLAction(formData: { categoryId: string }) {
+  const token = await getToken();
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.GENERATE_PUBLIC_COLLECTION_URL}/${formData.categoryId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${token?.value}`,
+      },
     },
   );
   const data: responseFormat = await response.json();
@@ -408,9 +448,14 @@ export async function postReportIssueAction(issueData: any) {
   return data;
 }
 // Public Endpoint Actions
-export async function getLinksFromPublicCategory(categoryId: string, searchQuery: string) {
+export async function getLinksFromPublicCollection(
+  username: string,
+  collectionSlug: string,
+  searchQuery: string,
+) {
+  const params = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : "";
   const response = await fetch(
-    `${API_URL}${ENDPOINTS.SHARED_CATEGORY}/${categoryId}?search=${searchQuery}`,
+    `${API_URL}${ENDPOINTS.SHARED_COLLECTION}/${username}/${collectionSlug}${params}`,
     {
       method: "GET",
       headers: {

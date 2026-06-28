@@ -22,7 +22,7 @@ def signup():
     # Check if user already exists
     existing_user = User.get_by_email(email)
     if existing_user:
-        return make_response({"success": False, "message": "User already exists"}, 400)
+        return make_response({"success": False, "message": "An account with this email already exists"}, 400)
     if not full_name or not email or not password:
         return make_response(
             {"success": False, "message": "All fields are required"}, 400
@@ -53,6 +53,21 @@ def signup():
         )
         response.set_cookie("X-OTPVerifier",jwt_token, max_age=5000, httponly=True, samesite="None", secure=True )
         return response
+
+@auth_router.route("/signup/verify_username", methods=["POST"])
+def verify_username():
+    data = request.get_json()
+    username = data.get("username")
+    username_exists = User.is_username_exists(username)
+    print(username_exists)
+    if username_exists:
+        return make_response(
+            {"success": False, "message": "Username already exists."}, 400
+        )
+    else:
+        return make_response(
+            {"success":True, "message":"Username available."}, 200
+        )
 
 @auth_router.route("/auth/resend_otp", methods=["POST"])
 def resend_otp():
