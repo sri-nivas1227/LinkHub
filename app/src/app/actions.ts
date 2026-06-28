@@ -346,6 +346,19 @@ export async function getProfileAction() {
   return data;
 }
 
+export async function getPublicProfileAction(username: string) {
+  const response = await fetch(
+    `${API_URL}${ENDPOINTS.PUBLIC_PROFILE}/${username}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    },
+  );
+  const data: responseFormat = await response.json();
+  return data;
+}
+
 export async function postUpdateProfileAction(updatedProfile: any) {
   const token = await getToken();
   const response = await fetch(`${API_URL}${ENDPOINTS.POST_PROFILE}`, {

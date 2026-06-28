@@ -3,9 +3,10 @@ import { pingServerAction } from "./app/actions";
 import { ROUTES, PUBLIC_PATHS } from "./config/constants";
 
 function isPublic(pathname: string) {
-  return PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(path + "/"),
-  );
+  if (PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/"))) return true;
+  // /profile/<username> — public user profiles (not /profile itself)
+  const parts = pathname.split("/").filter(Boolean);
+  return parts.length === 2 && parts[0] === "profile";
 }
 
 export async function middleware(req: NextRequest) {
